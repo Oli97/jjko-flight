@@ -3,11 +3,17 @@
   <title>Test</title>
 </head>
 
-<body onload="start()">
+<body>
 
   <canvas id="glcanvas" width="640" height="480"></canvas>
 
 </body>
+<div id="textDiv"></div>
+<script type="text/javascript">
+    var div = document.getElementById("textDiv");
+    div.textContent = "my text";
+    var text = div.textContent;
+</script>
 
 <script src="gl-matrix.js"></script>
 <script src="test.js"></script>

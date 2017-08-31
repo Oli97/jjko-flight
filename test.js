@@ -1,5 +1,4 @@
 main();
-
 //
 // Start here
 //
@@ -18,21 +17,27 @@ function main() {
 
   const vsSource = `
     attribute vec4 aVertexPosition;
+    attribute vec4 aVertexColor;
 
     uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
+     uniform mat4 uProjectionMatrix;
 
-    void main() {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    }
+     varying lowp vec4 vColor;
+
+     void main(void) {
+       gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+       vColor = aVertexColor;
+}
   `;
 
   // Fragment shader program
 
   const fsSource = `
-    void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
+    varying lowp vec4 vColor;
+
+    void main(void) {
+        gl_FragColor = vColor;
+}
   `;
 
   // Initialize a shader program; this is where all the lighting
@@ -46,6 +51,7 @@ function main() {
     program: shaderProgram,
     attribLocations: {
       vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+      vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
     },
     uniformLocations: {
       projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
@@ -86,17 +92,25 @@ function initBuffers(gl) {
      1.0, -1.0,
     -1.0, -1.0,
   ];
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+  var colors = [
+  1.0,  1.0,  1.0,  1.0,    // weiß
+  1.0,  0.0,  0.0,  1.0,    // rot
+  0.0,  1.0,  0.0,  1.0,    // grün
+  0.0,  0.0,  1.0,  1.0     // blau
+];
+
+colorBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
   // Now pass the list of positions into WebGL to build the
   // shape. We do this by creating a Float32Array from the
   // JavaScript array, then use it to fill the current buffer.
 
-  gl.bufferData(gl.ARRAY_BUFFER,
-                new Float32Array(positions),
-                gl.STATIC_DRAW);
-
   return {
     position: positionBuffer,
+    color: colorBuffer,
   };
 }
 
@@ -165,6 +179,24 @@ function drawScene(gl, programInfo, buffers) {
         programInfo.attribLocations.vertexPosition);
   }
 
+  {
+    const numComponents = 4;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+    gl.vertexAttribPointer(
+        programInfo.attribLocations.vertexColor,
+        numComponents,
+        type,
+        normalize,
+        stride,
+        offset);
+    gl.enableVertexAttribArray(
+        programInfo.attribLocations.vertexColor);
+  }
+
   // Tell WebGL to use our program when drawing
 
   gl.useProgram(programInfo.program);
@@ -193,6 +225,7 @@ function drawScene(gl, programInfo, buffers) {
 function initShaderProgram(gl, vsSource, fsSource) {
   const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
   const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
 
   // Create the shader program
 

@@ -1,0 +1,441 @@
+<html>
+
+<head>
+<title>Fluglageanzeige &mdash; Studienprojekt</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 vColor;
+    void main(void) {
+        gl_FragColor = vColor;
+    }
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    attribute vec4 aVertexColor;
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+    varying vec4 vColor;
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        vColor = aVertexColor;
+    }
+</script>
+
+
+<script type="text/javascript">
+    var gl;
+    function initGL(canvas) {
+        try {
+            gl = canvas.getContext("experimental-webgl");
+            gl.viewportWidth = canvas.width;
+            gl.viewportHeight = canvas.height;
+        } catch (e) {
+        }
+        if (!gl) {
+            alert("Could not initialise WebGL, sorry :-(");
+        }
+    }
+    function getShader(gl, id) {
+        var shaderScript = document.getElementById(id);
+        if (!shaderScript) {
+            return null;
+        }
+        var str = "";
+        var k = shaderScript.firstChild;
+        while (k) {
+            if (k.nodeType == 3) {
+                str += k.textContent;
+            }
+            k = k.nextSibling;
+        }
+        var shader;
+        if (shaderScript.type == "x-shader/x-fragment") {
+            shader = gl.createShader(gl.FRAGMENT_SHADER);
+        } else if (shaderScript.type == "x-shader/x-vertex") {
+            shader = gl.createShader(gl.VERTEX_SHADER);
+        } else {
+            return null;
+        }
+        gl.shaderSource(shader, str);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            alert(gl.getShaderInfoLog(shader));
+            return null;
+        }
+        return shader;
+    }
+    var shaderProgram;
+    function initShaders() {
+        var fragmentShader = getShader(gl, "shader-fs");
+        var vertexShader = getShader(gl, "shader-vs");
+        shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, vertexShader);
+        gl.attachShader(shaderProgram, fragmentShader);
+        gl.linkProgram(shaderProgram);
+        if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+            alert("Could not initialise shaders");
+        }
+        gl.useProgram(shaderProgram);
+        shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+        shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+        gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+        shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+        shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+    }
+    var mvMatrix = mat4.create();
+    var mvMatrixStack = [];
+    var pMatrix = mat4.create();
+    function mvPushMatrix() {
+        var copy = mat4.create();
+        mat4.set(mvMatrix, copy);
+        mvMatrixStack.push(copy);
+    }
+    function mvPopMatrix() {
+        if (mvMatrixStack.length == 0) {
+            throw "Invalid popMatrix!";
+        }
+        mvMatrix = mvMatrixStack.pop();
+    }
+    function setMatrixUniforms() {
+        gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+        gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+    }
+    function degToRad(degrees) {
+        return degrees * Math.PI / 180;
+    }
+
+    }
+
+    function drawScene() {
+        gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+        mat4.identity(mvMatrix);
+    }
+    function webGLStart() {
+        var canvas = document.getElementById("glcanvas");
+        initGL(canvas);
+        initShaders();
+        initBuffers();
+        gl.clearColor(0.0, 0.0, 0.0, 0.0);
+        gl.enable(gl.DEPTH_TEST);
+        drawScene();
+    }
+</script>
+
+
+</head>
+
+
+<body onload="webGLStart();">
+
+  <div class="container">
+
+  <canvas id="glcanvas" width="500" height="500" style="border:10px solid #000000;" ></canvas>
+  <canvas id="bewegl" width="500" height="500" style="border:10px solid #000000;"></canvas>
+  <canvas id="dreieck" width="500" height="500" style="border:10px solid #000000;"></canvas>
+  <canvas id="fest" width="500" height="500" style="border:10px solid #000000;"></canvas>
+  <canvas id="geschw" width="100" height="500" style="border:10px solid black"></canvas>
+  <canvas id="hoehe" width="100" height="500" style="border:10px solid black"></canvas>
+  <canvas id="anz" width="800" height="500" ></canvas>
+
+</div>
+
+<style>
+.container {
+    position: relative;
+}
+#glcanvas {
+  position: absolute;
+  left: 110px;
+border: 5px solid black;
+border-radius: 25px;
+overflow: hidden;
+}
+#bewegl {
+    position: absolute;
+    left: 110px;
+    top: 0px;
+    z-index: 10;
+    border: 5px solid black;
+    border-radius: 25px;
+    overflow: hidden;
+}
+#dreieck {
+    position: absolute;
+    left: 110px;
+    top: 0px;
+    z-index: 10;
+    border: 5px solid black;
+    border-radius: 25px;
+    overflow: hidden;
+}
+#fest{
+  position: absolute;
+  left: 110px;
+  top: 0px;
+  z-index: 10;
+  border: 5px solid black;
+  border-radius: 25px;
+  overflow: hidden;
+}
+#geschw{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index:10;
+  background-color: rgba(1,1,1,0.7);
+
+}
+#hoehe{
+  position: absolute;
+  left: 620px;
+  top: 0px;
+  z-index: 10;
+  background-color: rgba(1,1,1,0.7);
+}
+#anz{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 10;
+}
+
+</style>
+
+</body>
+
+
+<script>
+//Geschwindigkeit in Knoten (-> Verschiebung in y-Richtung: -250+4*v)
+var v = 180;
+//Höhe in Fuß
+var h=1200;
+var a=h/10;
+var canvas = document.getElementById("bewegl");
+var ctx=canvas.getContext("2d");
+ctx.translate(250,250);
+ctx.rotate(-0*Math.PI/180);
+
+ctx.fillStyle = "lightblue"
+ctx.fillRect(-500,-500,1000,499);
+ctx.fillStyle="lightgreen"
+ctx.fillRect(-500,1,1000,499);
+
+ctx.font="22px Arial";
+ctx.fillStyle = "black";
+ctx.textAlign = "left";
+ctx.fillText("10 ", -100, -72);
+ctx.fillText("10", 75, -72);
+ctx.fillText("20 ", -100, -152);
+ctx.fillText("20", 75, -152);
+ctx.fillText("10 ", -100, 88);
+ctx.fillText("10", 75, 88);
+ctx.fillText("20 ", -100, 168);
+ctx.fillText("20", 75, 168);
+
+ctx.moveTo(-20,-20);
+ctx.lineTo(20,-20);
+ctx.moveTo(-40,-40);
+ctx.lineTo(40,-40);
+ctx.moveTo(-20,-60);
+ctx.lineTo(20,-60);
+ctx.moveTo(-70,-80);
+ctx.lineTo(70,-80);
+ctx.moveTo(-20,-100);
+ctx.lineTo(20,-100);
+ctx.moveTo(-40,-120);
+ctx.lineTo(40,-120);
+ctx.moveTo(-20,-140);
+ctx.lineTo(20,-140);
+ctx.moveTo(-70,-160);
+ctx.lineTo(70,-160);
+
+ctx.moveTo(-20,20);
+ctx.lineTo(20,20);
+ctx.moveTo(-40,40);
+ctx.lineTo(40,40);
+ctx.moveTo(-20,60);
+ctx.lineTo(20,60);
+ctx.moveTo(-70,80);
+ctx.lineTo(70,80);
+ctx.moveTo(-20,100);
+ctx.lineTo(20,100);
+ctx.moveTo(-40,120);
+ctx.lineTo(40,120);
+ctx.moveTo(-20,140);
+ctx.lineTo(20,140);
+ctx.moveTo(-70,160);
+ctx.lineTo(70,160);
+ctx.stroke();
+
+
+var canvas1 = document.getElementById("dreieck");
+var ctx1=canvas1.getContext("2d");
+ctx1.translate(250,250);
+ctx1.rotate(-0*Math.PI/180);
+ctx1.moveTo(0,-238);
+ctx1.lineTo(10,-225);
+ctx1.lineTo(-10,-225);
+ctx1.lineTo(0,-238);
+ctx1.stroke();
+
+
+
+
+var canvas2=document.getElementById("fest");
+var ctx2 = canvas2.getContext("2d");
+ctx2.moveTo(290,0);
+ctx2.lineTo(287,15);
+ctx2.moveTo(210,0);
+ctx2.lineTo(213,15);
+ctx2.moveTo(340,12);
+ctx2.lineTo(333,28);
+ctx2.moveTo(160,12);
+ctx2.lineTo(167,28);
+ctx2.moveTo(400,18);
+ctx2.lineTo(375,55);
+ctx2.moveTo(100,18);
+ctx2.lineTo(125,55);
+ctx2.moveTo(435,75);
+ctx2.lineTo(424,85);
+ctx2.moveTo(65,75);
+ctx2.lineTo(76,85);
+ctx2.stroke();
+
+ctx2.fillStyle="black";
+ctx2.beginPath();
+ctx2.moveTo(242,0);
+ctx2.lineTo(258,0);
+ctx2.lineTo(250,10);
+ctx2.lineTo(242,0);
+ctx2.fill();
+
+ctx2.fillStyle="black";
+ctx2.beginPath();
+ctx2.moveTo(60,245);
+ctx2.lineTo(150,245);
+ctx2.lineTo(150,280);
+ctx2.lineTo(140,280);
+ctx2.lineTo(140,255);
+ctx2.lineTo(60,255);
+ctx2.lineTo(60,245);
+ctx2.moveTo(440,245);
+ctx2.lineTo(350,245);
+ctx2.lineTo(350,280);
+ctx2.lineTo(360,280);
+ctx2.lineTo(360,255);
+ctx2.lineTo(440,255);
+ctx2.lineTo(440,245);
+ctx2.fill();
+
+ctx2.fillStyle = "black";
+ctx2.beginPath();
+ctx2.arc(250,250,10,0,Math.PI * 2, true);
+ctx2.closePath();
+ctx2.fill();
+
+var canvas3=document.getElementById("geschw");
+var ctx3 = canvas3.getContext("2d");
+ctx3.translate(0,-250+4*v);
+ctx3.font="22px Arial white";
+ctx3.fillStyle = "white";
+ctx3.textAlign = "right";
+
+
+for (var i=72; i>-1;){
+  ctx3.moveTo(70,490-i*40);
+  ctx3.lineTo(100,490-i*40);
+  ctx3.moveTo(70,490-i*20);
+  ctx3.lineTo(100,490-i*20);
+  ctx3.fillText(i*10,65,495-i*40);
+
+  i=i-2;
+}
+ctx3.stroke();
+
+
+
+var canvas4=document.getElementById("hoehe");
+var ctx4 = canvas4.getContext("2d");
+ctx4.translate(0,-250+4*a);
+ctx4.font="22px Arial white";
+ctx4.fillStyle = "white";
+ctx4.textAlign = "left";
+
+
+for (var i=740; i>-1;){
+  ctx4.moveTo(0,490-i*40);
+  ctx4.lineTo(30,490-i*40);
+  ctx4.moveTo(0,490-i*20);
+  ctx4.lineTo(30,490-i*20);
+  ctx4.fillText(i*100,35,495-i*40);
+
+  i=i-2;
+}
+ctx4.stroke();
+
+var canvas5=document.getElementById("anz");
+var ctx5 = canvas5.getContext("2d");
+ctx5.fillStyle="white";
+ctx5.beginPath();
+ctx5.moveTo(0,228);
+ctx5.lineTo(72,228);
+ctx5.lineTo(72,238);
+ctx5.lineTo(82,250);
+ctx5.lineTo(72,262);
+ctx5.lineTo(72,272);
+ctx5.lineTo(0,272);
+ctx5.closePath();
+ctx5.fill();
+ctx5.beginPath();
+ctx5.moveTo(740,228);
+ctx5.lineTo(668,228);
+ctx5.lineTo(668,238);
+ctx5.lineTo(658,250);
+ctx5.lineTo(668,262);
+ctx5.lineTo(668,272);
+ctx5.lineTo(740,272);
+ctx5.closePath();
+ctx5.fill();
+ctx5.fillStyle="black";
+ctx5.beginPath();
+ctx5.moveTo(0,230);
+ctx5.lineTo(70,230);
+ctx5.lineTo(70,240);
+ctx5.lineTo(80,250);
+ctx5.lineTo(70,260);
+ctx5.lineTo(70,270);
+ctx5.lineTo(0,270);
+ctx5.closePath();
+ctx5.fill();
+ctx5.beginPath();
+ctx5.moveTo(740,230);
+ctx5.lineTo(670,230);
+ctx5.lineTo(670,240);
+ctx5.lineTo(660,250);
+ctx5.lineTo(670,260);
+ctx5.lineTo(670,270);
+ctx5.lineTo(740,270);
+ctx5.closePath();
+ctx5.fill();
+ctx5.stroke();
+ctx5.font="28px Arial white";
+ctx5.fillStyle = "white";
+ctx5.textAlign = "left";
+ctx5.fillText(v,15,260);
+ctx5.font="28px Arial white";
+ctx5.fillStyle = "white";
+ctx5.textAlign = "right";
+ctx5.fillText(h,739,260);
+</script>
+
+
+</html>

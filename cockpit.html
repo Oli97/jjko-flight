@@ -111,6 +111,7 @@
         return degrees * Math.PI / 180;
     }
 
+
     var square2VertexPositionBuffer;
     var square2VertexColorBuffer;
     var square1VertexPositionBuffer;
@@ -119,11 +120,112 @@
     var fensterlVertexColorBuffer;
     var fensterrVertexPositionBuffer;
     var fensterrVertexColorBuffer;
+    var xRot = 0;
+    var xSpeed = 0;
+
+    var yRot = 0;
+    var ySpeed = 0;
+
+    var z = -5.0;
+
+    var filter = 0;
+
+
+    var currentlyPressedKeys = {};
+
+    function handleKeyDown(event) {
+        currentlyPressedKeys[event.keyCode] = true;
+
+    }
+
+
+    function handleKeyUp(event) {
+        currentlyPressedKeys[event.keyCode] = false;
+    }
+
+
+    function handleKeys() {
+        if (currentlyPressedKeys[65]) {
+            // A
+            z -= 1;
+        }
+        if (currentlyPressedKeys[83]) {
+            // S
+            z += 1;
+        }
+        if (currentlyPressedKeys[37]) {
+            // Left cursor key
+            xSpeed -= 0.01;
+        }
+        if (currentlyPressedKeys[39]) {
+            // Right cursor key
+            xSpeed += 0.01;
+        }
+        if (currentlyPressedKeys[38]) {
+            // Up cursor key
+            ySpeed += 0.01;
+        }
+        if (currentlyPressedKeys[40]) {
+            // Down cursor key
+            ySpeed -= 0.01;
+        }
+    }
+    var cubeVertexPositionBuffer;
+    var cubeVertexColorBuffer;
 
     function initBuffers() {
 
+      cubeVertexPositionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+      vertices = [
+          // Front face
+          -1.0, -1.0,  1.0,
+           1.0, -1.0,  1.0,
+           1.0,  1.0,  1.0,
+          -1.0,  1.0,  1.0,
 
+          // Back face
+          -1.0, -1.0, -1.0,
+          -1.0,  1.0, -1.0,
+           1.0,  1.0, -1.0,
+           1.0, -1.0, -1.0,
 
+          // Top face
+          -1.0,  1.0, -1.0,
+          -1.0,  1.0,  1.0,
+           1.0,  1.0,  1.0,
+           1.0,  1.0, -1.0,
+
+          // Bottom face
+          -1.0, -1.0, -1.0,
+           1.0, -1.0, -1.0,
+           1.0, -1.0,  1.0,
+          -1.0, -1.0,  1.0,
+
+          // Right face
+           1.0, -1.0, -1.0,
+           1.0,  1.0, -1.0,
+           1.0,  1.0,  1.0,
+           1.0, -1.0,  1.0,
+
+          // Left face
+          -1.0, -1.0, -1.0,
+          -1.0, -1.0,  1.0,
+          -1.0,  1.0,  1.0,
+          -1.0,  1.0, -1.0,
+      ];
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+      cubeVertexPositionBuffer.itemSize = 3;
+      cubeVertexPositionBuffer.numItems = 24;
+      cubeVertexColorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+      var colors = [];
+      for (var i=0; i < 24; i++) {
+          colors = colors.concat([1.0, 0.0, 0.0, 0.0]);
+      }
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+      cubeVertexColorBuffer.itemSize = 4;
+      cubeVertexColorBuffer.numItems = 24;
 
 
         square1VertexPositionBuffer = gl.createBuffer();
@@ -213,11 +315,14 @@
         fensterrVertexColorBuffer.numItems = 4;
     }
     var rSquare = 15;
+
+
     function drawScene() {
         gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
         mat4.identity(mvMatrix);
+
 
         mat4.translate(mvMatrix, [0.0, -2.5, -7.0]);
         gl.bindBuffer(gl.ARRAY_BUFFER, square1VertexPositionBuffer);
@@ -235,6 +340,17 @@
         gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, square2VertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
         setMatrixUniforms();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, square2VertexPositionBuffer.numItems);
+
+        mat4.translate(mvMatrix, [xSpeed, ySpeed, z]);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+        gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        setMatrixUniforms();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, cubeVertexPositionBuffer.numItems);
+
+        mat4.translate(mvMatrix, [-xSpeed, -ySpeed, -z]);
 
 
         mat4.translate(mvMatrix, [-2.7, 0.5, 0.0]);
@@ -270,9 +386,14 @@
         mvPopMatrix();
 
 
-
-
     }
+
+    function tick() {
+        requestAnimFrame(tick);
+        handleKeys();
+        drawScene();
+    }
+
     function webGLStart() {
         var canvas = document.getElementById("glcanvas");
         initGL(canvas);
@@ -280,7 +401,10 @@
         initBuffers();
         gl.clearColor(0.0, 0.0, 0.0, 0.3);
         gl.enable(gl.DEPTH_TEST);
-        drawScene();
+        document.onkeydown = handleKeyDown;
+        document.onkeyup = handleKeyUp;
+
+        tick();
     }
 </script>
 
@@ -331,6 +455,5 @@ ctx2.textAlign = "left";
 ctx2.fillText("Hoehe: 100 ft ", 550, 430);
 
 </script>
-
 
 </html>

@@ -1,0 +1,205 @@
+<html>
+
+<head>
+<title>Fuel &mdash; Studienprojekt</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<meta name="viewport" content="width=200" />
+<meta name="viewport" content="initial-scale=2" />
+    <script type="text/javascript">
+        var can, ctx3, hun, n = 0;
+
+        function init() {
+            can = document.getElementById("abc");
+            ctx3 = can.getContext("2d");
+            hun = document.getElementById("hundred");
+            showN();
+        }
+
+        function showN() {
+            ctx3.clearRect(0, 0, can.width, can.height);
+            ctx3.fillStyle = "green";
+            ctx3.beginPath();
+            ctx3.arc(can.width/2,can.height/2,10,0,Math.PI * 2, true);
+            ctx3.closePath();
+            ctx3.fill();
+
+        }
+        function showN2() {
+            ctx3.clearRect(0, 0, can.width, can.height);
+            ctx3.fillStyle = "red";
+            ctx3.beginPath();
+            ctx3.arc(can.width/2,can.height/2,10,0,Math.PI * 2, true);
+            ctx3.closePath();
+            ctx3.fill();
+
+        }
+
+        function incr() {
+            n++;
+            if(n%2==0){
+              showN();
+        }
+           else { showN2();
+           }
+         }
+
+        function setHundred() {
+            n = hun.value;
+            showN();
+        }
+    </script>
+</head>
+
+
+<body onload="init()">
+
+  <div class="container">
+
+    <canvas id="glcanvas" width="300" height="150"  ></canvas>
+    <canvas id="fest" width="300" height="150" ></canvas>
+    <canvas id="abc" width="300" height="150"></canvas>
+    <canvas id="can" height="150" width="300" style="background-color:black; border-radius:25px;">
+    </canvas>
+
+
+</div>
+
+<style>
+.container {
+    position: relative;
+}
+#glcanvas {
+  position: absolute;
+  left: 0px;
+  border: 5px solid grey;
+  background-color: rgba(1,1,1,1.0);
+}
+#fest {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 0;
+    border: 5px solid grey ;
+
+}
+#abc {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 0;
+    border: 5px solid grey ;
+}
+
+
+
+
+</style>
+  <br />
+<div style="position:relative; top:-70; left:139">
+    <input type="button" value=" + " onclick="incr()">
+
+
+</div>
+</body>
+<script>
+//a für linken Tank
+//b für rechten Tank
+var a=15;
+var b=15;
+var canvas = document.getElementById("fest");
+var ctx=canvas.getContext("2d");
+
+//ctx.scale(0.5,0.5);
+ctx.fillStyle = "#363853";
+ctx.fillRect(15,15,133,100);
+ctx.fillStyle = "#363853"
+ctx.fillRect(152,15,133,100);
+
+ctx.font="16px Futura ";
+ctx.fillStyle = "white";
+ctx.textAlign = "middle";
+ctx.fillText("LEFT",60,135);
+ctx.fillText("RIGHT",195,135);
+ctx.font="22px Futura";
+ctx.fillText("FUEL",128,140);
+ctx.fillRect(30,60,100,3);
+ctx.fillRect(170,60,100,3);
+
+ctx.fillRect(80,56,3,12);
+ctx.fillRect(220,56,3,12);
+ctx.translate(105,54);
+ctx.rotate(15*Math.PI/180);
+ctx.fillRect(0,0,3,16);
+ctx.translate(135,0);
+ctx.fillRect(0,-36,3,16);
+ctx.translate(15,0);
+ctx.rotate(15*Math.PI/180);
+ctx.fillRect(0,-50,4,25);
+ctx.translate(-120,0);
+ctx.fillRect(0,20,4,25);
+
+ctx.rotate(-30*Math.PI/180);
+ctx.translate(0,0);
+ctx.rotate(-15*Math.PI/180);
+ctx.fillRect(-95,-3,3,16);
+ctx.fillRect(40,33,3,16);
+ctx.fillStyle="red";
+ctx.fillRect(12,20,4,25);
+ctx.fillRect(-120,-15,4,25);
+
+ctx.rotate(15*Math.PI/180);
+ctx.fillStyle="white";
+ctx.font="18px Futura";
+ctx.fillText("0",15,10);
+ctx.fillText("F",125,10);
+ctx.fillText("0",-125,10);
+ctx.fillText("F",-15,10);
+ctx.font="15px Futura";
+ctx.fillText("30",92,15);
+ctx.fillText("20",65,15);
+ctx.fillText("10",35,15);
+ctx.fillText("30",-45,15);
+ctx.fillText("20",-75,15);
+ctx.fillText("10",-102,15);
+
+var ctx1 = canvas.getContext("2d");
+
+ctx1.translate(-65,82);
+ctx1.fillStyle="white";
+ctx1.rotate(-a*Math.PI/180);
+ctx1.beginPath();
+ctx1.lineTo(5,0);
+ctx1.lineTo(5,-45);
+ctx1.lineTo(0,-70);
+ctx1.lineTo(-5,-45);
+ctx1.lineTo(-5,0);
+ctx1.lineTo(0,0);
+ctx1.fill();
+ctx1.stroke();
+ctx1.rotate(a*Math.PI/180);
+
+
+var ctx2=canvas.getContext("2d");
+
+ctx2.translate(140,0);
+ctx2.rotate(-b*Math.PI/180);
+ctx2.fillStyle="white";
+ctx2.beginPath();
+ctx2.moveTo(0,0);
+ctx2.lineTo(5,0);
+ctx2.lineTo(5,-45);
+ctx2.lineTo(0,-70);
+ctx2.lineTo(-5,-45);
+ctx2.lineTo(-5,0);
+ctx2.lineTo(0,0);
+ctx2.fill();
+ctx2.stroke();
+
+</script>
+
+
+</html>

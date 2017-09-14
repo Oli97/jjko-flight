@@ -1,0 +1,168 @@
+<html>
+
+<head>
+<title>Cockpit &mdash; Studienprojekt</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<meta name="viewport" content="width=200" />
+<meta name="viewport" content="initial-scale=2" />
+<script type="text/javascript">
+    var can, ctx3, hun, n = 0;
+
+    function init() {
+        can = document.getElementById("abc");
+        ctx3 = can.getContext("2d");
+        hun = document.getElementById("hundred");
+        showN();
+    }
+
+    function showN() {
+        ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "green";
+        ctx3.beginPath();
+        ctx3.arc(can.width/2,400,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+
+    }
+    function showN2() {
+        ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "red";
+        ctx3.beginPath();
+        ctx3.arc(can.width/2,400,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+
+    }
+
+    function incr() {
+        n++;
+        if(n%2==0){
+          showN();
+    }
+       else { showN2();
+       }
+     }
+
+    function setHundred() {
+        n = hun.value;
+        showN();
+    }
+</script>
+
+
+
+</head>
+
+
+<body onload="init() ">
+
+  <div class="container">
+
+  <canvas id="glcanvas" width="1000" height="700"  ></canvas>
+  <canvas id="fenster" width="1000" height="700" ></canvas>
+ <canvas id="instrumente1" width="1000" height="250"></canvas>
+ <canvas id="instrumente2" width="1000" height="70"></canvas>
+ <canvas id="abc" width="1000" height="700"></canvas>
+ <canvas id="can" height="1000" width="700" style="background-color:white; border-radius:25px;">
+ </canvas>
+
+</div>
+
+<style>
+.container {
+    position: relative;
+}
+#glcanvas {
+  position: absolute;
+  left: 0px;
+background-color: lightgrey;
+}
+#fenster {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+
+}
+#instrumente1{
+  position: absolute;
+  left: 0px;
+  top:450px;
+  background-color: grey;
+}
+#instrumente2{
+  position: absolute;
+  left:0px;
+  top:380px;
+
+}
+#abc {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 0;
+}
+
+
+</style>
+<br />
+<div style="position:relative; top:-600; left:470">
+  <input type="button" value=" On/Off " onclick="incr()">
+
+
+</div>
+
+
+
+
+
+</body>
+
+
+<script>
+
+
+
+var canvas = document.getElementById("fenster");
+var ctx=canvas.getContext("2d");
+ctx.translate(500,350);
+
+ctx.fillStyle="#81BEF7";
+ctx.beginPath();
+ctx.moveTo(-20,50);
+ctx.lineTo(-520,70);
+ctx.lineTo(-520,-320);
+ctx.lineTo(-15,-300);
+ctx.lineTo(-20,50);
+ctx.fill();
+
+
+ctx.fillStyle="#81BEF7";
+ctx.beginPath();
+ctx.moveTo(20,50);
+ctx.lineTo(520,70);
+ctx.lineTo(520,-320);
+ctx.lineTo(15,-300);
+ctx.lineTo(20,50);
+ctx.fill();
+
+var canvas1=document.getElementById("instrumente2");
+var ctx1=canvas1.getContext("2d");
+ctx1.fillStyle="#A4A4A4";
+ctx1.moveTo(100,70);
+ctx1.lineTo(150,00);
+ctx1.lineTo(850,00);
+ctx1.lineTo(900,70);
+ctx1.lineTo(100,70);
+ctx1.fill();
+
+
+
+
+
+</script>
+
+
+</html>

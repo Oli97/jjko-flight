@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=200" />
 <meta name="viewport" content="initial-scale=2" />
 <script type="text/javascript">
-    var can, ctx3, hun, n = 0, a = 0;
+    var can, ctx3, hun, n = 0, a = 0, b=0, c=0, d=0, e=0, f=0, g=0, h=0;
 
     function init() {
         can = document.getElementById("abc");
@@ -17,13 +17,22 @@
         hun = document.getElementById("hundred");
         showN();
         showN3();
+        showN5();
+        showN7();
+        showN9();
+        showN11();
+        showN13();
+        showN14();
+        showN15();
+
+
     }
 
     function showN() {
         //ctx3.clearRect(0, 0, can.width, can.height);
         ctx3.fillStyle = "green";
         ctx3.beginPath();
-        ctx3.arc(can.width/2,400,10,0,Math.PI * 2, true);
+        ctx3.arc(180,410,10,0,Math.PI * 2, true);
         ctx3.closePath();
         ctx3.fill();
         ctx3.stroke();
@@ -32,7 +41,7 @@
         //ctx3.clearRect(0, 0, can.width, can.height);
         ctx3.fillStyle = "red";
         ctx3.beginPath();
-        ctx3.arc(can.width/2,400,10,0,Math.PI * 2, true);
+        ctx3.arc(180,410,10,0,Math.PI * 2, true);
         ctx3.closePath();
         ctx3.fill();
         ctx3.stroke();
@@ -41,7 +50,7 @@
         //ctx3.clearRect(0, 0, can.width, can.height);
         ctx3.fillStyle = "green";
         ctx3.beginPath();
-        ctx3.arc(565,400,10,0,Math.PI * 2, true);
+        ctx3.arc(280,410,10,0,Math.PI * 2, true);
         ctx3.closePath();
         ctx3.fill();
         ctx3.stroke();
@@ -50,11 +59,84 @@
         //ctx3.clearRect(0, 0, can.width, can.height);
         ctx3.fillStyle = "red";
         ctx3.beginPath();
-        ctx3.arc(565,400,10,0,Math.PI * 2, true);
+        ctx3.arc(280,410,10,0,Math.PI * 2, true);
         ctx3.closePath();
         ctx3.fill();
         ctx3.stroke();
     }
+    function showN5() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "green";
+        ctx3.beginPath();
+        ctx3.arc(380,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN6() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "red";
+        ctx3.beginPath();
+        ctx3.arc(380,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN7() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "green";
+        ctx3.beginPath();
+        ctx3.arc(476,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN8() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "red";
+        ctx3.beginPath();
+        ctx3.arc(476,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN9() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "green";
+        ctx3.beginPath();
+        ctx3.arc(616,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN10() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "red";
+        ctx3.beginPath();
+        ctx3.arc(616,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN11() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "green";
+        ctx3.beginPath();
+        ctx3.arc(756,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN12() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "red";
+        ctx3.beginPath();
+        ctx3.arc(756,410,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+
 
     function incr() {
         n++;
@@ -71,6 +153,104 @@
      }
         else { showN4();
         }
+      }
+      function incr3() {
+          b++;
+          if(b%2==0){
+            showN5();
+      }
+         else { showN6();
+         }
+       }
+       function incr4() {
+           c++;
+           if(c%2==0){
+             showN7();
+       }
+          else { showN8();
+          }
+        }
+        function incr5() {
+            d++;
+            if(d%2==0){
+              showN9();
+        }
+           else { showN10();
+           }
+         }
+         function incr6() {
+             e++;
+             if(e%2==0){
+               showN11();
+         }
+            else { showN12();
+            }
+          }
+
+
+      function showN13() {
+
+          // large, centered, bright green text
+          ctx3.font = "18pt Helvetica";
+          ctx3.textAlign = "right";
+          ctx3.textBaseline = "right";
+          ctx3.fillStyle = "rgb(255,222,173)";
+          ctx3.clearRect(500,400,80,100);
+          // draw text at center, max length to fit on canvas
+          ctx3.fillText(f, 570, 420, can.width - 2);
+
+      }
+      function showN14() {
+
+          // large, centered, bright green text
+          ctx3.font = "18pt Helvetica";
+          ctx3.textAlign = "right";
+          ctx3.textBaseline = "right";
+          ctx3.fillStyle = "rgb(255,222,173)";
+          ctx3.clearRect(640,400,80,100);
+          // draw text at center, max length to fit on canvas
+          ctx3.fillText(g, 710, 420, can.width - 2);
+
+      }
+      function showN15() {
+
+          // large, centered, bright green text
+          ctx3.font = "18pt Helvetica";
+          ctx3.textAlign = "right";
+          ctx3.textBaseline = "right";
+          ctx3.fillStyle = "rgb(255,222,173)";
+          ctx3.clearRect(780,400,80,100);
+          // draw text at center, max length to fit on canvas
+          ctx3.fillText(h, 850, 420, can.width - 2);
+
+      }
+
+      function incr7() {
+        f=f+100;
+        showN13();
+      }
+
+     function decr1() {
+       f=f-100;
+       showN13();
+      }
+      function incr8() {
+        g=g+10;
+        showN14();
+      }
+
+     function decr2() {
+       g=g-10;
+       showN14();
+      }
+      function incr9() {
+        h=h+10;
+        showN15();
+      }
+
+     function decr3() {
+       h=h-10;
+       showN15();
       }
 
 </script>
@@ -131,11 +311,29 @@ background-color: lightgrey;
 
 </style>
 <br />
-<div style="position:relative; top:-600; left:470">
+<div style="position:relative; top:-590; left:150">
   <input type="button" value=" On/Off " onclick="incr()">
-<input type="button" value=" On/Off " onclick="incr2()">
-<input type="number" >
-<input type="checkbox">
+</div>
+  <div style="position:relative; top:-612; left:250">
+  <input type="button" value=" On/Off " onclick="incr2()" >
+</div>
+<div style="position:relative; top:-634; left:350">
+  <input type="button" value=" On/Off " onclick="incr3()">
+</div>
+<div style="position:relative; top:-656; left:450">
+<input type="button" value="On/Off" onclick="incr4()">
+<input type="button" value="+" onclick="incr7()">
+<input type="button" value="-" onclick="decr1()">
+</div>
+<div style="position:relative; top:-678; left:590">
+<input type="button" value="On/Off"onclick="incr5()" >
+<input type="button" value="+" onclick="incr8()">
+<input type="button" value="-" onclick="decr2()">
+</div>
+<div style="position:relative; top:-700; left:730">
+<input type="button" value="On/Off" onclick="incr6()" >
+<input type="button" value="+" onclick="incr9()">
+<input type="button" value="-" onclick="decr3()">
 </div>
 
 
@@ -181,11 +379,27 @@ ctx1.lineTo(850,00);
 ctx1.lineTo(900,70);
 ctx1.lineTo(100,70);
 ctx1.fill();
-
-
-
-
-
+ctx1.fillStyle = "black";
+ctx1.fillRect(500,15,70,30);
+ctx1.fillStyle = "black";
+ctx1.fillRect(640,15,70,30);
+ctx1.fillStyle = "black";
+ctx1.fillRect(780,15,70,30);
+ctx1.font="15px Futura ";
+ctx1.fillStyle = "rgb(255,222,173)";
+ctx1.textAlign = "middle";
+ctx1.fillText("ALT",525,13);
+ctx1.fillText("IAS",665,13);
+ctx1.fillText("VS",805,13);
+ctx1.font="15px Futura ";
+ctx1.fillStyle = "black";
+ctx1.textAlign = "middle";
+ctx1.fillText("ILS",170,13);
+ctx1.fillText("Y/D",265,13);
+ctx1.fillText("TR",370,13);
+ctx1.fillText("AAH",460,13);
+ctx1.fillText("A/THR",595,13);
+ctx1.fillText("AVSH",735,13);
 </script>
 
 

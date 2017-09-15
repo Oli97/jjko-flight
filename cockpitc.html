@@ -9,32 +9,51 @@
 <meta name="viewport" content="width=200" />
 <meta name="viewport" content="initial-scale=2" />
 <script type="text/javascript">
-    var can, ctx3, hun, n = 0;
+    var can, ctx3, hun, n = 0, a = 0;
 
     function init() {
         can = document.getElementById("abc");
         ctx3 = can.getContext("2d");
         hun = document.getElementById("hundred");
         showN();
+        showN3();
     }
 
     function showN() {
-        ctx3.clearRect(0, 0, can.width, can.height);
+        //ctx3.clearRect(0, 0, can.width, can.height);
         ctx3.fillStyle = "green";
         ctx3.beginPath();
         ctx3.arc(can.width/2,400,10,0,Math.PI * 2, true);
         ctx3.closePath();
         ctx3.fill();
-
+        ctx3.stroke();
     }
     function showN2() {
-        ctx3.clearRect(0, 0, can.width, can.height);
+        //ctx3.clearRect(0, 0, can.width, can.height);
         ctx3.fillStyle = "red";
         ctx3.beginPath();
         ctx3.arc(can.width/2,400,10,0,Math.PI * 2, true);
         ctx3.closePath();
         ctx3.fill();
-
+        ctx3.stroke();
+    }
+    function showN3() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "green";
+        ctx3.beginPath();
+        ctx3.arc(565,400,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
+    }
+    function showN4() {
+        //ctx3.clearRect(0, 0, can.width, can.height);
+        ctx3.fillStyle = "red";
+        ctx3.beginPath();
+        ctx3.arc(565,400,10,0,Math.PI * 2, true);
+        ctx3.closePath();
+        ctx3.fill();
+        ctx3.stroke();
     }
 
     function incr() {
@@ -45,11 +64,15 @@
        else { showN2();
        }
      }
+     function incr2() {
+         a++;
+         if(a%2==0){
+           showN3();
+     }
+        else { showN4();
+        }
+      }
 
-    function setHundred() {
-        n = hun.value;
-        showN();
-    }
 </script>
 
 
@@ -110,8 +133,9 @@ background-color: lightgrey;
 <br />
 <div style="position:relative; top:-600; left:470">
   <input type="button" value=" On/Off " onclick="incr()">
-
-
+<input type="button" value=" On/Off " onclick="incr2()">
+<input type="number" >
+<input type="checkbox">
 </div>
 
 

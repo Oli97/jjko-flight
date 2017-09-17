@@ -394,6 +394,7 @@
         drawScene();
     }
 
+
     function webGLStart() {
         var canvas = document.getElementById("glcanvas");
         initGL(canvas);
@@ -406,6 +407,8 @@
 
         tick();
     }
+
+
 </script>
 
 
@@ -416,8 +419,10 @@
   <div class="container">
   <canvas id="glcanvas" width="1000" height="700"></canvas>
   <canvas id="text" width="1000" height="700"></canvas>
-  <canvas id="text2" width="1000" height="700"></canvas>
+
+  </canvas>
 </div>
+
 <style>
 .container {
     position: relative;
@@ -428,31 +433,151 @@
     top: 0px;
     z-index: 10;
 }
-#text2 {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  z-index: 10;
+
+#abc {
+    position: absolute;
+    left: 200px;
+    top: 500px;
+    z-index: 0;
+    border: 5px solid grey ;
 }
+
 </style>
 
 </body>
 
 
 <script>
+(function() {
+    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
+})();
+
 var canvas = document.getElementById("text");
 var ctx=canvas.getContext("2d");
+var c="white";
+ctx.clearRect(0,0,1000,700);
+keys = [];
+function update(){
+  var c1="white",c2="white",xs=115,ys=550;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+            if (keys[39]) {
+       // right arrow
+       c2="red";
+       xs=130;
+   }
+   if (keys[37]) {
+        // left arrow
+  c1="red";
+  xs=100;
+   }
+   if (keys[40]) {
+// up arrow
+ys=565;
+}
+if (keys[38]) {
+// down arrow
+ys=535;
+}
+
 ctx.font="22px Arial";
 ctx.fillStyle = "black";
 ctx.textAlign = "left";
 ctx.fillText("Geschwindigkeit: 300 kn ", 170, 430);
 
-var canvas2 = document.getElementById("text2");
-var ctx2=canvas.getContext("2d");
-ctx2.font="22px Arial";
-ctx2.fillStyle = "black";
-ctx2.textAlign = "left";
-ctx2.fillText("Hoehe: 100 ft ", 550, 430);
+ctx.font="22px Arial";
+ctx.fillStyle = "black";
+ctx.textAlign = "left";
+ctx.fillText("Hoehe: 100 ft ", 550, 430);
+
+ctx.beginPath();
+ctx.lineWidth="2";
+ctx.strokeStyle = "white";
+/*Schubkontrolle*/
+ctx.strokeRect(460,500,30,120);
+ctx.strokeRect(510,500,30,120);
+/*Landeklappenhebel+Bremsklappenhebel*/
+ctx.strokeRect(440,650,20,40);
+ctx.strokeRect(480,650,20,40);
+/*Gearlevel+Warnanzeige*/
+ctx.strokeRect(820,600,26,70);
+ctx.strokeRect(880,610,50,50);
+
+ctx.fillStyle= "black";
+/*Sidestick*/
+ctx.arc(xs,ys,40,0,2*Math.PI);
+/*Pedale*/
+ctx.rect(120,630,50,50);
+ctx.arc(170,655,25,0,2*Math.PI);
+ctx.rect(60,630,50,50);
+ctx.arc(60,655,25,0,2*Math.PI);
+/*Schubkontrolle*/
+ctx.rect(455,560,40,20);
+ctx.rect(505,560,40,20);
+/*Landeklappenhebel+Bremsklappenhebel*/
+ctx.rect(435,670,30,15);
+ctx.arc(490,670,15,0,2*Math.PI);
+/*Gearlevel+Warnanzeige*/
+ctx.rect(815,620,36,15);
+ctx.fill();
+
+
+
+drawArrow(130,655,170,655,c2);
+drawArrow(100,655,60,655,c1);
+
+
+
+   requestAnimationFrame(update);
+}
+
+
+document.body.addEventListener("keydown", function(e) {
+    keys[e.keyCode] = true;
+});
+
+document.body.addEventListener("keyup", function(e) {
+    keys[e.keyCode] = false;
+});
+
+
+window.addEventListener("load",function(){
+    update();
+});
+
+function drawArrow(fromx, fromy, tox, toy,color){
+                //variables to be used when creating the arrow
+                var headlen = 1;
+
+                var angle = Math.atan2(toy-fromy,tox-fromx);
+
+                //starting path of the arrow from the start square to the end square and drawing the stroke
+                ctx.beginPath();
+                ctx.moveTo(fromx, fromy);
+                ctx.lineTo(tox, toy);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 10;
+                ctx.stroke();
+
+                //starting a new path from the head of the arrow to one of the sides of the point
+                ctx.beginPath();
+                ctx.moveTo(tox, toy);
+                ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
+
+                //path from the side point of the arrow, to the other side point
+                ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),toy-headlen*Math.sin(angle+Math.PI/7));
+
+                //path from the side point back to the tip of the arrow, and then again to the opposite side point
+                ctx.lineTo(tox, toy);
+                ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
+
+                //draws the paths created above
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 10;
+                ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
 
 </script>
 

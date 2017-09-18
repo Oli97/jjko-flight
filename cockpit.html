@@ -455,9 +455,9 @@
 
 var canvas = document.getElementById("text");
 var ctx=canvas.getContext("2d");
-var c="white";
 ctx.clearRect(0,0,1000,700);
 keys = [];
+var y1=560;
 function update(){
   var c1="white",c2="white",xs=115,ys=550;
   ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -512,7 +512,7 @@ ctx.arc(170,655,25,0,2*Math.PI);
 ctx.rect(60,630,50,50);
 ctx.arc(60,655,25,0,2*Math.PI);
 /*Schubkontrolle*/
-ctx.rect(455,560,40,20);
+ctx.rect(455,y1,40,20);
 ctx.rect(505,560,40,20);
 /*Landeklappenhebel+Bremsklappenhebel*/
 ctx.rect(435,670,30,15);
@@ -531,6 +531,7 @@ drawArrow(100,655,60,655,c1);
    requestAnimationFrame(update);
 }
 
+var click,mx,my;
 
 document.body.addEventListener("keydown", function(e) {
     keys[e.keyCode] = true;
@@ -539,7 +540,25 @@ document.body.addEventListener("keydown", function(e) {
 document.body.addEventListener("keyup", function(e) {
     keys[e.keyCode] = false;
 });
+document.body.addEventListener("mousemove", function(e) {
+if(click){
+  if(my>510&&my<610){
+    y1=y1+e.offsetY-my;
+  }
+  my=e.offsetY;
+}
+});
+document.body.addEventListener("mousedown", function(e) {
+  mx=e.clientX;
+  my=e.offsetY;
+  if(mx > 455 && mx < 495 && my>y1 && my<(y1+20)){
+    click=true;
+  }
 
+});
+document.body.addEventListener("mouseup", function(e) {
+  click=false;
+});
 
 window.addEventListener("load",function(){
     update();

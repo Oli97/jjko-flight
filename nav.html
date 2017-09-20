@@ -1,0 +1,158 @@
+<html>
+
+<head>
+<title>Navigation &mdash; Studienprojekt</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<meta name="viewport" content="width=200" />
+<meta name="viewport" content="initial-scale=2" />
+
+</head>
+
+
+<body >
+
+  <div class="container">
+
+    <canvas id="glcanvas" width="450" height="450"  ></canvas>
+<canvas id="bewegl" width="450" height="450"></canvas>
+<canvas id="bewegl2" width="450" height="450"></canvas>
+<canvas id="fest" widht="450" height="450"></canvas>
+<canvas id="fest2" widht="450" height="450"></canvas>
+</div>
+
+<style>
+.container {
+    position: relative;
+}
+#glcanvas {
+  position: absolute;
+  left: 0px;
+
+  background-color: rgba(1,1,1,1.0);
+}
+#bewegl{
+  position: absolute;
+  left: 0px;
+}
+#bewegl2{
+  position: absolute;
+  left: 0px;
+}
+#fest{
+  position: absolute;
+  left: 0px;
+}
+#fest2{
+  position: absolute;
+  left: 0px;
+}
+
+
+</style>
+
+</body>
+<script>
+//Ausrichtung
+var a=0;
+//heading
+var b=90;
+
+var canvas = document.getElementById("bewegl");
+var ctx=canvas.getContext("2d");
+ctx.scale(1.5,1.5);
+ctx.lineWidth=0.1;
+ctx.translate(150,150);
+ctx.rotate(-a*Math.PI/180);
+ctx.beginPath();
+ctx.arc(0,0,120,0,Math.PI * 2, true);
+ctx.closePath();
+ctx.strokeStyle="white";
+ctx.stroke();
+ctx.font="12px Arial";
+ctx.fillStyle = "white";
+ctx.textAlign = "left";
+for(var i=0;i<36;){
+ctx.moveTo(120,0);
+ctx.lineTo(130,0);
+ctx.strokeStyle="white";
+ctx.stroke();
+if(i%3==0){
+  ctx.fillText(i,133,5);
+}
+ctx.rotate(-10*Math.PI/180);
+i=i+1;
+}
+for(var n=1;n<74;){
+ctx.rotate(-5*Math.PI/180);
+ctx.moveTo(120,0);
+ctx.lineTo(125,0);
+ctx.strokeStyle="white";
+ctx.stroke();
+n=n+1;
+}
+
+ctx.lineWidth=1;
+ctx.setLineDash([5, 15]);
+ctx.beginPath();
+ctx.arc(0,0,60,0,Math.PI * 2, true);
+ctx.closePath();
+ctx.strokeStyle="white";
+ctx.stroke();
+
+var canvas3 = document.getElementById("bewegl2");
+var ctx3=canvas3.getContext("2d");
+ctx3.scale(1.5,1.5);
+ctx3.translate(150,150);
+ctx3.rotate(-b*Math.PI/180);
+ctx3.moveTo(120,0);
+ctx3.lineTo(130,-10);
+ctx3.lineTo(130,10);
+ctx3.lineTo(120,0);
+ctx3.strokeStyle="blue";
+ctx3.lineWidth=2;
+ctx3.stroke();
+
+var canvas1 = document.getElementById("fest");
+var ctx1=canvas1.getContext("2d");
+ctx1.scale(1.5,1.5);
+
+ctx1.moveTo(140,150);
+ctx1.lineTo(160,150);
+ctx1.moveTo(150,160);
+ctx1.lineTo(150,143);
+ctx1.moveTo(147,158);
+ctx1.lineTo(153,158);
+ctx1.stroke();
+ctx1.moveTo(150,20);
+ctx1.lineTo(150,40)
+ctx1.lineWidth=2;
+ctx1.strokeStyle="yellow";
+ctx1.stroke();
+
+ctx1.font="12px Arial";
+ctx1.fillStyle = "blue";
+ctx1.textAlign = "left";
+ctx1.fillText("10",105,185);
+ctx1.fillText("20",60,220);
+
+var canvas2 = document.getElementById("fest2");
+var ctx2=canvas2.getContext("2d");
+ctx2.scale(1.5,1.5);
+ctx2.strokeStyle="green";
+ctx2.moveTo(150,143);
+ctx2.lineTo(150,40);
+ctx2.stroke();
+ctx2.strokeStyle="green";
+
+ctx1.font="8px Arial";
+ctx1.fillStyle = "purple";
+ctx1.textAlign = "left";
+ctx1.fillText("*EDDL",150,250);
+</script>
+
+
+</html>

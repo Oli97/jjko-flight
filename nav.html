@@ -21,7 +21,7 @@
 <canvas id="bewegl" width="450" height="450"></canvas>
 <canvas id="bewegl2" width="450" height="450"></canvas>
 <canvas id="fest" widht="450" height="450"></canvas>
-<canvas id="fest2" widht="450" height="450"></canvas>
+<canvas id="wegpkte" widht="450" height="450"></canvas>
 </div>
 
 <style>
@@ -46,7 +46,7 @@
   position: absolute;
   left: 0px;
 }
-#fest2{
+#wegpkte{
   position: absolute;
   left: 0px;
 }
@@ -139,14 +139,18 @@ ctx1.textAlign = "left";
 ctx1.fillText("10",105,185);
 ctx1.fillText("20",60,220);
 
-var canvas2 = document.getElementById("fest2");
+var canvas2 = document.getElementById("wegpkte");
 var ctx2=canvas2.getContext("2d");
 ctx2.scale(1.5,1.5);
-ctx2.strokeStyle="green";
+ctx2.strokeStyle="#80FF00";
 ctx2.moveTo(150,143);
-ctx2.lineTo(150,40);
+ctx2.lineTo(150,45);
+ctx2.lineTo(146,37.5);
+ctx2.lineTo(150,30);
+ctx2.lineTo(154,37.5);
+ctx2.lineTo(150,45);
 ctx2.stroke();
-ctx2.strokeStyle="green";
+
 
 ctx1.font="8px Arial";
 ctx1.fillStyle = "purple";

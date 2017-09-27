@@ -271,6 +271,20 @@
  <canvas id="abc" width="1000" height="700"></canvas>
  <canvas id="can" height="1000" width="700" style="background-color:white; border-radius:25px;">
  </canvas>
+ <canvas id="glcanvas1" width="200" height="200" style="border:3px solid #000000;" ></canvas>
+ <canvas id="bewegl" width="200" height="200" style="border:3px solid #000000;"></canvas>
+ <canvas id="dreieck" width="200" height="200" style="border:3px solid #000000;"></canvas>
+ <canvas id="fest" width="200" height="200" style="border:3px solid #000000;"></canvas>
+ <canvas id="geschw" width="40" height="200" style="border:3px solid black"></canvas>
+ <canvas id="hoehe" width="40" height="200" style="border:3px solid black"></canvas>
+ <canvas id="anz" width="320" height="200" ></canvas>
+ <canvas id="glcanvas2" width="150" height="75"  ></canvas>
+ <canvas id="fest2" width="150" height="75" ></canvas>
+ <canvas id="glcanvas3" width="210" height="210"  ></canvas>
+<canvas id="bewegl1" width="210" height="210"></canvas>
+<canvas id="bewegl2" width="210" height="210"></canvas>
+<canvas id="fest3" widht="210" height="210"></canvas>
+<canvas id="wegpkte" widht="210" height="210"></canvas>
 
 </div>
 
@@ -307,7 +321,104 @@ background-color: lightgrey;
     top: 0px;
     z-index: 0;
 }
+#glcanvas1 {
+  position: absolute;
+  left:194px;
+  top: 470px;
+border: 2px solid black;
+border-radius: 12px;
+overflow: hidden;
+}
+#bewegl {
+    position: absolute;
+    left: 194px;
+    top: 470px;
+    z-index: 0;
+    border: 2px solid black;
+    border-radius: 12px;
+    overflow: hidden;
+}
+#dreieck {
+    position: absolute;
+    left: 194px;
+    top: 470px;
+    z-index: 0;
+    border: 2px solid black;
+    border-radius: 12px;
+    overflow: hidden;
+}
+#fest{
+  position: absolute;
+  left: 194px;
+  top: 470px;
+  z-index: 0;
+  border: 2px solid black;
+  border-radius: 12px;
+  overflow: hidden;
+}
+#geschw{
+  position: absolute;
+  left: 150px;
+  top: 470px;
+  z-index:0;
+  background-color: rgba(1,1,1,0.7);
 
+}
+#hoehe{
+  position: absolute;
+  left: 398px;
+  top: 470px;
+  z-index: 0;
+  background-color: rgba(1,1,1,0.7);
+}
+#anz{
+  position: absolute;
+  left: 150px;
+  top: 470px;
+  z-index: 0;
+}
+#glcanvas2 {
+  position: absolute;
+  left: 840px;
+  top: 450px;
+  border: 5px solid grey;
+  background-color: rgba(1,1,1,1.0);
+}
+#fest2 {
+    position: absolute;
+    left: 840px;
+    top: 450px;
+    z-index: 0;
+    border: 5px solid grey ;
+
+}
+#glcanvas3 {
+  position: absolute;
+  left: 590px;
+  top: 470px;
+
+  background-color: rgba(1,1,1,1.0);
+}
+#bewegl1{
+  position: absolute;
+  left: 590px;
+  top: 470px;
+}
+#bewegl2{
+  position: absolute;
+  left: 590px;
+  top: 470px;
+}
+#fest3{
+  position: absolute;
+  left: 590px;
+  top: 470px;
+}
+#wegpkte{
+  position: absolute;
+  left: 590px;
+  top: 470px;
+}
 
 </style>
 <br />
@@ -400,6 +511,432 @@ ctx1.fillText("TR",370,13);
 ctx1.fillText("AAH",460,13);
 ctx1.fillText("A/THR",595,13);
 ctx1.fillText("AVSH",735,13);
+
+//Geschwindigkeit in Knoten (-> Verschiebung in y-Richtung: -250+4*v)
+var v = 280;
+//Höhe in Fuß
+var ho=2070;
+var ab=ho/10;
+//Variable für die Neigung
+var nei=10;
+//Variable für die Steigung (0 bei 250)
+var ste=300;
+
+
+var canvas6 = document.getElementById("bewegl");
+var ctx6=canvas6.getContext("2d");
+ctx6.scale(0.4,0.4);
+ctx6.translate(250,ste);
+ctx6.rotate(-nei*Math.PI/180);
+
+ctx6.fillStyle = "lightblue"
+ctx6.fillRect(-500,-500,1000,499);
+ctx6.fillStyle="lightgreen"
+ctx6.fillRect(-500,1,1000,499);
+
+ctx6.font="22px Arial";
+ctx6.fillStyle = "black";
+ctx6.textAlign = "left";
+ctx6.fillText("10 ", -100, -72);
+ctx6.fillText("10", 75, -72);
+ctx6.fillText("20 ", -100, -152);
+ctx6.fillText("20", 75, -152);
+ctx6.fillText("10 ", -100, 88);
+ctx6.fillText("10", 75, 88);
+ctx6.fillText("20 ", -100, 168);
+ctx6.fillText("20", 75, 168);
+
+ctx6.moveTo(-20,-20);
+ctx6.lineTo(20,-20);
+ctx6.moveTo(-40,-40);
+ctx6.lineTo(40,-40);
+ctx6.moveTo(-20,-60);
+ctx6.lineTo(20,-60);
+ctx6.moveTo(-70,-80);
+ctx6.lineTo(70,-80);
+ctx6.moveTo(-20,-100);
+ctx6.lineTo(20,-100);
+ctx6.moveTo(-40,-120);
+ctx6.lineTo(40,-120);
+ctx6.moveTo(-20,-140);
+ctx6.lineTo(20,-140);
+ctx6.moveTo(-70,-160);
+ctx6.lineTo(70,-160);
+
+ctx6.moveTo(-20,20);
+ctx6.lineTo(20,20);
+ctx6.moveTo(-40,40);
+ctx6.lineTo(40,40);
+ctx6.moveTo(-20,60);
+ctx6.lineTo(20,60);
+ctx6.moveTo(-70,80);
+ctx6.lineTo(70,80);
+ctx6.moveTo(-20,100);
+ctx6.lineTo(20,100);
+ctx6.moveTo(-40,120);
+ctx6.lineTo(40,120);
+ctx6.moveTo(-20,140);
+ctx6.lineTo(20,140);
+ctx6.moveTo(-70,160);
+ctx6.lineTo(70,160);
+ctx6.stroke();
+
+
+var canvas7 = document.getElementById("dreieck");
+var ctx7=canvas7.getContext("2d");
+ctx7.scale(0.4,0.4);
+ctx7.translate(250,250);
+ctx7.rotate(-nei*Math.PI/180);
+ctx7.moveTo(0,-238);
+ctx7.lineTo(10,-225);
+ctx7.lineTo(-10,-225);
+ctx7.lineTo(0,-238);
+ctx7.stroke();
+
+
+
+
+var canvas2=document.getElementById("fest");
+var ctx2 = canvas2.getContext("2d");
+ctx2.scale(0.4,0.4);
+ctx2.moveTo(290,0);
+ctx2.lineTo(287,15);
+ctx2.moveTo(210,0);
+ctx2.lineTo(213,15);
+ctx2.moveTo(340,12);
+ctx2.lineTo(333,28);
+ctx2.moveTo(160,12);
+ctx2.lineTo(167,28);
+ctx2.moveTo(400,18);
+ctx2.lineTo(375,55);
+ctx2.moveTo(100,18);
+ctx2.lineTo(125,55);
+ctx2.moveTo(435,75);
+ctx2.lineTo(424,85);
+ctx2.moveTo(65,75);
+ctx2.lineTo(76,85);
+ctx2.stroke();
+
+ctx2.fillStyle="black";
+ctx2.beginPath();
+ctx2.moveTo(242,0);
+ctx2.lineTo(258,0);
+ctx2.lineTo(250,10);
+ctx2.lineTo(242,0);
+ctx2.fill();
+
+ctx2.fillStyle="black";
+ctx2.beginPath();
+ctx2.moveTo(60,245);
+ctx2.lineTo(150,245);
+ctx2.lineTo(150,280);
+ctx2.lineTo(140,280);
+ctx2.lineTo(140,255);
+ctx2.lineTo(60,255);
+ctx2.lineTo(60,245);
+ctx2.moveTo(440,245);
+ctx2.lineTo(350,245);
+ctx2.lineTo(350,280);
+ctx2.lineTo(360,280);
+ctx2.lineTo(360,255);
+ctx2.lineTo(440,255);
+ctx2.lineTo(440,245);
+ctx2.fill();
+
+ctx2.fillStyle = "black";
+ctx2.beginPath();
+ctx2.arc(250,250,10,0,Math.PI * 2, true);
+ctx2.closePath();
+ctx2.fill();
+
+var canvas3=document.getElementById("geschw");
+var ctx3 = canvas3.getContext("2d");
+ctx3.scale(0.4,0.4);
+ctx3.translate(0,-250+4*v);
+ctx3.font="22px Arial white";
+ctx3.fillStyle = "white";
+ctx3.textAlign = "right";
+
+
+for (var i=72; i>-1;){
+  ctx3.moveTo(70,490-i*40);
+  ctx3.lineTo(100,490-i*40);
+  ctx3.moveTo(70,490-i*20);
+  ctx3.lineTo(100,490-i*20);
+  ctx3.fillText(i*10,65,495-i*40);
+
+  i=i-2;
+}
+ctx3.stroke();
+
+
+
+var canvas4=document.getElementById("hoehe");
+var ctx4 = canvas4.getContext("2d");
+ctx4.scale(0.4,0.4);
+ctx4.translate(0,-250+4*ab);
+ctx4.font="22px Arial white";
+ctx4.fillStyle = "white";
+ctx4.textAlign = "left";
+
+
+for (var i=740; i>-1;){
+  ctx4.moveTo(0,490-i*40);
+  ctx4.lineTo(30,490-i*40);
+  ctx4.moveTo(0,490-i*20);
+  ctx4.lineTo(30,490-i*20);
+  ctx4.fillText(i*100,35,495-i*40);
+
+  i=i-2;
+}
+ctx4.stroke();
+
+var canvas5=document.getElementById("anz");
+var ctx5 = canvas5.getContext("2d");
+ctx5.scale(0.4,0.4);
+ctx5.fillStyle="white";
+ctx5.beginPath();
+ctx5.moveTo(0,228);
+ctx5.lineTo(72,228);
+ctx5.lineTo(72,238);
+ctx5.lineTo(82,250);
+ctx5.lineTo(72,262);
+ctx5.lineTo(72,272);
+ctx5.lineTo(0,272);
+ctx5.closePath();
+ctx5.fill();
+ctx5.beginPath();
+ctx5.moveTo(740,228);
+ctx5.lineTo(668,228);
+ctx5.lineTo(668,238);
+ctx5.lineTo(658,250);
+ctx5.lineTo(668,262);
+ctx5.lineTo(668,272);
+ctx5.lineTo(740,272);
+ctx5.closePath();
+ctx5.fill();
+ctx5.fillStyle="black";
+ctx5.beginPath();
+ctx5.moveTo(0,230);
+ctx5.lineTo(70,230);
+ctx5.lineTo(70,240);
+ctx5.lineTo(80,250);
+ctx5.lineTo(70,260);
+ctx5.lineTo(70,270);
+ctx5.lineTo(0,270);
+ctx5.closePath();
+ctx5.fill();
+ctx5.beginPath();
+ctx5.moveTo(740,230);
+ctx5.lineTo(670,230);
+ctx5.lineTo(670,240);
+ctx5.lineTo(660,250);
+ctx5.lineTo(670,260);
+ctx5.lineTo(670,270);
+ctx5.lineTo(740,270);
+ctx5.closePath();
+ctx5.fill();
+ctx5.stroke();
+ctx5.font="28px Arial white";
+ctx5.fillStyle = "white";
+ctx5.textAlign = "left";
+ctx5.fillText(v,15,260);
+ctx5.font="28px Arial white";
+ctx5.fillStyle = "white";
+ctx5.textAlign = "right";
+ctx5.fillText(ho,739,260);
+
+//t1 für linken Tank
+//t2 für rechten Tank
+var t1=15;
+var t2=15;
+var canvas8 = document.getElementById("fest2");
+var ctx8=canvas8.getContext("2d");
+
+ctx8.scale(0.5,0.5);
+ctx8.fillStyle = "#363853";
+ctx8.fillRect(15,15,133,100);
+ctx8.fillStyle = "#363853"
+ctx8.fillRect(152,15,133,100);
+
+ctx8.font="16px Futura ";
+ctx8.fillStyle = "white";
+ctx8.textAlign = "middle";
+ctx8.fillText("LEFT",60,135);
+ctx8.fillText("RIGHT",195,135);
+ctx8.font="22px Futura";
+ctx8.fillText("FUEL",128,140);
+ctx8.fillRect(30,60,100,3);
+ctx8.fillRect(170,60,100,3);
+
+ctx8.fillRect(80,56,3,12);
+ctx8.fillRect(220,56,3,12);
+ctx8.translate(105,54);
+ctx8.rotate(15*Math.PI/180);
+ctx8.fillRect(0,0,3,16);
+ctx8.translate(135,0);
+ctx8.fillRect(0,-36,3,16);
+ctx8.translate(15,0);
+ctx8.rotate(15*Math.PI/180);
+ctx8.fillRect(0,-50,4,25);
+ctx8.translate(-120,0);
+ctx8.fillRect(0,20,4,25);
+
+ctx8.rotate(-30*Math.PI/180);
+ctx8.translate(0,0);
+ctx8.rotate(-15*Math.PI/180);
+ctx8.fillRect(-95,-3,3,16);
+ctx8.fillRect(40,33,3,16);
+ctx8.fillStyle="red";
+ctx8.fillRect(12,20,4,25);
+ctx8.fillRect(-120,-15,4,25);
+
+ctx8.rotate(15*Math.PI/180);
+ctx8.fillStyle="white";
+ctx8.font="18px Futura";
+ctx8.fillText("0",15,10);
+ctx8.fillText("F",125,10);
+ctx8.fillText("0",-125,10);
+ctx8.fillText("F",-15,10);
+ctx8.font="15px Futura";
+ctx8.fillText("30",92,15);
+ctx8.fillText("20",65,15);
+ctx8.fillText("10",35,15);
+ctx8.fillText("30",-45,15);
+ctx8.fillText("20",-75,15);
+ctx8.fillText("10",-102,15);
+
+
+ctx8.translate(-65,82);
+ctx8.fillStyle="white";
+ctx8.rotate(-t1*Math.PI/180);
+ctx8.beginPath();
+ctx8.lineTo(5,0);
+ctx8.lineTo(5,-45);
+ctx8.lineTo(0,-70);
+ctx8.lineTo(-5,-45);
+ctx8.lineTo(-5,0);
+ctx8.lineTo(0,0);
+ctx8.fill();
+ctx8.stroke();
+ctx8.rotate(t1*Math.PI/180);
+
+
+ctx8.translate(140,0);
+ctx8.rotate(-t2*Math.PI/180);
+ctx8.fillStyle="white";
+ctx8.beginPath();
+ctx8.moveTo(0,0);
+ctx8.lineTo(5,0);
+ctx8.lineTo(5,-45);
+ctx8.lineTo(0,-70);
+ctx8.lineTo(-5,-45);
+ctx8.lineTo(-5,0);
+ctx8.lineTo(0,0);
+ctx8.fill();
+ctx8.stroke();
+
+//Ausrichtung
+var k=0;
+//heading
+var l=90;
+
+var canvas10 = document.getElementById("bewegl1");
+var ctx10=canvas10.getContext("2d");
+ctx10.scale(0.7,0.7);
+ctx10.lineWidth=0.1;
+ctx10.translate(150,150);
+ctx10.rotate(-k*Math.PI/180);
+ctx10.beginPath();
+ctx10.arc(0,0,120,0,Math.PI * 2, true);
+ctx10.closePath();
+ctx10.strokeStyle="white";
+ctx10.stroke();
+ctx10.font="12px Arial";
+ctx10.fillStyle = "white";
+ctx10.textAlign = "left";
+for(var i=0;i<36;){
+ctx10.moveTo(120,0);
+ctx10.lineTo(130,0);
+ctx10.strokeStyle="white";
+ctx10.stroke();
+if(i%3==0){
+  ctx10.fillText(i,133,5);
+}
+ctx10.rotate(-10*Math.PI/180);
+i=i+1;
+}
+for(var n=1;n<74;){
+ctx10.rotate(-5*Math.PI/180);
+ctx10.moveTo(120,0);
+ctx10.lineTo(125,0);
+ctx10.strokeStyle="white";
+ctx10.stroke();
+n=n+1;
+}
+
+ctx10.lineWidth=1;
+ctx10.setLineDash([5, 15]);
+ctx10.beginPath();
+ctx10.arc(0,0,60,0,Math.PI * 2, true);
+ctx10.closePath();
+ctx10.strokeStyle="white";
+ctx10.stroke();
+
+var canvas9 = document.getElementById("bewegl2");
+var ctx9=canvas9.getContext("2d");
+ctx9.scale(0.7,0.7);
+ctx9.translate(150,150);
+ctx9.rotate(-l*Math.PI/180);
+ctx9.moveTo(120,0);
+ctx9.lineTo(130,-10);
+ctx9.lineTo(130,10);
+ctx9.lineTo(120,0);
+ctx9.strokeStyle="blue";
+ctx9.lineWidth=2;
+ctx9.stroke();
+
+var canvas11 = document.getElementById("fest3");
+var ctx11=canvas11.getContext("2d");
+ctx11.scale(0.7,0.7);
+
+ctx11.moveTo(140,150);
+ctx11.lineTo(160,150);
+ctx11.moveTo(150,160);
+ctx11.lineTo(150,143);
+ctx11.moveTo(147,158);
+ctx11.lineTo(153,158);
+ctx11.stroke();
+ctx11.moveTo(150,20);
+ctx11.lineTo(150,40)
+ctx11.lineWidth=2;
+ctx11.strokeStyle="yellow";
+ctx11.stroke();
+
+ctx11.font="12px Arial";
+ctx11.fillStyle = "blue";
+ctx11.textAlign = "left";
+ctx11.fillText("10",105,185);
+ctx11.fillText("20",60,220);
+
+var canvas12 = document.getElementById("wegpkte");
+var ctx12=canvas12.getContext("2d");
+ctx12.scale(0.7,0.7);
+ctx12.strokeStyle="#80FF00";
+ctx12.moveTo(150,143);
+ctx12.lineTo(150,45);
+ctx12.lineTo(146,37.5);
+ctx12.lineTo(150,30);
+ctx12.lineTo(154,37.5);
+ctx12.lineTo(150,45);
+ctx12.stroke();
+
+
+ctx11.font="8px Arial";
+ctx11.fillStyle = "purple";
+ctx11.textAlign = "left";
+ctx11.fillText("*EDDL",150,250);
+
 </script>
 
 

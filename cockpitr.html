@@ -126,7 +126,8 @@
     var yRot = 0;
     var ySpeed = 0;
 
-    var z = -5.0;
+    var z = 0.0;
+    var s = 0.0;
 
     var filter = 0;
 
@@ -147,11 +148,11 @@
     function handleKeys() {
         if (currentlyPressedKeys[65]) {
             // A
-            z -= 1;
+            s -= 0.01;
         }
         if (currentlyPressedKeys[83]) {
             // S
-            z += 1;
+            s += 0.001;
         }
         if (currentlyPressedKeys[37]) {
             // Left cursor key
@@ -172,8 +173,11 @@
     }
     var cubeVertexPositionBuffer;
     var cubeVertexColorBuffer;
+    var dreieckVertexPositionBuffer;
+    var dreieckVertexColorBuffer;
 
     function initBuffers() {
+/*
       cubeVertexPositionBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
       vertices = [
@@ -225,7 +229,26 @@
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
       cubeVertexColorBuffer.itemSize = 4;
       cubeVertexColorBuffer.numItems = 24;
-
+*/
+dreieckVertexPositionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, dreieckVertexPositionBuffer);
+var vertices = [
+     2.0,  1.0,  -10.0,
+     1.0,  1.0,  -10.0,
+     1.0,  2.0,  -10.0,
+];
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+dreieckVertexPositionBuffer.itemSize = 3;
+dreieckVertexPositionBuffer.numItems = 3;
+dreieckVertexColorBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, dreieckVertexColorBuffer);
+var colors = [];
+for (var i=0; i < 3; i++) {
+    colors = colors.concat([0.0, 0.0, 0.0, 1.0]);
+}
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+dreieckVertexColorBuffer.itemSize = 4;
+dreieckVertexColorBuffer.numItems = 3;
 
         square1VertexPositionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, square1VertexPositionBuffer);
@@ -273,10 +296,10 @@
         fensterlVertexPositionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, fensterlVertexPositionBuffer);
         vertices = [
-             1.0,  0.5,  0.0,
-            -3.5,  0.5,  0.0,
-             1.0, -2.7,  0.0,
-            -3.5, -2.7,  0.0
+             15,  15,  -90.0,
+            -45,  15,  -90.0,
+             15, -30,  -90.0,
+            -45, -30,  -90.0
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         fensterlVertexPositionBuffer.itemSize = 3;
@@ -295,10 +318,10 @@
         fensterrVertexPositionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, fensterrVertexPositionBuffer);
         vertices = [
-             3.5,  0.5,  0.0,
-            -1.0,  0.5,  0.0,
-             3.5, -2.7,  0.0,
-            -1.0, -2.7,  0.0
+             -15,  15,  -90.0,
+            45,  15,  -90.0,
+             -15, -30,  -90.0,
+            45, -30,  -90.0
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         fensterrVertexPositionBuffer.itemSize = 3;
@@ -340,6 +363,15 @@
         setMatrixUniforms();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, square2VertexPositionBuffer.numItems);
 
+        mat4.translate(mvMatrix, [0, 0, z]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, dreieckVertexPositionBuffer);
+        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, dreieckVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, dreieckVertexColorBuffer);
+        gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, dreieckVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        setMatrixUniforms();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, dreieckVertexPositionBuffer.numItems);
+        mat4.translate(mvMatrix, [0, 0, -z]);
+/*
         mat4.translate(mvMatrix, [xSpeed, ySpeed, z]);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
@@ -350,7 +382,7 @@
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, cubeVertexPositionBuffer.numItems);
 
         mat4.translate(mvMatrix, [-xSpeed, -ySpeed, -z]);
-
+*/
 
         mat4.translate(mvMatrix, [-2.7, 0.5, 0.0]);
 
@@ -373,7 +405,7 @@
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, fensterlVertexPositionBuffer.numItems);
         mvPopMatrix();
 
-        mat4.translate(mvMatrix, [2.2, -0.0, 0.0]);
+
         mvPushMatrix();
         mat4.rotate(mvMatrix, degToRad(rSquare), [1, -1, 0]);
         gl.bindBuffer(gl.ARRAY_BUFFER, fensterrVertexPositionBuffer);
@@ -390,6 +422,9 @@
     function tick() {
         requestAnimFrame(tick);
         handleKeys();
+        if(s>=0){
+          z=z+s;
+        }
         drawScene();
     }
 

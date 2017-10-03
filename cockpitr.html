@@ -425,6 +425,9 @@ dreieckVertexColorBuffer.numItems = 3;
         if(s>=0){
           z=z+s;
         }
+        else{
+          s=0;
+        }
         drawScene();
     }
 
@@ -522,12 +525,14 @@ w=canvas.width;
 h=canvas.height;
 ctx.clearRect(0,0,w,h);
 keys = [];
-var y1=0.8*h;
+var y1=y2=0.8*h,y3=0.957*h,y4=0.8857*h;
 
 
 function update(){
   var c1="white",c2="white",xs=0.115*w,ys=0.7857*h;
   ctx.clearRect(0,0,w,h);
+  ctx.lineWidth = 0.001*w;
+  ctx.strokeStyle="black";
   showN();
   showN3();
   showN5();
@@ -578,7 +583,7 @@ ctx.strokeRect(0.44*w,0.929*h,0.02*w,0.057*h);
 ctx.strokeRect(0.48*w,0.929*h,0.02*w,0.057*h);
 /*Gearlevel+Warnanzeige*/
 ctx.strokeRect(0.82*w,0.857*h,0.026*w,0.1*h);
-ctx.strokeRect(0.88*w,0.857*h,0.026*w,0.1*h);
+ctx.strokeRect(0.88*w,0.857*h,0.07*w,0.1*h);
 
 ctx.fillStyle= "black";
 /*Sidestick*/
@@ -590,25 +595,27 @@ ctx.rect(0.06*w,0.9*h,0.05*w,0.0714*h);
 ctx.arc(0.06*w,0.9357*h,0.0357*h,0,2*Math.PI);
 /*Schubkontrolle*/
 ctx.rect(0.455*w,y1,0.04*w,0.02857*h);
-ctx.rect(0.505*w,0.8*h,0.04*w,0.02857*h);
+ctx.rect(0.505*w,y2,0.04*w,0.02857*h);
 /*Landeklappenhebel+Bremsklappenhebel*/
-ctx.rect(0.435*w,0.957*h,0.030*w,0.0214*h);
+ctx.rect(0.435*w,y3,0.030*w,0.0214*h);
 ctx.arc(0.49*w,0.957*h,0.0214*h,0,2*Math.PI);
 /*Gearlevel+Warnanzeige*/
-ctx.rect(0.815*w,0.8857*h,0.036*w,0.0214*h);
+ctx.rect(0.815*w,y4,0.036*w,0.0214*h);
 ctx.fill();
 
 
 
 drawArrow(0.13*w,0.9357*h,0.17*w,0.9357*h,c2);
 drawArrow(0.1*w,0.9357*h,0.06*w,0.9357*h,c1);
+ctx.strokeStyle = "white";
+
 ctx.closePath();
 
 
    requestAnimationFrame(update);
 }
 
-var click,mx,my;
+var click1,click2,click3,click4,mx,my;
 
 document.body.addEventListener("keydown", function(e) {
     keys[e.keyCode] = true;
@@ -618,23 +625,48 @@ document.body.addEventListener("keyup", function(e) {
     keys[e.keyCode] = false;
 });
 document.body.addEventListener("mousemove", function(e) {
-if(click){
+if(click1){
   if(my>0.7285*h&&my<0.8714*h){
     y1=y1+e.offsetY-my;
   }
-  my=e.offsetY;
 }
+  if(click2){
+    if(my>0.7285*h&&my<0.8714*h){
+      y2=y2+e.offsetY-my;
+    }
+  }
+  if(click3){
+    if(my>0.9357*h&&my<0.9785*h){
+      y3=y3+e.offsetY-my;
+    }
+  }
+  if(click4){
+    if(my>0.8642*h&&my<0.95*h){
+      y4=y4+e.offsetY-my;
+    }
+  }
+  my=e.offsetY;
+
 });
 document.body.addEventListener("mousedown", function(e) {
   mx=e.clientX;
   my=e.offsetY;
   if(mx > 0.455*w && mx < 0.495*w && my>y1 && my<(y1+0.0286*w)){
-    click=true;
+    click1=true;
+  }
+  if(mx > 0.505*w && mx < 0.545*w && my>y2 && my<(y2+0.0286*w)){
+    click2=true;
+  }
+  if(mx > 0.435*w && mx < 0.465*w && my>y3 && my<(y3+0.0214*w)){
+    click3=true;
+  }
+  if(mx > 0.815*w && mx < 0.851*w && my>y4 && my<(y4+0.0214*w)){
+    click4=true;
   }
 
 });
 document.body.addEventListener("mouseup", function(e) {
-  click=false;
+  click1=click2=click3=click4=false;
 });
 
 window.addEventListener("load",function(){

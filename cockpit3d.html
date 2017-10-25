@@ -68,6 +68,7 @@ worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 init();
 animate();
+
 function init() {
   container = document.getElementById( "container" );
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
@@ -77,8 +78,8 @@ function init() {
   controls.movementSpeed = 1000;
   controls.lookSpeed = 0.1;
   var data = generateHeight( worldWidth, worldDepth );
-  camera.position.y = data[ worldHalfWidth + worldHalfDepth * worldWidth ] * 10 + 500;
-  var geometry = new THREE.PlaneBufferGeometry( 7500, 7500, worldWidth - 1, worldDepth - 1 );
+  camera.position.y = data[ worldHalfWidth + worldHalfDepth * worldWidth ] * 10 + 2000;
+  var geometry = new THREE.PlaneBufferGeometry( 25000, 25000, worldWidth - 1, worldDepth - 1 );
   geometry.rotateX( - Math.PI / 2 );
   var vertices = geometry.attributes.position.array;
   for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
@@ -99,12 +100,14 @@ function init() {
   //
   window.addEventListener( 'resize', onWindowResize, false );
 }
+
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
   controls.handleResize();
 }
+
 function generateHeight( width, height ) {
   var size = width * height, data = new Uint8Array( size ),
   perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 100;
@@ -117,6 +120,7 @@ function generateHeight( width, height ) {
   }
   return data;
 }
+
 function generateTexture( data, width, height ) {
   var canvas, canvasScaled, context, image, imageData,
   level, diff, vector3, sun, shade;
@@ -166,6 +170,7 @@ function animate() {
   render();
   stats.update();
 }
+
 function render() {
   controls.update( clock.getDelta() );
   renderer.render( scene, camera );
@@ -173,13 +178,8 @@ function render() {
 
 </script>
 
-
 </head>
 
-
 </body>
-
-
-
 
 </html>

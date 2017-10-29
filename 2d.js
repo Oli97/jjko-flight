@@ -142,6 +142,17 @@ ctx.strokeStyle = "white";
 
 ctx.closePath();
 
+ctx.fillStyle = "grey";
+ctx.fillRect(0.2*w,0.7*h,0.1*w,0.1*w);
+ctx.fillStyle="black";
+ctx.fillText("Position : ", 0.25*w, 0.72*h);
+ctx.fillText("Z : ",0.25*w,0.75*h);
+ctx.fillText(Math.round(camera.position.z), 0.29*w, 0.75*h);
+ctx.fillText("X : ",0.25*w,0.78*h);
+ctx.fillText(Math.round(camera.position.x), 0.29*w, 0.78*h);
+ctx.fillText("Y : ",0.25*w,0.81*h);
+ctx.textAlign = "right";
+ctx.fillText(Math.round(camera.position.y), 0.29*w, 0.81*h);
 
    requestAnimationFrame(update);
 }

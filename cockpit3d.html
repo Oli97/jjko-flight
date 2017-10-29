@@ -63,6 +63,7 @@ if ( ! Detector.webgl ) {
 var container, stats;
 var camera, controls, scene, renderer;
 var mesh, texture;
+var altx = 0, altz = 0;
 var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
@@ -169,14 +170,40 @@ function animate() {
   requestAnimationFrame( animate );
   render();
   stats.update();
-  if(camera.position.x>12500||camera.position.x<-12500||camera.position.z>12500||camera.position.z<-12500){/*reset*/
-    init();
-  }
+  reset();
 }
 
 function render() {
   controls.update( clock.getDelta() );
   renderer.render( scene, camera );
+}
+
+function reset() {
+  if(Math.abs(camera.position.x-altx)>12500||Math.abs(camera.position.z-altz)>12500){/*reset*/
+    scene.translateX(camera.position.x-altx);
+    scene.translateZ(camera.position.z-altz);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }
+  /*
+  if(altx-camera.position.x<-12500){
+    scene.translateX(altx-camera.position.x);
+    scene.translateZ(camera.position.z-altz);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }
+  if(camera.position.z-altz>12500){
+    scene.translateZ(camera.position.z-altz);
+    scene.translateZ(camera.position.x-altx);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }
+  if(altz-camera.position.z<-12500){
+    scene.translateZ(altz-camera.position.z);
+    scene.translateX(camera.position.x-altx);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }*/
 }
 
 </script>

@@ -1,0 +1,7 @@
+git pull 				- Neues herunterladen
+
+git status				- Änderungen ansehen
+
+git add . 				- Alle Änderungen zum Hochladen übernehmen
+git commit -m "Sehr gute Änderung" 	- Änderungen übernehmen (lokal)
+git push 				- Änderungen auf Server hochladen

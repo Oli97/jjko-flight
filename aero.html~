@@ -36,7 +36,7 @@
     var to = 0;
     var tf = 6;
     var xo = [];
-    xo[0] = V;
+    xo[0] = 3*V;
     xo[1] = Gam;
     xo[2] = H;
     xo[3] = R;

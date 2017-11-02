@@ -69,7 +69,6 @@ worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 init();
 animate();
-aero();
 
 function init() {
   container = document.getElementById( "container" );

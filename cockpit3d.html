@@ -50,10 +50,12 @@ display: block;
 <script src="three.js-master/examples/js/ImprovedNoise.js"></script>
 <script src="three.js-master/examples/js/Detector.js"></script>
 <script src="three.js-master/examples/js/libs/stats.min.js"></script>
-<script src="three.js-master/examples/js/controls/FirstPersonControls.js"></script>
+<!--<script src="three.js-master/examples/js/controls/FirstPersonControls.js"></script>-->
+<script src="autopilot.js"></script>
+
+
 <script language="javascript" type="text/javascript" src="2d.js"></script>
 <script type="text/javascript">
-
 if ( ! Detector.webgl ) {
   Detector.addGetWebGLMessage();
   document.getElementById( 'container' ).innerHTML = "";
@@ -61,51 +63,55 @@ if ( ! Detector.webgl ) {
 var container, stats;
 var camera, controls, scene, renderer;
 var mesh, texture;
+var altx = 0, altz = 0;
 var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 init();
 animate();
+var Hn=aero();
 function init() {
   container = document.getElementById( "container" );
-  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );/*Kamera erstellen mit perpektivischen Eigenschaften*/
   scene = new THREE.Scene();
   scene.background = new THREE.Color( 0xbfd1e5 );
-  controls = new THREE.FirstPersonControls( camera );
-  controls.movementSpeed = 1000;
-  controls.lookSpeed = 0.1;
-  var data = generateHeight( worldWidth, worldDepth );
-  camera.position.y = data[ worldHalfWidth + worldHalfDepth * worldWidth ] * 10 + 500;
-  var geometry = new THREE.PlaneBufferGeometry( 7500, 7500, worldWidth - 1, worldDepth - 1 );
-  geometry.rotateX( - Math.PI / 2 );
-  var vertices = geometry.attributes.position.array;
+  controls = new THREE.FirstPersonControls( camera );/*Steuerung für die Kamera erstellen*/
+  controls.movementSpeed = 10000;/*Bewegungsgeschwindigkeit der Kamera*/
+  controls.lookSpeed = 0.1;/*Drehgeschwindigkeit*/
+  var data = generateHeight( worldWidth, worldDepth );/*Erstellt Daten für die 3D-Welt*/
+  camera.position.y = 3800;/*Startposition der Kamera*/
+  var geometry = new THREE.PlaneBufferGeometry( 25000, 25000, worldWidth - 1, worldDepth - 1 );  /*Erste zwei Variablen bestimmen größe der 3D-Welt und die anderen Zwei bestimmen größe der einzelnen Segmente*/
+  geometry.rotateX( - Math.PI / 2 );/*Rotation um die x-Achse*/
+  var vertices = geometry.attributes.position.array;/*Positionskoordinaten werden erstellt*/
   for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
-    vertices[ j + 1 ] = data[ i ] * 10;
+    vertices[ j + 1 ] = data[ i ] * 20;/*Faktor  beeinflusst Höhe der Hügel*/
   }
-  texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );
-  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );/*Texturen erstellen*/
+  texture.wrapS = THREE.ClampToEdgeWrapping;/*Kanten "festklammern"*/
   texture.wrapT = THREE.ClampToEdgeWrapping;
-  mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: texture } ) );
+  mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: texture } ) );/*Vermischen von Geometrie und Textur*/
   scene.add( mesh );
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer();/*zeichnet die 3D Welt*/
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.innerHTML = "";
-  container.appendChild( renderer.domElement );
+  container.appendChild( renderer.domElement );/*canvas wodrauf der renderer zeichnet*/
   stats = new Stats();
-  container.appendChild( stats.dom );
+  container.appendChild( stats.dom );/*Gibt daten oben links an*/
   //
-  window.addEventListener( 'resize', onWindowResize, false );
+  window.addEventListener( 'resize', onWindowResize, false );/*fenster anpassen*/
 }
+
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
   controls.handleResize();
 }
+
 function generateHeight( width, height ) {
   var size = width * height, data = new Uint8Array( size ),
-  perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 100;
+  perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 10000;
   for ( var j = 0; j < 4; j ++ ) {
     for ( var i = 0; i < size; i ++ ) {
       var x = i % width, y = ~~ ( i / width );
@@ -115,6 +121,7 @@ function generateHeight( width, height ) {
   }
   return data;
 }
+
 function generateTexture( data, width, height ) {
   var canvas, canvasScaled, context, image, imageData,
   level, diff, vector3, sun, shade;
@@ -163,21 +170,46 @@ function animate() {
   requestAnimationFrame( animate );
   render();
   stats.update();
+  reset();
 }
+
 function render() {
   controls.update( clock.getDelta() );
   renderer.render( scene, camera );
 }
 
-</script>
+function reset() {
+  if(Math.abs(camera.position.x-altx)>12500||Math.abs(camera.position.z-altz)>12500){/*reset*/
+    scene.translateX(camera.position.x-altx);
+    scene.translateZ(camera.position.z-altz);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }
+  /*
+  if(altx-camera.position.x<-12500){
+    scene.translateX(altx-camera.position.x);
+    scene.translateZ(camera.position.z-altz);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }
+  if(camera.position.z-altz>12500){
+    scene.translateZ(camera.position.z-altz);
+    scene.translateZ(camera.position.x-altx);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }
+  if(altz-camera.position.z<-12500){
+    scene.translateZ(altz-camera.position.z);
+    scene.translateX(camera.position.x-altx);
+    altx = camera.position.x;
+    altz = camera.position.z;
+  }*/
+}
 
+</script>
 
 </head>
 
-
 </body>
-
-
-
 
 </html>

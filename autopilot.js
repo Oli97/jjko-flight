@@ -3,11 +3,30 @@
  * @author alteredq / http://alteredqualia.com/
  * @author paulirish / http://paulirish.com/
  */
-var stepsize = 1 / 3600;var to = 0;
-    var tf = 6;
-THREE.FirstPersonControls = function ( object, domElement ) {
 
-	this.object = object;
+THREE.FirstPersonControls = function ( object, domElement ) {
+	var stepsize = 1 / 3600;var to = 0;
+    var tf = 1;    var S = 0.017;
+    var AR = 0.86;
+    var e = 0.9;
+    var m = 0.003;
+    var g = 9.8;
+    var rho = 1.225;
+    var CLa = Math.PI * AR / (1 + Math.sqrt(1 + Math.pow((AR / 2), 2)));
+    var CDo = 0.02;
+    var epsilon = 1 / (Math.PI * e * AR);
+    var CL = Math.sqrt(CDo / epsilon);
+    var CD = CDo + epsilon * Math.pow(CL, 2);
+    var LDmax = CL / CD;
+    var Gam = -Math.atan(1 / LDmax);
+    var V = Math.sqrt(2 * m * g / (rho * S * (CL * Math.cos(Gam) - CD * Math.sin(Gam))));
+    var Alpha = CL / CLa;
+    var q = 0.5 * rho * Math.pow(V, 2);
+
+    var H = 2;
+    var R = 0;
+this.nx = [3*V,1*Gam,H,R];
+this.object = object;
 	this.target = new THREE.Vector3( 0, 0, 0 );
 
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
@@ -136,10 +155,9 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 		}
 
 	};*/
- aero = function () 
+ function aero(nx) 
 {
-
-    var S = 0.017;
+  var S = 0.017;
     var AR = 0.86;
     var e = 0.9;
     var m = 0.003;
@@ -151,15 +169,16 @@ THREE.FirstPersonControls = function ( object, domElement ) {
     var CL = Math.sqrt(CDo / epsilon);
     var CD = CDo + epsilon * Math.pow(CL, 2);
     var LDmax = CL / CD;
-    var Gam = -Math.atan(1 / LDmax);
-    var V = Math.sqrt(2 * m * g / (rho * S * (CL * Math.cos(Gam) - CD * Math.sin(Gam))));
     var Alpha = CL / CLa;
+
+var V = nx[0];
+var Gam = nx[1];
+var H = nx[2];
+var R = nx[3];
     var q = 0.5 * rho * Math.pow(V, 2);
 
-    var H = 2;
-    var R = 0;
     var to = 0;
-    var tf = 6;
+    var tf = 0.01;
     var xo = [];
     xo[0] = V;
     xo[1] = Gam;
@@ -209,13 +228,20 @@ THREE.FirstPersonControls = function ( object, domElement ) {
             xn[j][i] = xn[j][i - 1] + (stepsize / 9) * (2 * s1[j] + 3 * s2[j] + 4 * s3[j]);
         }
     }
+V = xn[0][1 / stepsize * (tf - to) + 1];
+Gam = xn[1][1 / stepsize * (tf - to) + 1];
+H = xn[2][1 / stepsize * (tf - to) + 1];
+R = xn[3][1 / stepsize * (tf - to) + 1];
 
+nx[0]=V;
+nx[1]=Gam;
+nx[2]=H;
+nx[3]=R;
     
-return xn;
+return nx;
 };
-var xn  = aero();
 
- 
+ /*
 var Vn = [];
     for (var i = 0; i <= 1 / stepsize * (tf - to) + 1; i++)
     {
@@ -236,16 +262,8 @@ var Vn = [];
     {
         Rn[i] = xn[3][i];
     }
-var i = 0;
-
-  function flug()
-{
-	camera.position.x = 400*Rn[100*i];
-	camera.position.y = 400*Hn[100*i];
-	if(i<21000){				  
-	  setTimeout(flug,1);
-	  i++;}
-}
+*/
+ 
 	this.onKeyDown = function ( event ) {
 
 
@@ -256,24 +274,19 @@ var i = 0;
 			case 38: 
 			//case 87:  this.moveForward = true; break;
 			case 87:  
-				  flug();
+				
+
+					this.nx=aero(this.nx);
+				  	camera.position.x = 1000*this.nx[3];
+					camera.position.y = 1000*this.nx[2];
+
+
 				  break;
 
 			case 37: 
-			case 65:  	
-this.lat= 1.76*180/Math.PI;
-this.phi = THREE.Math.degToRad(this.lat );
-this.theta = THREE.Math.degToRad( this.lon );
-var targetPosition = this.target,
-			position = this.object.position;
+			case 65:  						
 
-		targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-		targetPosition.y = position.y + 100 * Math.cos( this.phi );
-		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
-
-		this.object.lookAt( targetPosition );
-    this.movementSpeed = 350;
-    this.moveForward = true;
+					
 
 break;
 
@@ -409,7 +422,10 @@ break;
 }; */
 
 	this.update = function( delta ) { // delta ist Zeitspanne zwischen letzter und jetztiger Aktualisierung?
-
+this.nx = aero(this.nx);
+this.lat= this.nx[1]*180/Math.PI;
+					this.movementSpeed = this.nx[0];
+					this.moveForward = true;
 		if ( this.enabled === false ) return;
 
 		if ( this.heightSpeed ) {
@@ -443,7 +459,17 @@ break;
 			actualLookSpeed = 0;
 
 		}
+		
+this.phi = THREE.Math.degToRad(90-this.lat );
+this.theta = THREE.Math.degToRad( this.lon );
+var targetPosition = this.target,
+			position = this.object.position;
 
+		targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
+		targetPosition.y = position.y + 100 * Math.cos( this.phi );
+		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
+
+		this.object.lookAt( targetPosition );
 		
 
 	};

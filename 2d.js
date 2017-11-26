@@ -10,12 +10,14 @@ var canvas = document.getElementById("text");
 var ctx=canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
+  controls = new THREE.FirstPersonControls( camera );
 w=canvas.width;
 h=canvas.height;
 ctx.clearRect(0,0,w,h);
 keys = [];
 var y1=y2=0.8*h,y3=0.957*h,y4=0.8857*h;
-
+var nei=controls.a(), stei=controls.b();
 
 function update(){
   var c1="white",c2="white",xs=0.115*w,ys=0.7857*h;
@@ -23,7 +25,7 @@ function update(){
   ctx.lineWidth = 0.001*w;
   ctx.strokeStyle="black";
 
-
+//Cockpit-Rahmen
   ctx.beginPath();
   ctx.moveTo(0,0);
   ctx.lineTo(w,0);
@@ -49,7 +51,7 @@ function update(){
   ctx.fillStyle=" #ccccb3";
   ctx.fill();
   ctx.closePath();
-
+//Untere Box für Instrumente
   ctx.beginPath();
   ctx.moveTo(0.026*w,0.67*h);
   ctx.lineTo(0.974*w,0.67*h);
@@ -59,7 +61,7 @@ function update(){
   ctx.fillStyle=" grey";
   ctx.fill();
   ctx.closePath();
-
+//obere Box für Knöpfe
   ctx.beginPath();
   ctx.moveTo(0.07*w,0.561*h);
   ctx.lineTo(0.93*w,0.561*h);
@@ -69,7 +71,8 @@ function update(){
   ctx.fillStyle=" grey";
   ctx.fill();
   ctx.closePath();
-
+  //Höhenmesser
+  fla();
 
 /*
   showN();
@@ -142,17 +145,18 @@ ctx.strokeStyle = "white";
 
 ctx.closePath();
 
+//Koordinatenanzeige
 ctx.fillStyle = "grey";
-ctx.fillRect(0.2*w,0.7*h,0.1*w,0.1*w);
+ctx.fillRect(0.7*w,0.7*h,0.1*w,0.1*w);
 ctx.fillStyle="black";
-ctx.fillText("Position : ", 0.25*w, 0.72*h);
-ctx.fillText("Z : ",0.25*w,0.75*h);
-ctx.fillText(Math.round(camera.position.z), 0.29*w, 0.75*h);
-ctx.fillText("X : ",0.25*w,0.78*h);
-ctx.fillText(Math.round(camera.position.x), 0.29*w, 0.78*h);
-ctx.fillText("Y : ",0.25*w,0.81*h);
+ctx.fillText("Position : ", 0.75*w, 0.72*h);
+ctx.fillText("Z : ",0.75*w,0.75*h);
+ctx.fillText(Math.round(camera.position.z), 0.79*w, 0.75*h);
+ctx.fillText("X : ",0.75*w,0.78*h);
+ctx.fillText(Math.round(camera.position.x), 0.79*w, 0.78*h);
+ctx.fillText("Y : ",0.75*w,0.81*h);
 ctx.textAlign = "right";
-ctx.fillText(Math.round(camera.position.y), 0.29*w, 0.81*h);
+ctx.fillText(Math.round(camera.position.y), 0.79*w, 0.81*h);
 
    requestAnimationFrame(update);
 }
@@ -485,4 +489,233 @@ function drawArrow(fromx, fromy, tox, toy,color){
              function decr3() {
                i=i-10;
                showN15();
+              }
+
+              function fla(){
+              //Geschwindigkeit in Knoten (-> Verschiebung in y-Richtung: -250+4*v)
+              var v = 180;
+              //Höhe in Fuß
+              controls.update( clock.getDelta() );
+              nei=controls.a(); stei=0.005*h*controls.b();
+              var a=h/10;
+              ctx.translate(0.31*w,0.83*h);
+              ctx.fillStyle = "lightblue"
+              ctx.fillRect(-0.09*w,-0.15*h,0.18*w,0.3*h);
+              ctx.translate(0,stei);
+              ctx.rotate(-nei*Math.PI/180);
+
+              ctx.fillStyle="lightgreen"
+              ctx.fillRect(-0.09*w,0*h,0.18*w,0.3*h);
+
+              ctx.font="9px Arial";
+              ctx.fillStyle = "black";
+              ctx.textAlign = "left";
+              ctx.fillText("10 ", -0.039*w, -0.045*h);
+              ctx.fillText("10", 0.031*w, -0.045*h);
+              ctx.fillText("20 ", -0.039*w, -0.095*h);
+              ctx.fillText("20", 0.031*w, -0.095*h);
+              ctx.fillText("10 ", -0.039*w, 0.055*h);
+              ctx.fillText("10", 0.031*w, 0.055*h);
+              ctx.fillText("20 ", -0.039*w, 0.105*h);
+              ctx.fillText("20", 0.031*w, 0.105*h);
+
+              ctx.lineWidth = 0.0005*w;
+              ctx.strokeStyle = "black";
+
+              ctx.moveTo(-0.01*w,-0.0125*h);
+              ctx.lineTo(0.01*w,-0.0125*h);
+              ctx.moveTo(-0.02*w,-0.025*h);
+              ctx.lineTo(0.02*w,-0.025*h);
+              ctx.moveTo(-0.01*w,-0.0375*h);
+              ctx.lineTo(0.01*w,-0.0375*h);
+              ctx.moveTo(-0.03*w,-0.05*h);
+              ctx.lineTo(0.03*w,-0.05*h);
+              ctx.moveTo(-0.01*w,-0.0625*h);
+              ctx.lineTo(0.01*w,-0.0625*h);
+              ctx.moveTo(-0.02*w,-0.075*h);
+              ctx.lineTo(0.02*w,-0.075*h);
+              ctx.moveTo(-0.01*w,-0.0875*h);
+              ctx.lineTo(0.01*w,-0.0875*h);
+              ctx.moveTo(-0.03*w,-0.1*h);
+              ctx.lineTo(0.03*w,-0.1*h);
+              ctx.moveTo(-0.09*w,0);
+              ctx.lineTo(0.09*w,0);
+
+              ctx.moveTo(-0.01*w,0.0125*h);
+              ctx.lineTo(0.01*w,0.0125*h);
+              ctx.moveTo(-0.02*w,0.025*h);
+              ctx.lineTo(0.02*w,0.025*h);
+              ctx.moveTo(-0.01*w,0.0375*h);
+              ctx.lineTo(0.01*w,0.0375*h);
+              ctx.moveTo(-0.03*w,0.05*h);
+              ctx.lineTo(0.03*w,0.05*h);
+              ctx.moveTo(-0.01*w,0.0625*h);
+              ctx.lineTo(0.01*w,0.0625*h);
+              ctx.moveTo(-0.02*w,0.075*h);
+              ctx.lineTo(0.02*w,0.075*h);
+              ctx.moveTo(-0.01*w,0.0875*h);
+              ctx.lineTo(0.01*w,0.0875*h);
+              ctx.moveTo(-0.03*w,0.1*h);
+              ctx.lineTo(0.03*w,0.1*h);
+              ctx.stroke();
+
+
+              ctx.moveTo(-0.005*w,-0.13*h);
+              ctx.lineTo(0.005*w,-0.13*h);
+              ctx.lineTo(0,-0.14*h);
+              ctx.lineTo(-0.005*w,-0.13*h);
+              ctx.stroke();
+
+
+/*
+              ctx.moveTo(-0.1188*w,0);
+              ctx.lineTo(-0.11664*w,-0.141*h);
+              ctx.moveTo(210,0);
+              ctx.lineTo(213,15);
+              ctx.moveTo(340,12);
+              ctx.lineTo(333,28);
+              ctx.moveTo(160,12);
+              ctx.lineTo(167,28);
+              ctx.moveTo(400,18);
+              ctx.lineTo(375,55);
+              ctx.moveTo(100,18);
+              ctx.lineTo(125,55);
+              ctx.moveTo(435,75);
+              ctx.lineTo(424,85);
+              ctx.moveTo(65,75);
+              ctx.lineTo(76,85);
+              ctx.stroke();
+              */
+              ctx.rotate(nei*Math.PI/180);
+              ctx.translate(-0.31*w,-0.83*h-stei);
+
+              ctx.translate(0.31*w,0.83*h);
+              ctx.fillStyle="black";
+              ctx.beginPath();
+              ctx.moveTo(-0.005*w,-0.15*h);
+              ctx.lineTo(0.005*w,-0.15*h);
+              ctx.lineTo(0,-0.14*h);
+              ctx.lineTo(-0.005*w,-0.15*h);
+              ctx.fill();
+
+              ctx.fillStyle="black";
+              ctx.beginPath();
+              ctx.moveTo(0.03*w,-0.005*h);
+              ctx.lineTo(0.07*w,-0.005*h);
+              ctx.lineTo(0.07*w,0.005*h);
+              ctx.lineTo(0.037*w,0.005*h);
+              ctx.lineTo(0.037*w,0.025*h);
+              ctx.lineTo(0.03*w,0.025*h);
+              ctx.lineTo(0.03*w,-0.005*h);
+              ctx.moveTo(-0.03*w,-0.005*h);
+              ctx.lineTo(-0.07*w,-0.005*h);
+              ctx.lineTo(-0.07*w,0.005*h);
+              ctx.lineTo(-0.037*w,0.005*h);
+              ctx.lineTo(-0.037*w,0.025*h);
+              ctx.lineTo(-0.03*w,0.025*h);
+              ctx.lineTo(-0.03*w,-0.005*h);
+              ctx.fill();
+
+              ctx.fillStyle = "black";
+              ctx.beginPath();
+              ctx.arc(0,0,0.005*w,0,Math.PI * 2, true);
+              ctx.closePath();
+              ctx.fill();
+              ctx.translate(-0.31*w,-0.83*h);
+/*
+              ctx.translate(0,-250+4*v);
+              ctx.font="22px Arial white";
+              ctx.fillStyle = "white";
+              ctx.textAlign = "right";
+
+
+              for (var i=72; i>-1;){
+                ctx.moveTo(70,490-i*40);
+                ctx.lineTo(100,490-i*40);
+                ctx.moveTo(70,490-i*20);
+                ctx.lineTo(100,490-i*20);
+                ctx.fillText(i*10,65,495-i*40);
+
+                i=i-2;
+              }
+              ctx.stroke();
+
+
+              ctx.translate(0,-250+4*a);
+              ctx.font="22px Arial white";
+              ctx.fillStyle = "white";
+              ctx.textAlign = "left";
+
+
+              for (var i=740; i>-1;){
+                ctx.moveTo(0,490-i*40);
+                ctx.lineTo(30,490-i*40);
+                ctx.moveTo(0,490-i*20);
+                ctx.lineTo(30,490-i*20);
+                ctx.fillText(i*100,35,495-i*40);
+
+                i=i-2;
+              }
+              ctx.stroke();
+
+              ctx.fillStyle="white";
+              ctx.beginPath();
+              ctx.moveTo(0,228);
+              ctx.lineTo(72,228);
+              ctx.lineTo(72,238);
+              ctx.lineTo(82,250);
+              ctx.lineTo(72,262);
+              ctx.lineTo(72,272);
+              ctx.lineTo(0,272);
+              ctx.closePath();
+              ctx.fill();
+              ctx.beginPath();
+              ctx.moveTo(740,228);
+              ctx.lineTo(668,228);
+              ctx.lineTo(668,238);
+              ctx.lineTo(658,250);
+              ctx.lineTo(668,262);
+              ctx.lineTo(668,272);
+              ctx.lineTo(740,272);
+              ctx.closePath();
+              ctx.fill();
+              ctx.fillStyle="black";
+              ctx.beginPath();
+              ctx.moveTo(0,230);
+              ctx.lineTo(70,230);
+              ctx.lineTo(70,240);
+              ctx.lineTo(80,250);
+              ctx.lineTo(70,260);
+              ctx.lineTo(70,270);
+              ctx.lineTo(0,270);
+              ctx.closePath();
+              ctx.fill();
+              ctx.beginPath();
+              ctx.moveTo(740,230);
+              ctx.lineTo(670,230);
+              ctx.lineTo(670,240);
+              ctx.lineTo(660,250);
+              ctx.lineTo(670,260);
+              ctx.lineTo(670,270);
+              ctx.lineTo(740,270);
+              ctx.closePath();
+              ctx.fill();
+              ctx.stroke();
+              ctx.font="28px Arial white";
+              ctx.fillStyle = "white";
+              ctx.textAlign = "left";
+              ctx.fillText(v,15,260);
+              ctx.font="28px Arial white";
+              ctx.fillStyle = "white";
+              ctx.textAlign = "right";
+              ctx.fillText(h,739,260);
+              */
+              /*Umrandung der Höhenanzeige*/
+              ctx.translate(0.31*w,0.83*h);
+              ctx.fillStyle = "grey"
+              ctx.fillRect(-0.2*w,0.15*h,0.5*w,0.3*h);
+              ctx.fillRect(-0.2*w,-0.25*h,0.5*w,0.1*h);
+              ctx.fillRect(-0.2*w,-0.15*h,0.11*w,0.3*h);
+              ctx.fillRect(0.09*w,-0.15*h,0.11*w,0.3*h);
+              ctx.translate(-0.31*w,-0.83*h);
               }

@@ -63,16 +63,16 @@ if ( ! Detector.webgl ) {
 var container, stats;
 var camera, controls, scene, renderer;
 var mesh, texture;
-var altx = 0, altz = 0;
+var altx = 0, altz = 0, vertices;
 var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 init();
 animate();
-var Hn=aero();
+
 function init() {
   container = document.getElementById( "container" );
-  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );/*Kamera erstellen mit perpektivischen Eigenschaften*/
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );/*Kamera erstellen mit perpektivischen Eigenschaften*/
   scene = new THREE.Scene();
   scene.background = new THREE.Color( 0xbfd1e5 );
   controls = new THREE.FirstPersonControls( camera );/*Steuerung für die Kamera erstellen*/
@@ -82,7 +82,7 @@ function init() {
   camera.position.y = 3800;/*Startposition der Kamera*/
   var geometry = new THREE.PlaneBufferGeometry( 25000, 25000, worldWidth - 1, worldDepth - 1 );  /*Erste zwei Variablen bestimmen größe der 3D-Welt und die anderen Zwei bestimmen größe der einzelnen Segmente*/
   geometry.rotateX( - Math.PI / 2 );/*Rotation um die x-Achse*/
-  var vertices = geometry.attributes.position.array;/*Positionskoordinaten werden erstellt*/
+  vertices = geometry.attributes.position.array;/*Positionskoordinaten werden erstellt*/
   for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
     vertices[ j + 1 ] = data[ i ] * 20;/*Faktor  beeinflusst Höhe der Hügel*/
   }
@@ -171,6 +171,7 @@ function animate() {
   render();
   stats.update();
   reset();
+  absturz();
 }
 
 function render() {
@@ -185,27 +186,15 @@ function reset() {
     altx = camera.position.x;
     altz = camera.position.z;
   }
-  /*
-  if(altx-camera.position.x<-12500){
-    scene.translateX(altx-camera.position.x);
-    scene.translateZ(camera.position.z-altz);
-    altx = camera.position.x;
-    altz = camera.position.z;
-  }
-  if(camera.position.z-altz>12500){
-    scene.translateZ(camera.position.z-altz);
-    scene.translateZ(camera.position.x-altx);
-    altx = camera.position.x;
-    altz = camera.position.z;
-  }
-  if(altz-camera.position.z<-12500){
-    scene.translateZ(altz-camera.position.z);
-    scene.translateX(camera.position.x-altx);
-    altx = camera.position.x;
-    altz = camera.position.z;
-  }*/
 }
 
+function absturz() {
+  for ( var i = 0, l = vertices.length; i < l;  i += 3 ) {
+    if(Math.abs(camera.position.x-altx-vertices[i])<100&&Math.abs(camera.position.z-altz-vertices[i+2])<100&&vertices[i+1]>camera.position.y){
+      if (confirm('You are dead. Restart?')) {
+init();      }
+}
+}}
 </script>
 
 </head>

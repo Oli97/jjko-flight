@@ -25,7 +25,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
     var H = 2;
     var R = 0;
-this.nx = [3*V,1*Gam,H,R];
+this.nx = [V,1*Gam,H,R];
 this.object = object;
 	this.target = new THREE.Vector3( 0, 0, 0 );
 
@@ -33,7 +33,8 @@ this.object = object;
 
 	this.enabled = true;
 
-	this.movementSpeed = 1.0;
+	this.movementSpeed = V;
+	this.schub=0;
 	this.lookSpeed = 0.005;
 
 	this.lookVertical = true;
@@ -60,7 +61,7 @@ this.object = object;
 	this.phi = 0;
 	this.theta = 0;
 
-	this.moveForward = false;
+	this.moveForward = true;
 	this.moveBackward = false;
 	this.moveLeft = false;
 	this.moveRight = false;
@@ -94,6 +95,15 @@ this.object = object;
 
 	};
 
+this.a=function(){
+	var a = this.theta;
+	return b;
+}
+
+this.b=function(){
+	var b = this.lat;
+	return b;
+}
 /*	this.onMouseDown = function ( event ) {
 
 		if ( this.domElement !== document ) {
@@ -155,7 +165,7 @@ this.object = object;
 		}
 
 	};*/
- function aero(nx) 
+ function aero(nx)
 {
   var S = 0.017;
     var AR = 0.86;
@@ -178,7 +188,7 @@ var R = nx[3];
     var q = 0.5 * rho * Math.pow(V, 2);
 
     var to = 0;
-    var tf = 0.01;
+    var tf = 0.005;
     var xo = [];
     xo[0] = V;
     xo[1] = Gam;
@@ -237,7 +247,7 @@ nx[0]=V;
 nx[1]=Gam;
 nx[2]=H;
 nx[3]=R;
-    
+
 return nx;
 };
 
@@ -263,7 +273,7 @@ var Vn = [];
         Rn[i] = xn[3][i];
     }
 */
- 
+
 	this.onKeyDown = function ( event ) {
 
 
@@ -271,10 +281,10 @@ var Vn = [];
 
 		switch ( event.keyCode ) {
 
-			case 38: 
+			case 38:
 			//case 87:  this.moveForward = true; break;
-			case 87:  
-				
+			case 87://Pfeiltaste
+
 
 					this.nx=aero(this.nx);
 				  	camera.position.x = 1000*this.nx[3];
@@ -283,21 +293,21 @@ var Vn = [];
 
 				  break;
 
-			case 37: 
-			case 65:  						
+			case 37:
+			case 65:
 
-					
+
 
 break;
 
-			case 40: 
-			case 83:  this.movementSpeed += 50; break;
+			case 40:
+			case 83:  this.nx[0] += 1; break;
 
-			case 39: 
-			case 68:  this.moveRight = true; break;
+			case 39:
+			case 68:   break;
 
-			case 82:  this.moveUp = true; break;
-			case 70:  this.moveDown = true; break;
+			case 82:   break;
+			case 70:   break;
 
 		}
 
@@ -307,16 +317,16 @@ break;
 
 		switch ( event.keyCode ) {
 
-			case 38: 
+			case 38:
 			case 87:  this.moveForward = false; break;
 
-			case 37: 
+			case 37:
 			case 65:  this.moveLeft = false; break;
 
-			case 40: 
+			case 40:
 			case 83:  this.moveBackward = false; break;
 
-			case 39: 
+			case 39:
 			case 68:  this.moveRight = false; break;
 
 			case 82:  this.moveUp = false; break;
@@ -325,7 +335,8 @@ break;
 		}
 
 	};
- /* aero = function () 
+
+ /* aero = function ()
 {
 
     var S = 0.017;
@@ -424,8 +435,7 @@ break;
 	this.update = function( delta ) { // delta ist Zeitspanne zwischen letzter und jetztiger Aktualisierung?
 this.nx = aero(this.nx);
 this.lat= this.nx[1]*180/Math.PI;
-					this.movementSpeed = this.nx[0];
-					this.moveForward = true;
+					this.movementSpeed = this.nx[0]+this.schub;
 		if ( this.enabled === false ) return;
 
 		if ( this.heightSpeed ) {
@@ -459,7 +469,7 @@ this.lat= this.nx[1]*180/Math.PI;
 			actualLookSpeed = 0;
 
 		}
-		
+
 this.phi = THREE.Math.degToRad(90-this.lat );
 this.theta = THREE.Math.degToRad( this.lon );
 var targetPosition = this.target,
@@ -470,7 +480,7 @@ var targetPosition = this.target,
 		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
 
 		this.object.lookAt( targetPosition );
-		
+
 
 	};
 

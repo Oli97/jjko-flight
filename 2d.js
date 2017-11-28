@@ -2,7 +2,7 @@
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;
 })();
-
+//<canvas id="glcanvas" width="10" height="10" style="border:10px solid #000000;"></canvas>
 var n = 0, a = 0, b=0, c=0, d=0, e=0, f=0, g=0, i=0;
 
 hun = document.getElementById("hundred");
@@ -20,7 +20,7 @@ var y1=y2=0.8*h,y3=0.957*h,y4=0.8857*h;
 var nei=controls.a(), stei=controls.b();
 
 function update(){
-  var c1="white",c2="white",xs=0.115*w,ys=0.7857*h;
+  var c1="white",c2="white",xs=0.10*w,ys=0.7857*h;
   ctx.clearRect(0,0,w,h);
   ctx.lineWidth = 0.001*w;
   ctx.strokeStyle="black";
@@ -51,6 +51,7 @@ function update(){
   ctx.fillStyle=" #ccccb3";
   ctx.fill();
   ctx.closePath();
+
 //Untere Box für Instrumente
   ctx.beginPath();
   ctx.moveTo(0.026*w,0.67*h);
@@ -58,19 +59,21 @@ function update(){
   ctx.lineTo(0.974*w,h);
   ctx.lineTo(0.026*w,h);
   ctx.lineTo(0.026*w,0.67*h);
-  ctx.fillStyle=" grey";
+  ctx.fillStyle=" #A4A4A4";
   ctx.fill();
   ctx.closePath();
 //obere Box für Knöpfe
+
   ctx.beginPath();
   ctx.moveTo(0.07*w,0.561*h);
   ctx.lineTo(0.93*w,0.561*h);
   ctx.lineTo(0.974*w,0.67*h);
   ctx.lineTo(0.026*w,0.67*h);
   ctx.lineTo(0.07*w,0.561*h);
-  ctx.fillStyle=" grey";
-  ctx.fill();
+
+
   ctx.closePath();
+  ctx.fill();
   //Höhenmesser
   fla();
 
@@ -84,7 +87,6 @@ function update(){
   showN13();
   showN14();
   showN15();
-
   */
             if (keys[39]) {
        // right arrow
@@ -113,8 +115,8 @@ ctx.strokeStyle = "white";
 ctx.strokeRect(0.46*w,0.714*h,0.03*w,0.171*h);
 ctx.strokeRect(0.51*w,0.714*h,0.03*w,0.171*h);
 /*Landeklappenhebel+Bremsklappenhebel*/
-ctx.strokeRect(0.44*w,0.929*h,0.02*w,0.057*h);
-ctx.strokeRect(0.48*w,0.929*h,0.02*w,0.057*h);
+ctx.strokeRect(0.46*w,0.929*h,0.02*w,0.057*h);
+ctx.strokeRect(0.51*w,0.929*h,0.02*w,0.057*h);
 /*Gearlevel+Warnanzeige*/
 ctx.strokeRect(0.82*w,0.857*h,0.026*w,0.1*h);
 ctx.strokeRect(0.88*w,0.857*h,0.07*w,0.1*h);
@@ -123,24 +125,24 @@ ctx.fillStyle= "black";
 /*Sidestick*/
 ctx.arc(xs,ys,0.0571*h,0,2*Math.PI);
 /*Pedale*/
-ctx.rect(0.12*w,0.9*h,0.05*w,0.0714*h);
-ctx.arc(0.17*w,0.9357*h,0.0357*h,0,2*Math.PI);
-ctx.rect(0.06*w,0.9*h,0.05*w,0.0714*h);
+ctx.rect(0.11*w,0.9*h,0.04*w,0.0714*h);
+ctx.arc(0.15*w,0.9357*h,0.0357*h,0,2*Math.PI);
+ctx.rect(0.06*w,0.9*h,0.04*w,0.0714*h);
 ctx.arc(0.06*w,0.9357*h,0.0357*h,0,2*Math.PI);
 /*Schubkontrolle*/
 ctx.rect(0.455*w,y1,0.04*w,0.02857*h);
 ctx.rect(0.505*w,y2,0.04*w,0.02857*h);
 /*Landeklappenhebel+Bremsklappenhebel*/
-ctx.rect(0.435*w,y3,0.030*w,0.0214*h);
-ctx.arc(0.49*w,0.957*h,0.0214*h,0,2*Math.PI);
+ctx.rect(0.455*w,y3,0.030*w,0.0214*h);
+ctx.arc(0.52*w,0.957*h,0.0214*h,0,2*Math.PI);
 /*Gearlevel+Warnanzeige*/
 ctx.rect(0.815*w,y4,0.036*w,0.0214*h);
 ctx.fill();
 
 
 
-drawArrow(0.13*w,0.9357*h,0.17*w,0.9357*h,c2);
-drawArrow(0.1*w,0.9357*h,0.06*w,0.9357*h,c1);
+drawArrow(0.12*w,0.9357*h,0.16*w,0.9357*h,c2);
+drawArrow(0.09*w,0.9357*h,0.05*w,0.9357*h,c1);
 ctx.strokeStyle = "white";
 
 ctx.closePath();
@@ -505,7 +507,8 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.rotate(-nei*Math.PI/180);
 
               ctx.fillStyle="lightgreen"
-              ctx.fillRect(-0.09*w,0*h,0.18*w,0.3*h);
+              ctx.fillRect(-0.09*w,0.0*h,0.18*w,0.3*h);
+// Beschriftung der Skala vom fla
 
               ctx.font="9px Arial";
               ctx.fillStyle = "black";
@@ -521,7 +524,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
 
               ctx.lineWidth = 0.0005*w;
               ctx.strokeStyle = "black";
-
+// skala vom fla
               ctx.moveTo(-0.01*w,-0.0125*h);
               ctx.lineTo(0.01*w,-0.0125*h);
               ctx.moveTo(-0.02*w,-0.025*h);
@@ -560,11 +563,6 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.stroke();
 
 
-              ctx.moveTo(-0.005*w,-0.13*h);
-              ctx.lineTo(0.005*w,-0.13*h);
-              ctx.lineTo(0,-0.14*h);
-              ctx.lineTo(-0.005*w,-0.13*h);
-              ctx.stroke();
 
 
 /*
@@ -588,7 +586,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
               */
               ctx.rotate(nei*Math.PI/180);
               ctx.translate(-0.31*w,-0.83*h-stei);
-
+// konstante Anzeigen im fla
               ctx.translate(0.31*w,0.83*h);
               ctx.fillStyle="black";
               ctx.beginPath();
@@ -597,6 +595,14 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.lineTo(0,-0.14*h);
               ctx.lineTo(-0.005*w,-0.15*h);
               ctx.fill();
+              //dreieck für Querneigungswinkel
+              ctx.moveTo(0,-0.14*h);
+              ctx.lineTo(0.005*w,-0.13*h);
+              ctx.lineTo(-0.005*w,-0.13*h);
+              ctx.lineTo(0,-0.14*h);
+              ctx.stroke();
+
+
 
               ctx.fillStyle="black";
               ctx.beginPath();
@@ -616,106 +622,155 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.lineTo(-0.03*w,-0.005*h);
               ctx.fill();
 
-              ctx.fillStyle = "black";
+              ctx.fillStyle = "black"
               ctx.beginPath();
               ctx.arc(0,0,0.005*w,0,Math.PI * 2, true);
               ctx.closePath();
               ctx.fill();
-              ctx.translate(-0.31*w,-0.83*h);
-/*
-              ctx.translate(0,-250+4*v);
-              ctx.font="22px Arial white";
+              //ctx.translate(-0.31*w,-0.83*h);
+
+//Bänder für Höhe und Geschwindigkeit
+              ctx.fillStyle="#585858";
+              ctx.fillRect(-0.13*w,-0.2*h,0.04*w,0.8*h);
+              ctx.fillRect(0.09*w,-0.2*h,0.04*w,0.8*h);
+              var Geschwindigkeit = 300;
+
+              ctx.translate(0,-490+2*(Math.round(Geschwindigkeit)));
+              ctx.translate(21,0);
+              ctx.font="12px Arial white";
               ctx.fillStyle = "white";
               ctx.textAlign = "right";
-
-
-              for (var i=72; i>-1;){
-                ctx.moveTo(70,490-i*40);
-                ctx.lineTo(100,490-i*40);
-                ctx.moveTo(70,490-i*20);
-                ctx.lineTo(100,490-i*20);
-                ctx.fillText(i*10,65,495-i*40);
-
+              var grenze1=Math.round(Math.round(Geschwindigkeit)/20)*2+6;
+              for (var i=grenze1; i>-1;){
+                //ctx.moveTo(-145,490-i*20);
+                //ctx.lineTo(-130,490-i*20);
+                //ctx.moveTo(-145,490-i*10);
+                //ctx.lineTo(-130,490-i*10);
+                ctx.fillText(i*10,-150,495-i*20);
+                ctx.stroke();
+                i=i-2;
+              }
+              for (var i=grenze1*2; i>-1;){
+                ctx.moveTo(-145,490-i*10);
+                ctx.lineTo(-130,490-i*10);
                 i=i-2;
               }
               ctx.stroke();
+              ctx.translate(-21,0);
+
+              ctx.translate(0,+490-2*(Math.round(Geschwindigkeit)));
 
 
-              ctx.translate(0,-250+4*a);
-              ctx.font="22px Arial white";
+              ctx.translate(0,-490+2*(Math.round(camera.position.y)/10)); //h=0 bei translate(0,-490)
+              ctx.translate(-21,0);
+              ctx.font="12px Arial white";
               ctx.fillStyle = "white";
               ctx.textAlign = "left";
-
-
-              for (var i=740; i>-1;){
-                ctx.moveTo(0,490-i*40);
-                ctx.lineTo(30,490-i*40);
-                ctx.moveTo(0,490-i*20);
-                ctx.lineTo(30,490-i*20);
-                ctx.fillText(i*100,35,495-i*40);
-
+              var grenze2=Math.round(Math.round(camera.position.y)/200)*2+8;
+              for (var i=grenze2; i>-1;){
+              //  ctx.moveTo(145,490-i*20);
+              //  ctx.lineTo(130,490-i*20);
+              //  ctx.moveTo(145,490-i*10);
+                //ctx.lineTo(130,490-i*10);
+                ctx.fillText(i*100,150,495-i*20);
+                i=i-2;
+              }
+              for (var i=grenze2*2; i>-1;){
+                ctx.moveTo(145,490-i*10);
+                ctx.lineTo(130,490-i*10);
                 i=i-2;
               }
               ctx.stroke();
+              ctx.translate(21,0);
+ctx.translate(0,490-2*(Math.round(camera.position.y)/10));
+              ctx.fillStyle="black";
 
+
+
+ctx.translate(31,0);
+//Anzeigeboxen für Geschwindigkeit und Höhe
+              ctx.fill();
               ctx.fillStyle="white";
               ctx.beginPath();
-              ctx.moveTo(0,228);
-              ctx.lineTo(72,228);
-              ctx.lineTo(72,238);
-              ctx.lineTo(82,250);
-              ctx.lineTo(72,262);
-              ctx.lineTo(72,272);
-              ctx.lineTo(0,272);
+              ctx.moveTo(-187,-12);
+              ctx.lineTo(-149,-12);
+              ctx.lineTo(-149,-7);
+              ctx.lineTo(-144,1);
+              ctx.lineTo(-149,9);
+              ctx.lineTo(-149,14);
+              ctx.lineTo(-187,14);
               ctx.closePath();
               ctx.fill();
+ctx.translate(-31,0);
+ctx.translate(-31,0);
               ctx.beginPath();
-              ctx.moveTo(740,228);
-              ctx.lineTo(668,228);
-              ctx.lineTo(668,238);
-              ctx.lineTo(658,250);
-              ctx.lineTo(668,262);
-              ctx.lineTo(668,272);
-              ctx.lineTo(740,272);
+              ctx.moveTo(187,-12);
+              ctx.lineTo(149,-12);
+              ctx.lineTo(149,-7);
+              ctx.lineTo(144,1);
+              ctx.lineTo(149,9);
+              ctx.lineTo(149,14);
+              ctx.lineTo(187,14);
               ctx.closePath();
               ctx.fill();
+ctx.translate(31,0);
               ctx.fillStyle="black";
+ctx.translate(31,0);
               ctx.beginPath();
-              ctx.moveTo(0,230);
-              ctx.lineTo(70,230);
-              ctx.lineTo(70,240);
-              ctx.lineTo(80,250);
-              ctx.lineTo(70,260);
-              ctx.lineTo(70,270);
-              ctx.lineTo(0,270);
+              ctx.moveTo(-187,-10);
+              ctx.lineTo(-151,-10);
+              ctx.lineTo(-151,-5);
+              ctx.lineTo(-146,1);
+              ctx.lineTo(-151,7);
+              ctx.lineTo(-151,12);
+              ctx.lineTo(-187,12);
+              ctx.lineTo(-187,-10);
               ctx.closePath();
               ctx.fill();
+ctx.translate(-31,0);
+
+ctx.translate(-31,0);
               ctx.beginPath();
-              ctx.moveTo(740,230);
-              ctx.lineTo(670,230);
-              ctx.lineTo(670,240);
-              ctx.lineTo(660,250);
-              ctx.lineTo(670,260);
-              ctx.lineTo(670,270);
-              ctx.lineTo(740,270);
+              ctx.moveTo(187,-10);
+              ctx.lineTo(151,-10);
+              ctx.lineTo(151,-5);
+              ctx.lineTo(146,1);
+              ctx.lineTo(151,7);
+              ctx.lineTo(151,12);
+              ctx.lineTo(187,12);
               ctx.closePath();
               ctx.fill();
               ctx.stroke();
-              ctx.font="28px Arial white";
+              ctx.fillStyle="white"
+ctx.translate(31,0);
+
+
+ctx.translate(31,0);
+              ctx.font="12px Arial white";
               ctx.fillStyle = "white";
               ctx.textAlign = "left";
-              ctx.fillText(v,15,260);
-              ctx.font="28px Arial white";
+              ctx.fillText(Geschwindigkeit,-184,4);
+              ctx.translate(-31,0);
+              ctx.translate(-31,0);
+              ctx.font="12px Arial white";
               ctx.fillStyle = "white";
               ctx.textAlign = "right";
-              ctx.fillText(h,739,260);
-              */
+
+              ctx.fillText(Math.round(camera.position.y),184,0.005*h);
+              ctx.translate(31,0);
+                ctx.translate(-0.31*w,-0.83*h);
               /*Umrandung der Höhenanzeige*/
               ctx.translate(0.31*w,0.83*h);
-              ctx.fillStyle = "grey"
+              ctx.fillStyle = "#A4A4A4"
               ctx.fillRect(-0.2*w,0.15*h,0.5*w,0.3*h);
               ctx.fillRect(-0.2*w,-0.25*h,0.5*w,0.1*h);
-              ctx.fillRect(-0.2*w,-0.15*h,0.11*w,0.3*h);
-              ctx.fillRect(0.09*w,-0.15*h,0.11*w,0.3*h);
+              //ctx.fillRect(-0.2*w,-0.15*h,0.11*w,0.3*h);
+              //ctx.fillRect(0.09*w,-0.15*h,0.11*w,0.3*h);
+
+              ctx.moveTo(-0.2*w,-0.16*h);
+              ctx.lineTo(0.3*w,-0.16*h);
+              ctx.stroke();
               ctx.translate(-0.31*w,-0.83*h);
+
+
               }

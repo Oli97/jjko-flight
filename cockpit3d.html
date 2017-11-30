@@ -53,7 +53,6 @@ display: block;
 <!--<script src="three.js-master/examples/js/controls/FirstPersonControls.js"></script>-->
 <script src="autopilot.js"></script>
 
-
 <script language="javascript" type="text/javascript" src="2d.js"></script>
 <script type="text/javascript">
 if ( ! Detector.webgl ) {
@@ -76,7 +75,7 @@ function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color( 0xbfd1e5 );
   controls = new THREE.FirstPersonControls( camera );/*Steuerung für die Kamera erstellen*/
-  controls.movementSpeed = 10000;/*Bewegungsgeschwindigkeit der Kamera*/
+  controls.movementSpeed = 100;/*Bewegungsgeschwindigkeit der Kamera*/
   controls.lookSpeed = 0.1;/*Drehgeschwindigkeit*/
   var data = generateHeight( worldWidth, worldDepth );/*Erstellt Daten für die 3D-Welt*/
   camera.position.y = 3800;/*Startposition der Kamera*/
@@ -191,10 +190,12 @@ function reset() {
 function absturz() {
   for ( var i = 0, l = vertices.length; i < l;  i += 3 ) {
     if(Math.abs(camera.position.x-altx-vertices[i])<100&&Math.abs(camera.position.z-altz-vertices[i+2])<100&&vertices[i+1]>camera.position.y){
-      if (confirm('You are dead. Restart?')) {
-init();      }
+      if (confirm('Game over. Restart?')) {
+        init();
+      }
+    }
+  }
 }
-}}
 </script>
 
 </head>

@@ -20,3 +20,14 @@ DCM = function(Phi,Theta,Psi)
 
 return H;
 }
+
+event = function(t,x)
+{
+  var value       =   x(6); 
+  var isterminal  =   1; 
+  var direction   =   1;
+  
+  var eventausgabe = [value, isterminal, direction];
+
+return eventausgabe;  
+}

@@ -25,6 +25,9 @@ function update(){
   ctx.lineWidth = 0.001*w;
   ctx.strokeStyle="black";
 
+  controls.schub = (0.8*h-y1)/0.15/h;
+  controls.update( clock.getDelta() );
+
 //Cockpit-Rahmen
   ctx.beginPath();
   ctx.moveTo(0,0);
@@ -141,8 +144,8 @@ ctx.fill();
 
 
 
-drawArrow(0.12*w,0.9357*h,0.16*w,0.9357*h,c2);
-drawArrow(0.09*w,0.9357*h,0.05*w,0.9357*h,c1);
+drawArrow(0.12*w,0.9357*h,0.15*w,0.9357*h,c2);
+drawArrow(0.09*w,0.9357*h,0.06*w,0.9357*h,c1);
 ctx.strokeStyle = "white";
 
 ctx.closePath();
@@ -497,7 +500,6 @@ function drawArrow(fromx, fromy, tox, toy,color){
               //Geschwindigkeit in Knoten (-> Verschiebung in y-Richtung: -250+4*v)
               var v = 180;
               //Höhe in Fuß
-              controls.update( clock.getDelta() );
               nei=controls.a(); stei=0.005*h*controls.b();
               var a=h/10;
               ctx.translate(0.31*w,0.83*h);
@@ -633,7 +635,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.fillStyle="#585858";
               ctx.fillRect(-0.13*w,-0.2*h,0.04*w,0.8*h);
               ctx.fillRect(0.09*w,-0.2*h,0.04*w,0.8*h);
-              var Geschwindigkeit = 300;
+              var Geschwindigkeit = controls.movementSpeed;
 
               ctx.translate(0,-490+2*(Math.round(Geschwindigkeit)));
               ctx.translate(21,0);
@@ -749,7 +751,7 @@ ctx.translate(31,0);
               ctx.font="12px Arial white";
               ctx.fillStyle = "white";
               ctx.textAlign = "left";
-              ctx.fillText(Geschwindigkeit,-184,4);
+              ctx.fillText(Math.round(Geschwindigkeit),-184,4);
               ctx.translate(-31,0);
               ctx.translate(-31,0);
               ctx.font="12px Arial white";

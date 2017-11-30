@@ -435,7 +435,15 @@ break;
 	this.update = function( delta ) { // delta ist Zeitspanne zwischen letzter und jetztiger Aktualisierung?
 this.nx = aero(this.nx);
 this.lat= this.nx[1]*180/Math.PI;
-					this.movementSpeed = this.nx[0]+this.schub;
+		if(this.movementSpeed>0 && this.movementSpeed<1000){
+			this.movementSpeed += this.schub;
+		}
+		if(this.movementSpeed<=0){
+			this.movementSpeed = 0.000000000001;
+		}
+		if(this.movementSpeed>=1000){
+			this.movementSpeed = 999.999999999;
+		}
 		if ( this.enabled === false ) return;
 
 		if ( this.heightSpeed ) {

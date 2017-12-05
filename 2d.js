@@ -17,6 +17,7 @@ h=canvas.height;
 ctx.clearRect(0,0,w,h);
 keys = [];
 var y1=y2=0.8*h,y3=0.957*h,y4=0.8857*h;
+var onoff1=true;
 var nei=controls.a(), stei=controls.b();
 
 function update(){
@@ -79,9 +80,25 @@ function update(){
   ctx.fill();
   //Höhenmesser
   fla();
+  //Knöpfe
+  ctx.beginPath();
+    ctx.rect(0.16*w,0.62*h , 0.04*w, 0.03*h); 
+    ctx.fillStyle = 'white'; 
+    ctx.fill(); 
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'black'; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.font = '10pt Kremlin Pro Web';
+    ctx.fillStyle = 'black';
+    ctx.fillText('On/Off', 0.19*w, 0.64*h);
 
-/*
-  showN();
+  if(onoff1){
+    showN();
+  }
+  else{
+    showN2();
+   };
   showN3();
   showN5();
   showN7();
@@ -90,16 +107,16 @@ function update(){
   showN13();
   showN14();
   showN15();
-  */
+ 
             if (keys[39]) {
        // right arrow
        c2="red";
-       xs=0.13*w;
+       xs=0.11*w;
    }
    if (keys[37]) {
         // left arrow
   c1="red";
-  xs=0.1*w;
+  xs=0.09*w;
    }
    if (keys[40]) {
 // up arrow
@@ -214,7 +231,13 @@ document.body.addEventListener("mousedown", function(e) {
   if(mx > 0.815*w && mx < 0.851*w && my>y4 && my<(y4+0.0214*w)){
     click4=true;
   }
-
+if(mx > 0.16*w && mx < 0.2*w && my>0.62*h && my<0.65*h){
+    if(onoff1){
+    onoff1=false;
+  }else{
+    onoff1=true;
+  }
+}
 });
 document.body.addEventListener("mouseup", function(e) {
   click1=click2=click3=click4=false;
@@ -438,7 +461,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
                   ctx.textAlign = "right";
                   ctx.textBaseline = "right";
                   ctx.fillStyle = "rgb(255,222,173)";
-                  ctx.clearRect(0.5*w,0.571*h,0.08*w,1/7*h);
+                  
                   // draw text at center, max length to fit on canvas
                   ctx.fillText(f, 0.57*w, 0.6*h, w - 2);
 
@@ -450,7 +473,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
                   ctx.textAlign = "right";
                   ctx.textBaseline = "right";
                   ctx.fillStyle = "rgb(255,222,173)";
-                  ctx.clearRect(0.64*w,4/7*h,0.08*w,1/7*h);
+                  
                   // draw text at center, max length to fit on canvas
                   ctx.fillText(g, 0.71*w, 0.6*h, w - 2);
 
@@ -462,7 +485,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
                   ctx.textAlign = "right";
                   ctx.textBaseline = "right";
                   ctx.fillStyle = "rgb(255,222,173)";
-                  ctx.clearRect(0.78*w,4/7*h,0.08*w,1/7*h);
+                  
                   // draw text at center, max length to fit on canvas
                   ctx.fillText(i, 0.85*w, 42/70*h, w - 2);
 

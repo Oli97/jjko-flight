@@ -15,9 +15,9 @@ canvas.height = window.innerHeight;
 w=canvas.width;
 h=canvas.height;
 ctx.clearRect(0,0,w,h);
+//ctx.setLineDash([5, 0]);
 keys = [];
 var y1=y2=0.8*h,y3=0.957*h,y4=0.8857*h;
-var onoff1=onoff2=onoff3=onoff4=onoff5=onoff6=true;
 var nei=controls.a(), stei=controls.b();
 
 function update(){
@@ -80,79 +80,27 @@ function update(){
   ctx.fill();
   //Höhenmesser
   fla();
-  //Knöpfe
-  drawButton(0.16*w,0.635*h , 0.04*w, 0.03*h,"On/Off");
-  ctx.fillText("ILS", 0.18*w, 0.58*h);
-  drawButton(0.26*w,0.635*h , 0.04*w, 0.03*h,"On/Off");
-  ctx.fillText("Y/D", 0.28*w, 0.58*h);
-  drawButton(0.36*w,0.635*h , 0.04*w, 0.03*h,"On/Off");
-  ctx.fillText("TR", 0.38*w, 0.58*h);
-  drawButton(0.46*w,0.635*h , 0.04*w, 0.03*h,"On/Off");
-  ctx.fillText("AAH", 0.48*w, 0.58*h);
-  drawButton(0.6*w,0.635*h , 0.04*w, 0.03*h,"On/Off");
-  ctx.fillText("A/THR", 0.62*w, 0.58*h);
-  drawButton(0.74*w,0.635*h , 0.04*w, 0.03*h,"On/Off");
-  ctx.fillText("AVSH", 0.76*w, 0.58*h);
-  drawButton(0.52*w,0.635*h , 0.02*w, 0.03*h,"-");
-  drawButton(0.55*w,0.635*h , 0.02*w, 0.03*h,"+");
-  drawButton(0.66*w,0.635*h , 0.02*w, 0.03*h,"-");
-  drawButton(0.69*w,0.635*h , 0.02*w, 0.03*h,"+");
-  drawButton(0.8*w,0.635*h , 0.02*w, 0.03*h,"-");
-  drawButton(0.83*w,0.635*h , 0.02*w, 0.03*h,"+");
 
-
-
-
-
-  if(onoff1){
-    showN(0.18*w,"green");
-  }
-  else{
-    showN(0.18*w,"red");
-   };
-   if(onoff2){
-     showN(0.28*w,"green");
-   }
-   else{
-     showN(0.28*w,"red");
-    };
-    if(onoff3){
-      showN(0.38*w,"green");
-    }
-    else{
-      showN(0.38*w,"red");
-     };
-     if(onoff4){
-       showN(0.48*w,"green");
-     }
-     else{
-       showN(0.48*w,"red");
-      };
-      if(onoff5){
-        showN(0.62*w,"green");
-      }
-      else{
-        showN(0.62*w,"red");
-       };
-       if(onoff6){
-         showN(0.76*w,"green");
-       }
-       else{
-         showN(0.76*w,"red");
-        };
+/*
+  showN();
+  showN3();
+  showN5();
+  showN7();
+  showN9();
+  showN11();
   showN13();
   showN14();
   showN15();
-
+  */
             if (keys[39]) {
        // right arrow
        c2="red";
-       xs=0.11*w;
+       xs=0.13*w;
    }
    if (keys[37]) {
         // left arrow
   c1="red";
-  xs=0.09*w;
+  xs=0.1*w;
    }
    if (keys[40]) {
 // up arrow
@@ -167,6 +115,7 @@ ys=0.764*h;
 ctx.beginPath();
 ctx.lineWidth="2";
 ctx.strokeStyle = "white";
+//ctx.setLineDash([5, 0]);
 /*Schubkontrolle*/
 ctx.strokeRect(0.46*w,0.714*h,0.03*w,0.171*h);
 ctx.strokeRect(0.51*w,0.714*h,0.03*w,0.171*h);
@@ -202,7 +151,7 @@ drawArrow(0.09*w,0.9357*h,0.06*w,0.9357*h,c1);
 ctx.strokeStyle = "white";
 
 ctx.closePath();
-
+/*
 //Koordinatenanzeige
 ctx.fillStyle = "grey";
 ctx.fillRect(0.7*w,0.7*h,0.1*w,0.1*w);
@@ -215,7 +164,7 @@ ctx.fillText(Math.round(camera.position.x), 0.79*w, 0.78*h);
 ctx.fillText("Y : ",0.75*w,0.81*h);
 ctx.textAlign = "right";
 ctx.fillText(Math.round(camera.position.y), 0.79*w, 0.81*h);
-
+*/
    requestAnimationFrame(update);
 }
 
@@ -267,66 +216,7 @@ document.body.addEventListener("mousedown", function(e) {
   if(mx > 0.815*w && mx < 0.851*w && my>y4 && my<(y4+0.0214*w)){
     click4=true;
   }
-if(mx > 0.16*w && mx < 0.2*w && my>0.635*h && my<0.665*h){
-    if(onoff1){
-    onoff1=false;
-  }else{
-    onoff1=true;
-  }
-}
-if(mx > 0.26*w && mx < 0.3*w && my>0.635*h && my<0.665*h){
-    if(onoff2){
-    onoff2=false;
-  }else{
-    onoff2=true;
-  }
-}
-if(mx > 0.36*w && mx < 0.4*w && my>0.635*h && my<0.665*h){
-    if(onoff3){
-    onoff3=false;
-  }else{
-    onoff3=true;
-  }
-}
-if(mx > 0.46*w && mx < 0.5*w && my>0.635*h && my<0.665*h){
-    if(onoff4){
-    onoff4=false;
-  }else{
-    onoff4=true;
-  }
-}
-if(mx > 0.6*w && mx < 0.64*w && my>0.635*h && my<0.665*h){
-    if(onoff5){
-    onoff5=false;
-  }else{
-    onoff5=true;
-  }
-}
-if(mx > 0.74*w && mx < 0.78*w && my>0.635*h && my<0.665*h){
-    if(onoff6){
-    onoff6=false;
-  }else{
-    onoff6=true;
-  }
-}
-if(mx > 0.52*w && mx < 0.54*w && my>0.635*h && my<0.665*h){
-  f = f-100;
-}
-if(mx > 0.55*w && mx < 0.57*w && my>0.635*h && my<0.665*h){
-  f = f+100;
-}
-if(mx > 0.66*w && mx < 0.68*w && my>0.635*h && my<0.665*h){
-  g = g-10;
-}
-if(mx > 0.69*w && mx < 0.71*w && my>0.635*h && my<0.665*h){
-  g = g+10;
-}
-if(mx > 0.8*w && mx < 0.82*w && my>0.635*h && my<0.665*h){
-  i = i-10;
-}
-if(mx > 0.83*w && mx < 0.85*w && my>0.635*h && my<0.665*h){
-  i = i+10;
-}
+
 });
 document.body.addEventListener("mouseup", function(e) {
   click1=click2=click3=click4=false;
@@ -336,22 +226,9 @@ window.addEventListener("load",function(){
     update();
 });
 
-function drawButton(x,y,breite,hoehe,text){
-  ctx.beginPath();
-  ctx.rect(x,y , breite, hoehe);
-  ctx.fillStyle = 'white';
-  ctx.fill();
-  ctx.lineWidth = 0.001*w;
-  ctx.strokeStyle = 'black';
-  ctx.stroke();
-  ctx.font = '10pt Kremlin Pro Web';
-  ctx.fillStyle = 'black';
-  ctx.textAlign = "center";
-  ctx.fillText(text, x+breite/2, y+hoehe/3*2);
-}
-
 function drawArrow(fromx, fromy, tox, toy,color){
                 //variables to be used when creating the arrow
+                //ctx.setLineDash([5, 0]);
                 var headlen = 1;
 
                 var angle = Math.atan2(toy-fromy,tox-fromx);
@@ -397,61 +274,230 @@ function drawArrow(fromx, fromy, tox, toy,color){
             window.addEventListener('resize', resizeCanvas, false);
 
             /*Knöpfe*/
-            function showN(x, color) {
+            function showN() {
                 //ctx.clearRect(0, 0, can.width, can.height);
-                ctx.fillStyle = color;
+                ctx.fillStyle = "green";
                 ctx.beginPath();
-                ctx.arc(x,0.61*h,1/70*h,0,Math.PI * 2, true);
+                ctx.arc(0.18*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN2() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "red";
+                ctx.beginPath();
+                ctx.arc(0.18*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN3() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "green";
+                ctx.beginPath();
+                ctx.arc(0.28*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN4() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "red";
+                ctx.beginPath();
+                ctx.arc(0.28*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN5() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "green";
+                ctx.beginPath();
+                ctx.arc(0.38*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN6() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "red";
+                ctx.beginPath();
+                ctx.arc(0.38*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN7() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "green";
+                ctx.beginPath();
+                ctx.arc(0.48*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN8() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "red";
+                ctx.beginPath();
+                ctx.arc(0.48*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN9() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "green";
+                ctx.beginPath();
+                ctx.arc(0.62*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN10() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "red";
+                ctx.beginPath();
+                ctx.arc(0.62*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN11() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "green";
+                ctx.beginPath();
+                ctx.arc(0.76*w,41/70*h,1/70*h,0,Math.PI * 2, true);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            function showN12() {
+                //ctx.clearRect(0, 0, can.width, can.height);
+                ctx.fillStyle = "red";
+                ctx.beginPath();
+                ctx.arc(0.76*w,41/70*h,1/70*h,0,Math.PI * 2, true);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
             }
 
 
+            function incr() {
+                n++;
+                if(n%2==0){
+                  showN();
+            }
+               else { showN2();
+               }
+             }
+             function incr2() {
+                 a++;
+                 if(a%2==0){
+                   showN3();
+             }
+                else { showN4();
+                }
+              }
+              function incr3() {
+                  b++;
+                  if(b%2==0){
+                    showN5();
+              }
+                 else { showN6();
+                 }
+               }
+               function incr4() {
+                   c++;
+                   if(c%2==0){
+                     showN7();
+               }
+                  else { showN8();
+                  }
+                }
+                function incr5() {
+                    d++;
+                    if(d%2==0){
+                      showN9();
+                }
+                   else { showN10();
+                   }
+                 }
+                 function incr6() {
+                     e++;
+                     if(e%2==0){
+                       showN11();
+                 }
+                    else { showN12();
+                    }
+                  }
+
+
               function showN13() {
-                ctx.font = "10pt Helvetica";
-                ctx.fillStyle = "black";
-                ctx.fillRect(0.52*w,0.585*h, 0.05*w,0.04*h);
+
                   // large, centered, bright green text
+                  ctx.font = "18pt Helvetica";
                   ctx.textAlign = "right";
                   ctx.textBaseline = "right";
                   ctx.fillStyle = "rgb(255,222,173)";
-                  ctx.fillText("ALT", 0.55*w, 0.58*h);
-                  ctx.font = "18pt Helvetica";
+                  ctx.clearRect(0.5*w,0.571*h,0.08*w,1/7*h);
                   // draw text at center, max length to fit on canvas
-                  ctx.fillText(f, 0.57*w, 0.62*h, w - 2);
+                  ctx.fillText(f, 0.57*w, 0.6*h, w - 2);
 
               }
               function showN14() {
 
                   // large, centered, bright green text
-                  ctx.font = "10pt Helvetica";
-                  ctx.fillStyle = "black";
-                  ctx.fillRect(0.66*w,0.585*h, 0.05*w,0.04*h);
+                  ctx.font = "18pt Helvetica";
                   ctx.textAlign = "right";
                   ctx.textBaseline = "right";
                   ctx.fillStyle = "rgb(255,222,173)";
-                  ctx.fillText("IAS", 0.69*w, 0.58*h);
-                  ctx.font = "18pt Helvetica";
+                  ctx.clearRect(0.64*w,4/7*h,0.08*w,1/7*h);
                   // draw text at center, max length to fit on canvas
-                  ctx.fillText(g, 0.71*w, 0.62*h, w - 2);
+                  ctx.fillText(g, 0.71*w, 0.6*h, w - 2);
 
               }
               function showN15() {
-                ctx.font = "10pt Helvetica";
+
                   // large, centered, bright green text
-                  ctx.fillStyle = "black";
-                  ctx.fillRect(0.8*w,0.585*h, 0.05*w,0.04*h);
+                  ctx.font = "18pt Helvetica";
                   ctx.textAlign = "right";
                   ctx.textBaseline = "right";
                   ctx.fillStyle = "rgb(255,222,173)";
-                  ctx.fillText("VS", 0.83*w, 0.58*h);
-                  ctx.font = "18pt Helvetica";
+                  ctx.clearRect(0.78*w,4/7*h,0.08*w,1/7*h);
                   // draw text at center, max length to fit on canvas
-                  ctx.fillText(i, 0.85*w,0.62*h, w - 2);
+                  ctx.fillText(i, 0.85*w, 42/70*h, w - 2);
 
               }
 
+              function incr7() {
+                f=f+100;
+                showN13();
+              }
+
+             function decr1() {
+               f=f-100;
+               showN13();
+              }
+              function incr8() {
+                g=g+10;
+                showN14();
+              }
+
+             function decr2() {
+               g=g-10;
+               showN14();
+              }
+              function incr9() {
+                i=i+10;
+                showN15();
+              }
+
+             function decr3() {
+               i=i-10;
+               showN15();
+              }
 
               function fla(){
               //Geschwindigkeit in Knoten (-> Verschiebung in y-Richtung: -250+4*v)
@@ -731,5 +777,118 @@ ctx.translate(31,0);
               ctx.stroke();
               ctx.translate(-0.31*w,-0.83*h);
 
+//navigation
+ctx.fillStyle="black";
+ctx.fillRect(693,507,230,230);
+//Ausrichtung
+var a=0;
+//heading
+var b=90;
+ctx.lineWidth=0.1;
+ctx.translate(810,620);
 
+ctx.rotate(-a*Math.PI/180);
+ctx.beginPath();
+ctx.arc(0,0,90,0,Math.PI * 2, true);
+ctx.closePath();
+ctx.strokeStyle="white";
+ctx.stroke();
+ctx.font="12px Arial";
+ctx.fillStyle = "white";
+ctx.textAlign = "left";
+for(var i=0;i<36;){
+ctx.moveTo(90,0);
+ctx.lineTo(100,0);
+ctx.strokeStyle="white";
+ctx.stroke();
+if(i%3==0){
+  ctx.fillText(i,103,5);
+}
+ctx.rotate(-10*Math.PI/180);
+i=i+1;
+}
+for(var n=1;n<74;){
+ctx.rotate(-5*Math.PI/180);
+ctx.moveTo(90,0);
+ctx.lineTo(95,0);
+ctx.strokeStyle="white";
+ctx.stroke();
+n=n+1;
+}
+
+ctx.lineWidth=1;
+//ctx.setLineDash([5, 15]);
+ctx.strokeStyle="white";
+ctx.beginPath();
+ctx.arc(0,0,60,0,Math.PI * 2, true);
+ctx.closePath();
+ctx.strokeStyle="white";
+ctx.stroke();
+
+ctx.rotate(a*Math.PI/180);
+ctx.rotate(36*10*Math.PI/180);
+ctx.rotate(73*5*Math.PI/180);
+ctx.translate(-810,-620);
+
+
+ctx.translate(810,649);
+ctx.rotate(-b*Math.PI/180);
+ctx.strokeStyle="#2E9AFE";
+ctx.beginPath();
+ctx.moveTo(120,0);
+ctx.lineTo(130,-10);
+ctx.lineTo(130,10);
+ctx.lineTo(120,0);
+//ctx.lineWidth=2;
+ctx.strokeStyle="#2E9AFE";
+ctx.closePath();
+ctx.stroke();
+
+ctx.rotate(b*Math.PI/180);
+ctx.translate(-810,-649);
+
+ctx.translate(660,470)
+ctx.beginPath();
+ctx.strokeStyle="yellow";
+ctx.lineWidth=2;
+ctx.moveTo(140,150);
+ctx.lineTo(160,150);
+ctx.moveTo(150,160);
+ctx.lineTo(150,143);
+ctx.moveTo(147,158);
+ctx.lineTo(153,158);
+ctx.closePath();
+ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(150,50);
+ctx.lineTo(150,70)
+ctx.lineWidth=2;
+ctx.strokeStyle="yellow";
+ctx.closePath();
+ctx.stroke();
+
+
+ctx.font="10px Arial";
+ctx.fillStyle = "blue";
+ctx.textAlign = "left";
+ctx.fillText("10",105,185);
+ctx.fillText("20",80,200);
+
+ctx.beginPath();
+ctx.strokeStyle="#80FF00";
+ctx.moveTo(150,143);
+ctx.lineTo(150,80);
+ctx.lineTo(146,72.5);
+ctx.lineTo(150,65);
+ctx.lineTo(154,72.5);
+ctx.lineTo(150,80);
+ctx.closePath();
+ctx.stroke();
+
+
+ctx.font="8px Arial";
+ctx.fillStyle = "purple";
+ctx.textAlign = "left";
+ctx.fillText("*EDDL",150,220);
+ctx.translate(-660,-470);
               }

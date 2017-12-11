@@ -880,4 +880,138 @@ ctx.fillStyle = "purple";
 ctx.textAlign = "left";
 ctx.fillText("*EDDL",150,220);
 ctx.translate(-660,-470);
+
+
+//Tankanzeige
+//ta für linken Tank
+//tb für rechten Tank
+var ta=25;
+var tb=15;
+
+ctx.translate(950,500);
+ctx.fillStyle="black";
+ctx.fillRect(0,0,200,120)
+ctx.fillStyle = "#363853";
+ctx.fillRect(10,10,85,65);
+ctx.fillStyle = "#363853"
+ctx.fillRect(105,10,85,65);
+
+ctx.font="14px Futura ";
+ctx.fillStyle = "white";
+ctx.textAlign = "middle";
+ctx.fillText("LEFT",40,100);
+ctx.fillText("RIGHT",135,100);
+ctx.font="20px Futura";
+ctx.fillText("FUEL",80,105);
+ctx.fillRect(20,40,65,3);
+ctx.fillRect(115,40,65,3);
+
+
+ctx.fillRect(52,34,3,12);
+ctx.fillRect(147,34,3,12);
+ctx.translate(85,32);
+ctx.rotate(15*Math.PI/180);
+ctx.fillRect(0,0,3,16);
+ctx.rotate(-15*Math.PI/180);
+ctx.translate(-85,-32);
+ctx.translate(180,32);
+ctx.rotate(15*Math.PI/180);
+ctx.fillRect(0,0,3,16);
+ctx.rotate(-15*Math.PI/180);
+ctx.translate(-180,-32);
+
+ctx.translate(32,33);
+ctx.rotate(-13*Math.PI/180);
+ctx.fillRect(0,0,3,14);
+ctx.rotate(13*Math.PI/180);
+ctx.translate(-32,-33);
+ctx.translate(128,33);
+ctx.rotate(-13*Math.PI/180);
+ctx.fillRect(0,0,3,14);
+ctx.rotate(13*Math.PI/180);
+ctx.translate(-128,-33);
+
+ctx.translate(71,33);
+ctx.rotate(13*Math.PI/180);
+ctx.fillRect(0,0,3,14);
+ctx.rotate(-13*Math.PI/180);
+ctx.translate(-71,-33);
+ctx.translate(166,33);
+ctx.rotate(13*Math.PI/180);
+ctx.fillRect(0,0,3,14);
+ctx.rotate(-13*Math.PI/180);
+ctx.translate(-166,-33);
+
+ctx.fillStyle="red";
+ctx.translate(17,32);
+ctx.rotate(-15*Math.PI/180);
+ctx.fillRect(0,0,3,16);
+ctx.rotate(15*Math.PI/180);
+ctx.translate(-17,-32);
+ctx.translate(112,32);
+ctx.rotate(-15*Math.PI/180);
+ctx.fillRect(0,0,3,16);
+ctx.rotate(15*Math.PI/180);
+ctx.translate(-112,-32);
+
+
+ctx.fillStyle="white";
+ctx.font="12px Futura";
+ctx.fillText("0",10,23);
+ctx.fillText("F",85,23);
+ctx.fillText("0",110,23);
+ctx.fillText("F",180,23);
+ctx.font="10px Futura";
+ctx.fillText("30",68,27);
+ctx.fillText("20",47,27);
+ctx.fillText("10",26,27);
+ctx.fillText("30",164,27);
+ctx.fillText("20",143,27);
+ctx.fillText("10",122,27);
+
+
+ctx.strokeStyle="black";
+ctx.fillStyle="black";
+ctx.translate(53,75);
+ctx.rotate(-ta*Math.PI/180);
+ctx.beginPath();
+ctx.lineTo(3,0);
+ctx.lineTo(3,-20);
+ctx.lineTo(0,-45);
+ctx.lineTo(-3,-20);
+ctx.lineTo(-3,0);
+ctx.lineTo(0,0);
+ctx.fill();
+ctx.stroke();
+ctx.rotate(ta*Math.PI/180);
+ctx.translate(-53,-75);
+
+ctx.translate(148,75);
+ctx.rotate(-tb*Math.PI/180);
+ctx.beginPath();
+ctx.lineTo(3,0);
+ctx.lineTo(3,-20);
+ctx.lineTo(0,-45);
+ctx.lineTo(-3,-20);
+ctx.lineTo(-3,0);
+ctx.lineTo(0,0);
+ctx.fill();
+ctx.stroke();
+ctx.rotate(tb*Math.PI/180);
+ctx.translate(-148,-75);
+ctx.translate(-950,-500);
+
+ctx.fillText("max.",1057,680);
+ctx.fillText("Steigungswinkel",1057,690);
+if (stei>60||stei<-60){
+  ctx.fillStyle="red";
+} else {
+  ctx.fillStyle="green";
+}
+ctx.beginPath();
+ctx.arc(1095,654,15,0,Math.PI * 2, true);
+ctx.closePath();
+ctx.fill();
+
+
               }

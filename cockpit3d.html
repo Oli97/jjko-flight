@@ -66,6 +66,7 @@ var altx = 0, altz = 0, vertices;
 var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
+var reload = false;
 init();
 animate();
 
@@ -189,9 +190,10 @@ function reset() {
 
 function absturz() {
   for ( var i = 0, l = vertices.length; i < l;  i += 3 ) {
-    if(Math.abs(camera.position.x-altx-vertices[i])<100&&Math.abs(camera.position.z-altz-vertices[i+2])<100&&vertices[i+1]>camera.position.y){
+    if(!reload&&Math.abs(camera.position.x-altx-vertices[i])<100&&Math.abs(camera.position.z-altz-vertices[i+2])<100&&vertices[i+1]>camera.position.y){
       if (confirm('Game over. Restart?')) {
-        init();
+        location.reload();
+        reload = true;
       }
     }
   }

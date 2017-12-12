@@ -191,8 +191,7 @@ ctx.arc(0.15*w,0.9357*h,0.0357*h,0,2*Math.PI);
 ctx.rect(0.06*w,0.9*h,0.04*w,0.0714*h);
 ctx.arc(0.06*w,0.9357*h,0.0357*h,0,2*Math.PI);
 /*Schubkontrolle*/
-ctx.rect(0.455*w,y1,0.04*w,0.02857*h);
-ctx.rect(0.505*w,y2,0.04*w,0.02857*h);
+ctx.rect(0.455*w,y1,0.09*w,0.02857*h);
 /*Landeklappenhebel+Bremsklappenhebel*/
 ctx.rect(0.455*w,y3,0.030*w,0.0214*h);
 ctx.arc(0.52*w,0.957*h,0.0214*h,0,2*Math.PI);
@@ -224,7 +223,7 @@ ctx.fillText(Math.round(camera.position.y), 0.79*w, 0.81*h);
    requestAnimationFrame(update);
 }
 
-var click1,click2,click3,click4,mx,my;
+var click1,click3,click4,mx,my;
 
 document.body.addEventListener("keydown", function(e) {
     keys[e.keyCode] = true;
@@ -239,11 +238,6 @@ if(click1){
     y1=y1+e.offsetY-my;
   }
 }
-  if(click2){
-    if(my>0.7285*h&&my<0.8714*h){
-      y2=y2+e.offsetY-my;
-    }
-  }
   if(click3){
     if(my>0.9357*h&&my<0.9785*h){
       y3=y3+e.offsetY-my;
@@ -260,11 +254,8 @@ if(click1){
 document.body.addEventListener("mousedown", function(e) {
   mx=e.clientX;
   my=e.offsetY;
-  if(mx > 0.455*w && mx < 0.495*w && my>y1 && my<(y1+0.0286*w)){
+  if(mx > 0.455*w && mx < 0.545*w && my>y1 && my<(y1+0.0286*w)){
     click1=true;
-  }
-  if(mx > 0.505*w && mx < 0.545*w && my>y2 && my<(y2+0.0286*w)){
-    click2=true;
   }
   if(mx > 0.435*w && mx < 0.465*w && my>y3 && my<(y3+0.0214*w)){
     click3=true;

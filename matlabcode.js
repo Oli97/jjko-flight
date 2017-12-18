@@ -332,6 +332,27 @@ LinModel=function(tj,xj)
 }
 
 
+min = function(a,b)
+{
+  if a<=b{
+    return a;
+  }
+  else {
+    return b;
+  }
+}
+
+
+
+max = function(a,b)
+{
+  if a>=b{
+    return a;
+  }
+  else {
+    return b;
+  }
+}
 
 
 
@@ -487,14 +508,14 @@ interp1 = function(x,y,xi)
  var r1 = find(x,xi); // Vektor der die Indizes speichert, die kleinergleich xi sind
  var n1 = r1.length; // Laenge des Indizevektors
  var r = r1[n1]; // maximaler Eintrag des Indizevektors
- var n = x.length; // 
+ var n = x.length; //
  if (xi == x[n])
  {
     r = x.length-1;
  }
  /*if (isempty(r)) // Wenn r leer ist, gibt es ein Problem!
  {
- yi = NaN; 
+ yi = NaN;
  return
  }*/
  if ((r>0) && (r<x.length))
@@ -1057,7 +1078,7 @@ EoM = function(t,x)
  // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
 
  global m Ixx Iyy Izz Ixz S b cBar CONHIS u tuHis deluHis uInc MODEL RUNNING
- 
+
  // Select Aerodynamic Model
 
  if MODEL == 0
@@ -1371,7 +1392,7 @@ flight = function()
  // u[1] =  Elevator, dEr, rad, positive: trailing edge down
  // u[2] =  Aileron, dAr, rad, positive: left trailing edge down
  // u[3] =  Rudder, dRr, rad, positive: trailing edge left
- // u[4] =  Throttle, dT, 
+ // u[4] =  Throttle, dT,
  // u[5] = Asymmetric Spoiler, dASr, rad
  // u[6] = Flap, dFr, rad
  // u[7] = Stabilator, dSr, rad
@@ -1465,7 +1486,7 @@ flight = function()
  // Always use Euler Angles for trim calculation
  // Trim Parameter Vector (OptParam):
  // 1 = Stabilator, rad
- // 2 = Throttle, 
+ // 2 = Throttle,
  // 3 = Pitch Angle, rad
 
  if(TRIM >= 1)

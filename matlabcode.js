@@ -1,4 +1,4 @@
-/*globale Variablen*/
+/*globale Variablen*/ // Was soll das??
 var Trimhist, x, u, V;
 /*// Supporting Calculations for Geometric, Inertial, and Aerodynamic
 // Properties of BizJet B
@@ -123,8 +123,8 @@ var dAmax = 35 * 0.01745329 // Maximum Aileron Deflection is ±35 deg
 var dRmax = 35 * 0.01745329 // Maximum Rudder Deflection is ±35 deg
 
 // BizJet B Aero Properties
-var AlphaTable = [-10 -8 -6 -4 -2 0 2 4 6 8 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 30 35 40 45 50 55 60 65 70 75 80 85 90];
-var Points = length(AlphaTable);
+var AlphaTable = [-10, -8, -6, -4, -2, 0, 2, 4, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90];
+var Points = AlphaTable.length;
 var AlphaRad = 0.0174533*AlphaTable;
 var SinAlpha = Math.sin(AlphaRad);
 var CosAlpha = Math.cos(AlphaRad);
@@ -151,16 +151,31 @@ var CL10 = CLaTot*0.174533;
 // Assume CL is symmetrically quadratic about CLmax
 var CLmax = 1.35;
 var delAlph = 4*0.0174533; // Stall occurs at 14 deg
-var CLstatic = zeros(1,39);
-CLstatic[1:11] = CLaTot*AlphaRad[1:11];
+var CLstatic = zeros(0,39);
+
+for (var i = 1; i <= 11; i++)
+{
+  CLstatic[i] = CLaTot*AlphaRad[i];
+}
+
 var kStall = (CLmax - CL10)/Math.pow(delAlph,2);
-CLstatic[12:21] = CLmax - kStall*elemmult((AlphaRad[15] - AlphaRad[12:21]),(AlphaRad[15] - AlphaRad[12:21]));
+
+for (var i = 12; i <= 21; i++)
+{
+  CLstatic[i] = CLmax - kStall*elemmult((AlphaRad[15] - AlphaRad[i]),(AlphaRad[15] - AlphaRad[i]));
+}
+
 CLstatic[22] = 0.73;
 CLstatic[23] = 0.73;
 CLstatic[24] = 0.74;
 CLstatic[25] = 0.76;
 CLstatic[26] = 0.78;
-CLstatic[27:39] = elemmult(CN[27:39],CosAlpha[27:39]);
+
+for (var i = 27; i <= 39; i++)
+{
+  CLstatic[i] = elemmult(CN[i],CosAlpha[i]);
+}
+
 var CLTable = CLstatic;
 
 // Drag
@@ -170,8 +185,13 @@ var CDf = Cf*Swet / S;
 var CDbase = 0.12*Sbase / S; // Base pressure drag
 var CDo = CDf + CDbase;
 var OEF = 1.78*(1 - 0.045*Math.pow(ARwing,0.68)) - 0.64; // Oswald Efficiency factor, Raymer (straight wing)
-var CDstatic = zeros(1,39);
-CDstatic[1:10] = CDo + elemmult(CLstatic[1:10],CLstatic[1:10]) / (OEF*Math.PI*ARwing);
+var CDstatic = zeros(0,39);
+
+for (var i = 1; i <= 10; i++)
+{
+  CDstatic[i] = CDo + elemmult(CLstatic[i],CLstatic[i]) / (OEF*Math.PI*ARwing);
+}
+
 CDstatic[11] = CDstatic[10]*1.15;
 CDstatic[12] = CDstatic[11]*1.15;
 CDstatic[13] = CDstatic[12]*1.15;
@@ -188,15 +208,24 @@ CDstatic[23] = CDstatic[22]*1.1;
 CDstatic[24] = CDstatic[23]*1.1;
 CDstatic[25] = CDstatic[24]*1.1;
 CDstatic[26] = CDstatic[25]*1.1;
-CDstatic[26:39] = 2*(Splan/S)*Math.abs(elemmult(elemmult(SinAlpha[26:39],SinAlpha[26:39]),SinAlpha[26:39]));
+
+for (var i = 26; i <= 39; i++)
+{
+  CDstatic[i] = 2*(Splan/S)*Math.abs(elemmult(elemmult(SinAlpha[i],SinAlpha[i]),SinAlpha[i]));
+}
+
 var CDNewt = 2*(Splan/S)*Math.abs(elemmult(elemmult(SinAlpha,SinAlpha),SinAlpha));
 var CDTable = CDstatic;
 
 // Pitching Moment (c.m. @ wing c.p.)
-var CmStatic = zeros(1,39);
-var SM = (CLaWing*lWing + CLaFus*lFus + CLaHT*lHT + CLaNac*lNac + CLaVent*lVent) /(cBar*(CLaWing + CLaFus + CLaHT + CLaNac + CLaVent));
-// Static Margin at Alpha = 0 deg
-CmStatic[1:21] = -(elemmult(CLstatic[1:21],Math.cos(AlphaRad[1:21])) + elemmult(CDstatic[1:21],Math.sin(AlphaRad[1:21])))*SM;
+var CmStatic = zeros(0,39);
+var SM = (CLaWing*lWing + CLaFus*lFus + CLaHT*lHT + CLaNac*lNac + CLaVent*lVent) /(cBar*(CLaWing + CLaFus + CLaHT + CLaNac + CLaVent)); // Static Margin at Alpha = 0 deg
+
+for (var i = 1; i <= 21; i++)
+{
+  CmStatic[i] = -(elemmult(CLstatic[i],Math.cos(AlphaRad[i])) + elemmult(CDstatic[i],Math.sin(AlphaRad[i])))*SM;
+}
+
 CmStatic[22] = CmStatic[21]*0.9;
 CmStatic[23] = CmStatic[22]*0.9;
 CmStatic[24] = CmStatic[23]*0.9;
@@ -204,23 +233,45 @@ CmStatic[25] = CmStatic[24]*0.9;
 CmStatic[26] = 0.9*CmStatic[25] - 0.1*elemmult(CN[26],Math.sign(AlphaRad[26]))*cpNewt/cBar;
 CmStatic[27] = 0.4*CmStatic[26] - 0.6*elemmult(CN[27],Math.sign(AlphaRad[27]))*cpNewt/cBar;
 CmStatic[28] = 0.1*CmStatic[27] - 0.9*elemmult(CN[28],Math.sign(AlphaRad[28]))*cpNewt/cBar;
+
 var CN = 2*(Splan/S)*elemmult(SinAlpha,SinAlpha);
-CmStatic[29:39] = -CN[29:39]*cpNewt/cBar;
+
+for (var i = 29; i <= 39; i++)
+{
+  CmStatic[i] = -CN[i]*cpNewt/cBar;
+}
+
 var CmTable = CmStatic;
 
 // CmdETable & CLdEo, Elevator Effect
 var tauDE = 0.32; // Geometric elevator chord/horizontal tail chord
 var tauCO = 0.68; // Elevator Carryover effect
 var Sigmoid = [];
-Sigmoid[1:5] = tauCO;
-Sigmoid[6:39] = tauDE + elemdiv((tauCO - tauDE), (1 + Math.exp(-15.*(AlphaRad[26] - AlphaRad[6:39]))));
-var CmdETable = zeros(1,39);
+Sigmoid[0] = 0;
+
+for (var i = 1; i <= 5; i++)
+{
+  Sigmoid[i] = tauCO;
+}
+
+for (var i = 6; i <= 39; i++)
+{
+  Sigmoid[i] = tauDE + elemdiv((tauCO - tauDE), (1 + Math.exp(-15.*(AlphaRad[26] - AlphaRad[i]))));
+}
+
+var CmdETable = zeros(0,39);
 var CLdEo = tauCO*CLaHT; // CLdE at Alpha = 0
 var CmdEo = -tauCO*(lHT/cBar)*CLaHT; // CmdE at Alpha = 0
-CmdETable[1:39] = elemmult((CmdEo*Sigmoid),Math.cos(AlphaRad[1:39]));
-// Elevator effect on moment, per rad
-CLdETable[1:39] = elemmult((CLdEo*Sigmoid),Math.cos(AlphaRad[1:39]));
-// Elevator effect on lift, per rad
+
+for (var i = 1; i <= 39; i++)
+{
+  CmdETable[i] = elemmult((CmdEo*Sigmoid),Math.cos(AlphaRad[i])); // Elevator effect on moment, per rad
+}
+
+for (var i = 1; i <= 39; i++)
+{
+  CLdETable[i] = elemmult((CLdEo*Sigmoid),Math.cos(AlphaRad[i])); // Elevator effect on lift, per rad
+}
 
 // Longitudinal Rotary & Unsteady Derivatives
 var CLqHat = 2*CLaHT*lHT/cBar;
@@ -259,9 +310,8 @@ var CldAo = tauDA*(CLaWing/(1 + taperw))*((1 - Math.pow(kDA,2))/3 - (1 - Math.po
 var CldATable = CldAo*Math.cos(AlphaRad);
 var CYdAo = 0; // Side force due to aileron, rad
 
-// CndATable, Yaw Moment Sensitivity to Aileron Deflection
-// Cessna 510 has an Aileron-Rudder Interconnect; assume CndA = 0
-var CndATable = zeros(1,39);
+// CndATable, Yaw Moment Sensitivity to Aileron Deflection; Cessna 510 has an Aileron-Rudder Interconnect; assume CndA = 0
+var CndATable = zeros(0,39);
 
 // CldRTable, Roll Moment Sensitivity to Rudder Deflection
 var tauDR = 0.5; // Geometric Rudder chord/horizontal tail chord
@@ -290,48 +340,6 @@ var CnrHatTable = elemmult(CnrHato, Math.cos(AlphaRad));
 
 
 
-Windfield=function(height,phir,thetar,psir)
-{
- /*// FLIGHT Wind Field Interpolation for 3-D wind as a Function of Altitude
- // June 12, 2015
- // ===============================================================
- // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
- */
- var windh = [-10 0 100 200 500 1000 2000 4000 8000 16000]; // Height, m
- var windx = [0 0 0 0 0 0 0 0 0 0]; // Northerly wind, m/s
- var windy = [0 0 0 0 0 0 0 0 0 0]; // Easterly wind, m/s
- var windz = [0 0 0 0 0 0 0 0 0 0]; // Vertical wind. m/s
- var winde = [interp1(windh,windx,height);interp1(windh,windy,height);interp1(windh,windz,height)]; // Earth-relative frame
- var HEB = DCM(phir,thetar,psir);
- var windb = HEB * winde; // Body-axis frame
-
- return windb;
-}
-
-
-
-
-
-
-LinModel=function(tj,xj)
-{
- /*// FLIGHT Equations of Motion for Linear Model (Jacobian) Evaluation,
- // with dummy state elements added for controls
-
- // June 12, 2015
- // ===============================================================
- // Copyright 2006 by ROBERT F. STENGEL. All rights reserved.
- */
- var x = xj[1:12];
- u = xj[13:19];
-
- var xdot = EoM(tj,x);
- var xdotj = [xdot;0;0;0;0;0;0;0];
-
- return xdotj;
-}
-
-
 min = function(a,b)
 {
   if a<=b{
@@ -341,6 +349,9 @@ min = function(a,b)
     return b;
   }
 }
+
+
+
 
 
 
@@ -357,12 +368,14 @@ max = function(a,b)
 
 
 
+
+
 zeros = function(i,j)
 {
  var zeros=[];
  for(;i<=j;i++)
  {
-    zeros = [zeros;0]
+    zeros = [zeros,0]
  }
 
  return zeros;
@@ -375,7 +388,7 @@ zeros = function(i,j)
 
 elemmult = function(array1, array2)
 {
- var l =length(array1);
+ var l = array1.length;
  var res = [];
  for(var i=1;i<=l;i++)
  {
@@ -508,14 +521,14 @@ interp1 = function(x,y,xi)
  var r1 = find(x,xi); // Vektor der die Indizes speichert, die kleinergleich xi sind
  var n1 = r1.length; // Laenge des Indizevektors
  var r = r1[n1]; // maximaler Eintrag des Indizevektors
- var n = x.length; //
+ var n = x.length; // 
  if (xi == x[n])
  {
     r = x.length-1;
  }
  /*if (isempty(r)) // Wenn r leer ist, gibt es ein Problem!
  {
- yi = NaN;
+ yi = NaN; 
  return
  }*/
  if ((r>0) && (r<x.length))
@@ -534,6 +547,59 @@ interp1 = function(x,y,xi)
  yi = reshape(yi,siz);
  }*/
  return yi;
+}
+
+
+
+
+
+
+Windfield=function(height,phir,thetar,psir)
+{
+ /*// FLIGHT Wind Field Interpolation for 3-D wind as a Function of Altitude
+ // June 12, 2015
+ // ===============================================================
+ // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
+ */
+ var windh = [-10, 0, 100, 200, 500, 1000, 2000, 4000, 8000, 16000]; // Height, m
+ var windx = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Northerly wind, m/s
+ var windy = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Easterly wind, m/s
+ var windz = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Vertical wind. m/s
+ var winde = [interp1(windh,windx,height);interp1(windh,windy,height);interp1(windh,windz,height)]; // Earth-relative frame
+ var HEB = DCM(phir,thetar,psir);
+ var windb = HEB * winde; // Body-axis frame
+
+ return windb;
+}
+
+
+
+
+
+
+LinModel=function(tj,xj)
+{
+ /*// FLIGHT Equations of Motion for Linear Model (Jacobian) Evaluation,
+ // with dummy state elements added for controls
+
+ // June 12, 2015
+ // ===============================================================
+ // Copyright 2006 by ROBERT F. STENGEL. All rights reserved.
+ */
+ for (var i = 1; i <= 12; i++)
+ {
+    var x[i] = xj[i];
+ }
+
+ for (var i = 13; i <= 19; i++)
+ {
+    u[i] = xj[i];
+ }
+
+ var xdot = EoM(tj,x);
+ var xdotj = [xdot,0;0,0,0,0,0,0];
+
+ return xdotj;
 }
 
 
@@ -623,13 +689,13 @@ TrimCost=function(OptParam)
  // 3 = Pitch Angle, rad
  */
 
- u = [u[1];u[2];u[3];OptParam[2];u[5];u[6];OptParam[1]]; // Wird das u aus einer anderen Funktion geholt? --> this.u
+ u = [u[1], u[2], u[3], OptParam[2], u[5], u[6], OptParam[1]]; // Wird das u aus einer anderen Funktion geholt? --> this.u
 
- x = [V * Math.cos(OptParam[3]); x[2]; V * Math.sin(OptParam[3]); x[4]; x[5];x[6];x[7];x[8];x[9];x[10];OptParam[3];x[12]]; // Wird das x aus einer anderen Funktion geholt? --> this.x
+ x = [V * Math.cos(OptParam[3]),  x[2],  V * Math.sin(OptParam[3]),  x[4],  x[5], x[6], x[7], x[8], x[9], x[10], OptParam[3], x[12]],;  // Wird das x aus einer anderen Funktion geholt? --> this.x
 
  var xdot = EoM(1,x);
- var xCost = [xdot[1] xdot[3] xdot[8]];
- var TrimCost  = math.transpose(xCost) * R * xCost;
+ var xCost = [xdot[1], xdot[3], xdot[8]];
+ var TrimCost  = transpose(xCost) * R * xCost;  // transpose muss noch geschrieben werden!!
  var ParamCost = [OptParam;J];
  TrimHist = [TrimHist ParamCost];
 
@@ -877,7 +943,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  }
 
  var CLqr=4.231 * cBar / (2 * V); // Pitch-Rate Effect, per rad/s
- CLdSr=1.08; // Stabilator Effect, per rad
+ var CLdSr=1.08; // Stabilator Effect, per rad
 
  if (u[6] >= 0.65)
  {
@@ -946,7 +1012,6 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  }
 
  var Cmqr = -18.8 * cBar / (2 * V); // Pitch-Rate + Alpha-Rate Effect, per rad/s
-
  var CmdSr=-2.291; // Stabilator Effect, per rad
 
  if ( u[6] >= 0.65)
@@ -1001,7 +1066,6 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
 
  var Cnpr=CL * (1 + 3 * taperw)/(12 * (1 + taperw)) * (b / (2 * V)); // Roll-Rate Effect, per rad/s
  var Cnrr=(-2 * (lvt / b) * CnBr * VertTailMach - 0.1 * Math.pow(CL,2))* (b / (2 * V)); // Yaw-Rate Effect, per rad/s
-
  var CndAr=0; // Aileron Effect, per rad
 
  if ( u[6] >= 0.65)
@@ -1035,7 +1099,6 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
 
  var Clpr=-CLar * (1 + 3 * taperw)/(12 * (1 + taperw))* (b / (2 * V)); // Roll-Rate Effect, per rad/s
  var Clrr=(CL * (1 + 3 * taperw)/(12 * (1 + taperw))* Math.pow((Mach * Math.cos(sweepw)),2) - 2) / Math.pow((Mach * Math.cos(sweepw)),2) - 1))* (b / (2 * V)); // Yaw-Rate Effect, per rad/s
-
  var CldAr=0.1537; // Aileron Effect, per rad
 
  if ( u[6] >= 0.65)
@@ -1078,7 +1141,7 @@ EoM = function(t,x)
  // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
 
  global m Ixx Iyy Izz Ixz S b cBar CONHIS u tuHis deluHis uInc MODEL RUNNING
-
+ 
  // Select Aerodynamic Model
 
  if MODEL == 0
@@ -1104,15 +1167,15 @@ EoM = function(t,x)
  var soundSpeed = atmos[3];
 
  // Body-Axis Wind Field
- var windb = WindField(-x[6],x[10],x[11],x[12]);
+ var windb = WindField(-x[6], x[10], x[11], x[12]);
 
  // Body-Axis Gravity Components
- var gb  = HEB * [0;0;9.80665];
+ var gb  = HEB * [0, 0, 9.80665];
 
  // Air-Relative Velocity Vector
  x[1] = max(x[1],0); // Limit axial velocity to >= 0 m/s
  var Va  = [x[1];x[2];x[3]] + windb;
- var V  = Math.sqrt(transpose(Va) * Va);
+ var V  = Math.sqrt(transpose(Va) * Va); // transpose muss noch geschrieben werden!!
  var alphar = Math.atan(Va[3] / Math.abs(Va[1])); // alphar = min(alphar, (pi/2 - 1e-6)); // Limit angle of attack to <= 90 deg
  var alpha  = 57.2957795 * alphar;
  var betar =  Math.asin(Va[2] / V);
@@ -1126,7 +1189,7 @@ EoM = function(t,x)
  if(CONHIS >=1 && RUNNING == 1)
  {
     [uInc] = interp1(tuHis,deluHis,t);
-    uInc = transpose(uInc);
+    uInc = transpose(uInc); // transpose muss noch geschrieben werden!!
     uTotal = u + uInc;
  }
  else
@@ -1155,7 +1218,7 @@ EoM = function(t,x)
  var Thrust = mod[7];
  var qbarS = qbar * S;
  var CX = -CD * Math.cos(alphar) + CL * Math.sin(alphar); // Body-axis X coefficient
- var CZ =  -CD * Math.sin(alphar) - CL * Math.cos(alphar); // Body-axis Z coefficient
+ var CZ = -CD * Math.sin(alphar) - CL * Math.cos(alphar); // Body-axis Z coefficient
 
  // State Accelerations
  var Xb = (CX * qbarS + Thrust) / m;
@@ -1170,18 +1233,18 @@ EoM = function(t,x)
  var xd1 = Xb + gb[1] + x[9] * x[2] - x[8] * x[3];
  var xd2 = Yb + gb[2] - x[9] * x[1] + x[7] * x[3];
  var xd3 = Zb + gb[3] + x[8] * x[1] - x[7] * x[2];
- var y = transpose(HEB) * [x[1];x[2];x[3]];
+ var y = transpose(HEB) * [x[1];x[2];x[3]];  // transpose muss noch geschrieben werden!!
  var xd4 = y[1];
  var xd5 = y[2];
  var xd6 = y[3];
- var xd7 =  (Izz * Lb + Ixz * Nb - (Ixz * (Iyy - Ixx - Izz) * x[7] +(Math.pow(Ixz,2) + Izz * (Izz - Iyy)) * x[9]) * x[8]) / (Ixx * Izz - Math.pow(Ixz,2));
- var xd8 =  (Mb - (Ixx - Izz) * x[7] * x[9] - Ixz * (Math.pow(x[7],2) - Math.pow(x[9],2))) / Iyy;
+ var xd7 = (Izz * Lb + Ixz * Nb - (Ixz * (Iyy - Ixx - Izz) * x[7] +(Math.pow(Ixz,2) + Izz * (Izz - Iyy)) * x[9]) * x[8]) / (Ixx * Izz - Math.pow(Ixz,2));
+ var xd8 = (Mb - (Ixx - Izz) * x[7] * x[9] - Ixz * (Math.pow(x[7],2) - Math.pow(x[9],2))) / Iyy;
  var xd9 = (Ixz * Lb + Ixx * Nb + (Ixz * (Iyy - Ixx - Izz) * x[9] +(Math.pow(Ixz,2) + Ixx * (Ixx - Iyy)) * x[7]) * x[8]) / (Ixx * Izz - Math.pow(Ixz,2));
  var cosPitch = Math.cos(x[11]);
 
  if( Math.abs(cosPitch) <= 0.00001)
  {
-    cosPitch = 0.00001 * sign(cosPitch);
+    cosPitch = 0.00001 * sign(cosPitch); // sign muss noch geschrieben werden!!
  }
 
  var tanPitch = Math.sin(x[11]) / cosPitch;
@@ -1194,6 +1257,7 @@ EoM = function(t,x)
 }
 
 
+// Bis hierhin bin ich beim Durchschauen gekommen!!
 
 
 
@@ -1244,7 +1308,7 @@ EoMQver2 = function(t,x)
  // Air-Relative Velocity Vector
  x[1] = max(x[1],0); // Limit axial velocity to >= 0 m/s
  var Va = [x[1];x[2];x[3]] + windb;
- var V = Math.sqrt(transpose(Va) * Va);
+ var V = Math.sqrt(transpose(Va) * Va); // transpose muss noch geschrieben werden!!
  var alphar = Math.atan(Va[3] / Math.abs(Va[1])); // alphar = min(alphar, (pi/2 - 1e-6)); // Limit angle of attack to <= 90 deg
  var alpha = 57.2957795 * alphar;
  var betar = Math.asin(Va[2] / V);
@@ -1258,7 +1322,7 @@ EoMQver2 = function(t,x)
  if(CONHIS >=1 && RUNNING == 1)
  {
     [uInc] = interp1(tuHis,deluHis,t);
-    uInc = transpose(uInc);
+    uInc = transpose(uInc); // transpose muss noch geschrieben werden!!
     uTotal = u + uInc;
  }
  else
@@ -1302,7 +1366,7 @@ EoMQver2 = function(t,x)
  var xd1 = Xb + gb[1] + x[9] * x[2] - x[8] * x[3];
  var xd2 = Yb + gb[2] - x[9] * x[1] + x[7] * x[3];
  var xd3 = Zb + gb[3] + x[8] * x[1] - x[7] * x[2];
- var y = transpose(HEB) * [x[1];x[2];x[3]];
+ var y = transpose(HEB) * [x[1];x[2];x[3]]; // transpose muss noch geschrieben werden!!
  var xd4 = y[1];
  var xd5 = y[2];
  var xd6 = y[3];
@@ -1392,7 +1456,7 @@ flight = function()
  // u[1] =  Elevator, dEr, rad, positive: trailing edge down
  // u[2] =  Aileron, dAr, rad, positive: left trailing edge down
  // u[3] =  Rudder, dRr, rad, positive: trailing edge left
- // u[4] =  Throttle, dT,
+ // u[4] =  Throttle, dT, 
  // u[5] = Asymmetric Spoiler, dASr, rad
  // u[6] = Flap, dFr, rad
  // u[7] = Stabilator, dSr, rad
@@ -1486,7 +1550,7 @@ flight = function()
  // Always use Euler Angles for trim calculation
  // Trim Parameter Vector (OptParam):
  // 1 = Stabilator, rad
- // 2 = Throttle,
+ // 2 = Throttle, 
  // 3 = Pitch Angle, rad
 
  if(TRIM >= 1)
@@ -1500,9 +1564,9 @@ flight = function()
 
     // Optimizing Trim Error Cost with respect to dSr, dT, and Theta
     var TrimHist;
-    var Index= [1:length(TrimHist)];
+    var Index= [1:TrimHist.length];
     var TrimStabDeg = 57.2957795*OptParam[1];
-    var  TrimThrusPer = 100*OptParam[2];
+    var TrimThrusPer = 100*OptParam[2];
     var TrimPitchDeg = 57.2957795*OptParam[3];
     var TrimAlphaDeg = TrimPitchDeg - gamma;
 
@@ -1544,7 +1608,7 @@ flight = function()
 	tic
 	[t,x] = ode15s(@EoM,tspan,xo,options);
 	toc
-	kHis = length(t);
+	kHis = t.length;
 	break;
 
       case 1:
@@ -1559,7 +1623,7 @@ flight = function()
 	tic
 	[tQ,xQ] = ode15s(@EoMQver2,tspan,xoQ,options);
 	toc
-	var kHisQ = length(tQ);
+	var kHisQ = tQ.length;
 	var q1s = xQ(:,10);
 	var q2s = xQ(:,11);
 	var q3s = xQ(:,12);
@@ -1600,12 +1664,12 @@ flight = function()
     }
 
     var vBody  = [x(:,1), x(:,2), x(:,3)];
-    vBody  = transpose(vBody);
+    vBody  = transpose(vBody); // transpose muss noch geschrieben werden!!
     var vBodyAir = vBody + windBody;
 
     for(var i=1;i <=kHis;i++)
     {
-      var vE = transpose(DCM(x(i,10),x(i,11),x(i,12))) * [vBody(1,i);vBody(2,i);vBody(3,i)];
+      var vE = transpose(DCM(x(i,10),x(i,11),x(i,12))) * [vBody(1,i);vBody(2,i);vBody(3,i)]; // transpose muss noch geschrieben werden!!
       var VER = Math.sqrt(Math.pow(vE[1],2) + Math.pow(vE[2],2) + Math.pow(vE[3],2));
       var VAR = Math.sqrt(Math.pow(vBodyAir(1,i),2) + Math.pow(vBodyAir(2,i),2) + Math.pow(vBodyAir(3,i),2));
       var VARB = Math.sqrt(Math.pow(vBodyAir(1,i),2) + Math.pow(vBodyAir(3,i),2));

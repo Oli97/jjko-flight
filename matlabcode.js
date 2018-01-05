@@ -520,15 +520,15 @@ interp1 = function(x,y,xi)
  x = sort(x); // sortiere x
  var r1 = find(x,xi); // Vektor der die Indizes speichert, die kleinergleich xi sind
  var n1 = r1.length; // Laenge des Indizevektors
- var r = r1[n1]; // maximaler Eintrag des Indizevektors
- var n = x.length; // 
+ var r = r1[n1-1]; // maximaler Eintrag des Indizevektors
+ var n = x.length; //
  if (xi == x[n])
  {
     r = x.length-1;
  }
  /*if (isempty(r)) // Wenn r leer ist, gibt es ein Problem!
  {
- yi = NaN; 
+ yi = NaN;
  return
  }*/
  if ((r>0) && (r<x.length))
@@ -586,18 +586,21 @@ LinModel=function(tj,xj)
  // ===============================================================
  // Copyright 2006 by ROBERT F. STENGEL. All rights reserved.
  */
- for (var i = 1; i <= 12; i++)
- {
-    var x[i] = xj[i];
- }
+ var x = [];
+ var u = [];
+   for (var i = 0; i <= 11; i++)
+   {
+      x[i] = xj[i];
+   }
 
- for (var i = 13; i <= 19; i++)
- {
-    u[i] = xj[i];
- }
+   for (var i = 12; i <= 18; i++)
+   {
+      u[i-12] = xj[i];
+   }
+
 
  var xdot = EoM(tj,x);
- var xdotj = [xdot,0;0,0,0,0,0,0];
+ var xdotj = [xdot,0,0,0,0,0,0,0];
 
  return xdotj;
 }
@@ -642,7 +645,7 @@ Atmos = function(geomAlt)
 
  // Exponential Interpolation in Geometric Altitude for Air Density and Pressure
  var betap, betar, airDens, airPres;
- for(k=2;k<=10;k++)
+ for(k=1;k<=9;k++)
  {
     if (geomAlt <= Z[k])
     {
@@ -671,16 +674,21 @@ TrimCost=function(OptParam)
  // ===============================================================
  // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
  */
- var R;
+ var R = new Array(3);
+
+ for (var i=0;i<R.length;i++){
+   R[i] = new Array (3);
+ }
+
+ R[0][0] = 1;
+ R[0][1] = 0;
+ R[0][2] = 0;
+ R[1][0] = 0;
  R[1][1] = 1;
  R[1][2] = 0;
- R[1][3] = 0;
+ R[2][0] = 0;
  R[2][1] = 0;
  R[2][2] = 1;
- R[2][3] = 0;
- R[3][1] = 0;
- R[3][2] = 0;
- R[3][3] = 1;
 
  /*
  // Optimization Vector:
@@ -689,17 +697,23 @@ TrimCost=function(OptParam)
  // 3 = Pitch Angle, rad
  */
 
- u = [u[1], u[2], u[3], OptParam[2], u[5], u[6], OptParam[1]]; // Wird das u aus einer anderen Funktion geholt? --> this.u
+ u = [u[0], u[1], u[2], OptParam[1], u[4], u[5], OptParam[0]]; // Wird das u aus einer anderen Funktion geholt? --> this.u
 
- x = [V * Math.cos(OptParam[3]),  x[2],  V * Math.sin(OptParam[3]),  x[4],  x[5], x[6], x[7], x[8], x[9], x[10], OptParam[3], x[12]],;  // Wird das x aus einer anderen Funktion geholt? --> this.x
+ x = [V * Math.cos(OptParam[2]),  x[1],  V * Math.sin(OptParam[2]),  x[3],  x[4], x[5], x[6], x[7], x[8], x[9], OptParam[2], x[11]];  // Wird das x aus einer anderen Funktion geholt? --> this.x
 
  var xdot = EoM(1,x);
  var xCost = [xdot[1], xdot[3], xdot[8]];
- var TrimCost  = transpose(xCost) * R * xCost;  // transpose muss noch geschrieben werden!!
- var ParamCost = [OptParam;J];
+ var J = R[0][0]*xCost[0]*xCost[0]+R[0][1]*xCost[0]*xCost[1]+R[0][2]*xCost[0]*xCost[2]+R[1][0]*xCost[0]*xCost[1]+R[1][1]*xCost[1]*xCost[1]+R[1][2]*xCost[1]*xCost[2]+R[2][0]*xCost[0]*xCost[2]+R[2][1]*xCost[1]*xCost[2]+R[2][2]*xCost[2]*xCost[2];
+ var ParamCost = [];
+ for (var k=0;k<OptParam.length;k++){
+   ParamCost[k]=OptParam[k];
+ }
+ ParamCost[OptParam.length]=J;
+
+
  TrimHist = [TrimHist ParamCost];
 
- return TrimCost;
+ return J;
 }
 
 
@@ -709,23 +723,27 @@ TrimCost=function(OptParam)
 
 DCM = function(Phi,Theta,Psi)
 {
- var sinR = Math.sin(Phi);
- var cosR = Math.cos(Phi);
- var sinP = Math.sin(Theta);
- var cosP = Math.cos(Theta);
- var sinY = Math.sin(Psi);
- var cosY = Math.cos(Psi);
- var H;
+  var sinR = Math.sin(Phi);
+var cosR = Math.cos(Phi);
+var sinP = Math.sin(Theta);
+var cosP = Math.cos(Theta);
+var sinY = Math.sin(Psi);
+var cosY = Math.cos(Psi);
+var H = new Array(3);
 
- H[1][1] = cosP * cosY;
- H[1][2] = cosP * sinY;
- H[1][3] = -sinP;
- H[2][1] = sinR * sinP * cosY - cosR * sinY;
- H[2][2] = sinR * sinP * sinY + cosR * cosY;
- H[2][3] = sinR * cosP;
- H[3][1] = cosR * sinP * cosY + sinR * sinY;
- H[3][2] = cosR * sinP * sinY - sinR * cosY;
- H[3][3] = cosR * cosP;
+for (var i=0;i<H.length;i++){
+  H[i] = new Array (3);
+}
+
+H[0][0] = cosP * cosY;
+H[0][1] = cosP * sinY;
+H[0][2] = -sinP;
+H[1][0] = sinR * sinP * cosY - cosR * sinY;
+H[1][1] = sinR * sinP * sinY + cosR * cosY;
+H[1][2] = sinR * cosP;
+H[2][0] = cosR * sinP * cosY + sinR * sinY;
+H[2][1] = cosR * sinP * sinY - sinR * cosY;
+H[2][2] = cosR * cosP;
 
  return H;
 }
@@ -737,7 +755,7 @@ DCM = function(Phi,Theta,Psi)
 
 event = function(t,x)
 {
- var value = x[6];
+ var value = x[5];
  var isterminal = 1;
  var direction = 1;
 
@@ -758,16 +776,20 @@ Quaternion: q1, x Component of quaternion q2, y Component of quaternion
 q3, z Component of quaternion q4, cos(Euler) Component of quaternion */
 RMQ = function(q1,q1,q3,q4)
 {
- var H;
- H[1][1] = Math.pow(q1,2) - Math.pow(q2,2) - Math.pow(q3,2) + Math.pow(q4,2);
- H[1][2] = 2*(q1*q2 + q3*q4);
- H[1][3] = 2*(q1*q3 - q2*q4);
- H[2][1] = 2*(q1*q2 - q3*q4);
- H[2][2] = -Math.pow(q1,2) + Math.pow(q2,2) - Math.pow(q3,2) + Math.pow(q4,2);
- H[2][3] = 2*(q2*q3 + q1*q4);
- H[3][1] = 2*(q1*q3 + q2*q4);
- H[3][2] = 2*(q2*q3 - q1*q4);
- H[3][3] = -Math.pow(q1,2) - Math.pow(q2,2) + Math.pow(q3,2) + Math.pow(q4,2);
+  var H = new Array(3);
+
+  for (var i=0;i<H.length;i++){
+    H[i] = new Array (3);
+  }
+  H[0][0] = Math.pow(q1,2) - Math.pow(q2,2) - Math.pow(q3,2) + Math.pow(q4,2);
+  H[0][1] = 2*(q1*q2 + q3*q4);
+  H[0][2] = 2*(q1*q3 - q2*q4);
+  H[1][0] = 2*(q1*q2 - q3*q4);
+  H[1][1] = -Math.pow(q1,2) + Math.pow(q2,2) - Math.pow(q3,2) + Math.pow(q4,2);
+  H[1][2] = 2*(q2*q3 + q1*q4);
+  H[2][0] = 2*(q1*q3 + q2*q4);
+  H[2][1] = 2*(q2*q3 - q1*q4);
+  H[2][2] = -Math.pow(q1,2) - Math.pow(q2,2) + Math.pow(q3,2) + Math.pow(q4,2);
 
  return H;
 }
@@ -1141,7 +1163,7 @@ EoM = function(t,x)
  // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
 
  global m Ixx Iyy Izz Ixz S b cBar CONHIS u tuHis deluHis uInc MODEL RUNNING
- 
+
  // Select Aerodynamic Model
 
  if MODEL == 0
@@ -1456,7 +1478,7 @@ flight = function()
  // u[1] =  Elevator, dEr, rad, positive: trailing edge down
  // u[2] =  Aileron, dAr, rad, positive: left trailing edge down
  // u[3] =  Rudder, dRr, rad, positive: trailing edge left
- // u[4] =  Throttle, dT, 
+ // u[4] =  Throttle, dT,
  // u[5] = Asymmetric Spoiler, dASr, rad
  // u[6] = Flap, dFr, rad
  // u[7] = Stabilator, dSr, rad
@@ -1550,7 +1572,7 @@ flight = function()
  // Always use Euler Angles for trim calculation
  // Trim Parameter Vector (OptParam):
  // 1 = Stabilator, rad
- // 2 = Throttle, 
+ // 2 = Throttle,
  // 3 = Pitch Angle, rad
 
  if(TRIM >= 1)

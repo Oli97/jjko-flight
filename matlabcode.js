@@ -337,12 +337,20 @@ var CnrHatTable = elemmult(CnrHato, Math.cos(AlphaRad));
 
 
 
+sign = function(x)
+{
+if (x<0) { return -1}
+else if (x==0) { return 0}
+else { return 1}
+
+}
+
 
 
 
 min = function(a,b)
 {
-  if a<=b{
+  if (a<=b){
     return a;
   }
   else {
@@ -357,7 +365,7 @@ min = function(a,b)
 
 max = function(a,b)
 {
-  if a>=b{
+  if (a>=b){
     return a;
   }
   else {
@@ -373,7 +381,7 @@ max = function(a,b)
 zeros = function(i,j)
 {
  var zeros=[];
- for(;i<=j;i++)
+ for(i;i<=j;i++)
  {
     zeros = [zeros,0]
  }
@@ -1173,34 +1181,41 @@ EoM = function(t,x)
  end
  */
  var ev = event(t,x);
- var value = ev[1];
- var isterminal = ev[2];
- var direction = ev[3];
+ var value = ev[0];
+ var isterminal = ev[1];
+ var direction = ev[2];
 
  // Earth-to-Body-Axis Transformation Matrix
- var HEB  = DCM(x[10],x[11],x[12]);
+ var HEB  = DCM(x[9],x[10],x[11]);
 
  // Atmospheric State
- x[6] = min(x[6],0); // Limit x[6] to <= 0 m
- var atmos = Atmos(-x[6]);
+ x[5] = min(x[5],0); // Limit x[6] to <= 0 m
+ var atmos = Atmos(-x[5]);
  var airDens = atmos[0];
  var airPres = atmos[1];
  var temp = atmos[2];
  var soundSpeed = atmos[3];
 
  // Body-Axis Wind Field
- var windb = WindField(-x[6], x[10], x[11], x[12]);
+ var windb = WindField(-x[5], x[9], x[10], x[11]);
 
  // Body-Axis Gravity Components
- var gb  = HEB * [0, 0, 9.80665];
+ var gb = [];
+
+  gb[0]=HEB[0][2]*9.80665;
+  gb[1]=HEB[1][2]*9.80665;
+  gb[2]=HEB[2][2]*9.80665;
 
  // Air-Relative Velocity Vector
- x[1] = max(x[1],0); // Limit axial velocity to >= 0 m/s
- var Va  = [x[1];x[2];x[3]] + windb;
- var V  = Math.sqrt(transpose(Va) * Va); // transpose muss noch geschrieben werden!!
- var alphar = Math.atan(Va[3] / Math.abs(Va[1])); // alphar = min(alphar, (pi/2 - 1e-6)); // Limit angle of attack to <= 90 deg
+ x[0] = max(x[0],0); // Limit axial velocity to >= 0 m/s
+ var Va  = [];
+ for (var i=0;i<3;i++){
+   Va[i]=x[i]+windb[i];
+ }
+ var V  = Math.sqrt(Va[0]*Va[0]+Va[1]*Va[1]+Va[2]*Va[2]);
+ var alphar = Math.atan(Va[2] / Math.abs(Va[0])); // alphar = min(alphar, (pi/2 - 1e-6)); // Limit angle of attack to <= 90 deg
  var alpha  = 57.2957795 * alphar;
- var betar =  Math.asin(Va[2] / V);
+ var betar =  Math.asin(Va[1] / V);
  var beta =  57.2957795 * betar;
  var Mach =  V / soundSpeed;
  var qbar = 0.5 * airDens * Math.pow(V,2);
@@ -1211,12 +1226,19 @@ EoM = function(t,x)
  if(CONHIS >=1 && RUNNING == 1)
  {
     [uInc] = interp1(tuHis,deluHis,t);
-    uInc = transpose(uInc); // transpose muss noch geschrieben werden!!
-    uTotal = u + uInc;
+
+
+for(var i=0;i<lenght.uInc;i++){
+    uTotal[i] = u[i] + uInc[i];
+}
+
  }
  else
  {
-    uTotal = u;
+   for(var i=0;i<lenght.uInc;i++){
+       uTotal[i] = u[i];
+   }
+
  }
 
  // Force and Moment Coefficients; Thrust
@@ -1231,13 +1253,13 @@ EoM = function(t,x)
     mod = AeroModelMach(x,uTotal,Mach,alphar,betar,V);
  }
 
- var CD = mod[1];
- var CL = mod[2];
- var CY = mod[3];
- var Cl = mod[4];
- var Cm = mod[5];
- var Cn = mod[6];
- var Thrust = mod[7];
+ var CD = mod[0];
+ var CL = mod[1];
+ var CY = mod[2];
+ var Cl = mod[3];
+ var Cm = mod[4];
+ var Cn = mod[5];
+ var Thrust = mod[6];
  var qbarS = qbar * S;
  var CX = -CD * Math.cos(alphar) + CL * Math.sin(alphar); // Body-axis X coefficient
  var CZ = -CD * Math.sin(alphar) - CL * Math.cos(alphar); // Body-axis Z coefficient
@@ -1252,28 +1274,31 @@ EoM = function(t,x)
  var nz = -Zb / 9.80665; // Normal load factor
 
  // Dynamic Equations
- var xd1 = Xb + gb[1] + x[9] * x[2] - x[8] * x[3];
- var xd2 = Yb + gb[2] - x[9] * x[1] + x[7] * x[3];
- var xd3 = Zb + gb[3] + x[8] * x[1] - x[7] * x[2];
- var y = transpose(HEB) * [x[1];x[2];x[3]];  // transpose muss noch geschrieben werden!!
- var xd4 = y[1];
- var xd5 = y[2];
- var xd6 = y[3];
- var xd7 = (Izz * Lb + Ixz * Nb - (Ixz * (Iyy - Ixx - Izz) * x[7] +(Math.pow(Ixz,2) + Izz * (Izz - Iyy)) * x[9]) * x[8]) / (Ixx * Izz - Math.pow(Ixz,2));
- var xd8 = (Mb - (Ixx - Izz) * x[7] * x[9] - Ixz * (Math.pow(x[7],2) - Math.pow(x[9],2))) / Iyy;
- var xd9 = (Ixz * Lb + Ixx * Nb + (Ixz * (Iyy - Ixx - Izz) * x[9] +(Math.pow(Ixz,2) + Ixx * (Ixx - Iyy)) * x[7]) * x[8]) / (Ixx * Izz - Math.pow(Ixz,2));
- var cosPitch = Math.cos(x[11]);
+ var xd1 = Xb + gb[0] + x[8] * x[1] - x[7] * x[2];
+ var xd2 = Yb + gb[1] - x[8] * x[0] + x[6] * x[2];
+ var xd3 = Zb + gb[2] + x[7] * x[0] - x[6] * x[1];
+ var y = [];
+ for(var i=0;i<3;i++){
+   y[i]=HEB[i][0]*x[0]+HEB[i][1]*x[1]+HEB[i][2]*x[2];
+ }
+ var xd4 = y[0];
+ var xd5 = y[1];
+ var xd6 = y[2];
+ var xd7 = (Izz * Lb + Ixz * Nb - (Ixz * (Iyy - Ixx - Izz) * x[6] +(Math.pow(Ixz,2) + Izz * (Izz - Iyy)) * x[8]) * x[7]) / (Ixx * Izz - Math.pow(Ixz,2));
+ var xd8 = (Mb - (Ixx - Izz) * x[6] * x[8] - Ixz * (Math.pow(x[6],2) - Math.pow(x[8],2))) / Iyy;
+ var xd9 = (Ixz * Lb + Ixx * Nb + (Ixz * (Iyy - Ixx - Izz) * x[8] +(Math.pow(Ixz,2) + Ixx * (Ixx - Iyy)) * x[6]) * x[7]) / (Ixx * Izz - Math.pow(Ixz,2));
+ var cosPitch = Math.cos(x[10]);
 
  if( Math.abs(cosPitch) <= 0.00001)
  {
     cosPitch = 0.00001 * sign(cosPitch); // sign muss noch geschrieben werden!!
  }
 
- var tanPitch = Math.sin(x[11]) / cosPitch;
- var xd10 = x[7] + (Math.sin(x[10]) * x[8] + Math.cos(x[10]) * x[9]) * tanPitch;
- var xd11 = Math.cos(x[10]) * x[8] - Math.sin(x[10]) * x[9];
- var xd12 = (Math.sin(x[10]) * x[8] + Math.cos(x[10]) * x[9]) / cosPitch;
- var xdot = [xd1;xd2;xd3;xd4;xd5;xd6;xd7;xd8;xd9;xd10;xd11;xd12];
+ var tanPitch = Math.sin(x[10]) / cosPitch;
+ var xd10 = x[6] + (Math.sin(x[9]) * x[7] + Math.cos(x[9]) * x[8]) * tanPitch;
+ var xd11 = Math.cos(x[9]) * x[7] - Math.sin(x[9]) * x[8];
+ var xd12 = (Math.sin(x[9]) * x[7] + Math.cos(x[9]) * x[8]) / cosPitch;
+ var xdot = [xd1,xd2,xd3,xd4,xd5,xd6,xd7,xd8,xd9,xd10,xd11,xd12];
 
  return xdot;
 }

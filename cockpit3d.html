@@ -50,8 +50,8 @@ display: block;
 <script src="three.js-master/examples/js/ImprovedNoise.js"></script>
 <script src="three.js-master/examples/js/Detector.js"></script>
 <script src="three.js-master/examples/js/libs/stats.min.js"></script>
-<!--<script src="three.js-master/examples/js/controls/FirstPersonControls.js"></script>-->
-<script src="autopilot.js"></script>
+<script src="three.js-master/examples/js/controls/FirstPersonControls.js"></script>
+<!--script src="autopilot.js"></script>-->
 
 <script language="javascript" type="text/javascript" src="2d.js"></script>
 <script type="text/javascript">
@@ -61,30 +61,39 @@ if ( ! Detector.webgl ) {
 }
 var container, stats;
 var camera, controls, scene, renderer;
-var mesh, texture;
+var mesh, texture, data;
 var altx = 0, altz = 0, vertices;
 var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 var reload = false;
+var weite = 125000, breite = 125000;
 init();
 animate();
 
 function init() {
   container = document.getElementById( "container" );
-  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );/*Kamera erstellen mit perpektivischen Eigenschaften*/
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );/*Kamera erstellen mit perpektivischen Eigenschaften*/
   scene = new THREE.Scene();
-  scene.background = new THREE.Color( 0xbfd1e5 );
+  var path = "three.js-master/examples/textures/cube/skybox/";
+  var urls = [
+    path + "px.jpg", path + "nx.jpg",
+    path + "py.jpg", path + "ny.jpg",
+    path + "pz.jpg", path + "nz.jpg"
+  ];
+
+  textureCube = new THREE.CubeTextureLoader().load( urls );
+  scene.background = textureCube;
   controls = new THREE.FirstPersonControls( camera );/*Steuerung für die Kamera erstellen*/
   controls.movementSpeed = 100;/*Bewegungsgeschwindigkeit der Kamera*/
   controls.lookSpeed = 0.1;/*Drehgeschwindigkeit*/
-  var data = generateHeight( worldWidth, worldDepth );/*Erstellt Daten für die 3D-Welt*/
-  camera.position.y = 3800;/*Startposition der Kamera*/
-  var geometry = new THREE.PlaneBufferGeometry( 25000, 25000, worldWidth - 1, worldDepth - 1 );  /*Erste zwei Variablen bestimmen größe der 3D-Welt und die anderen Zwei bestimmen größe der einzelnen Segmente*/
+  data = generateHeight2( worldWidth, worldDepth );/*Erstellt natürliche Höhendaten für die 3D-Welt*/
+  camera.position.y = 3000;/*Startposition der Kamera*/
+  var geometry = new THREE.PlaneBufferGeometry( weite, breite, worldWidth - 1, worldDepth - 1 );  /*Erste zwei Variablen bestimmen größe der 3D-Welt und die anderen Zwei bestimmen größe der einzelnen Segmente*/
   geometry.rotateX( - Math.PI / 2 );/*Rotation um die x-Achse*/
   vertices = geometry.attributes.position.array;/*Positionskoordinaten werden erstellt*/
   for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
-    vertices[ j + 1 ] = data[ i ] * 20;/*Faktor  beeinflusst Höhe der Hügel*/
+    vertices[ j + 1 ] = data[ i ] * 100;/*y Koordinaten werden übernommen,Faktor  beeinflusst Höhe der Hügel*/
   }
   texture = new THREE.CanvasTexture( generateTexture( data, worldWidth, worldDepth ) );/*Texturen erstellen*/
   texture.wrapS = THREE.ClampToEdgeWrapping;/*Kanten "festklammern"*/
@@ -111,14 +120,39 @@ function onWindowResize() {
 
 function generateHeight( width, height ) {
   var size = width * height, data = new Uint8Array( size ),
-  perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 10000;
+  perlin = new ImprovedNoise(), quality = 1, z = Math.random() * 100;
   for ( var j = 0; j < 4; j ++ ) {
     for ( var i = 0; i < size; i ++ ) {
-      var x = i % width, y = ~~ ( i / width );
+      var x = i % width, y = ~~ ( i / width );//%=modulo,~~ eliminiert Nachkommastellen
       data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75 );
     }
     quality *= 5;
   }
+  return data;
+}
+
+function generateHeight2( width, height ) {
+  var size = width * height, data = new Uint8Array( size );
+    for ( var i = 0; i < size; i ++ ) {
+      var j = i % width;
+      if((180<j && j<200&&i>180*width&&i<200*width)||(8<j && j<28&&i>180*width&&i<200*width)){
+        data[i] = 20;
+      }else{
+        if((130<j && j<140&&i>110*width&&i<120*width)||(150<j && j<170&&i>135*width&&i<140*width)){
+          data[i] = 30;
+        }else{
+          if((145<j && j<155&&i>105*width&&i<115*width)||(80<j && j<90&&i>140*width&&i<150*width)){
+            data[i] = 100;
+          }else{
+            if((0<j && j<10&&i>10*width&&i<20*width)||(192<j && j<202&&i>10*width&&i<20*width)){
+              data[i] = 200;
+            }else{
+              data[ i ] =0;
+            }
+          }
+        }
+      }
+    }
   return data;
 }
 
@@ -132,7 +166,7 @@ function generateTexture( data, width, height ) {
   canvas.width = width;
   canvas.height = height;
   context = canvas.getContext( '2d' );
-  context.fillStyle = '#000';
+  context.fillStyle = 'grey';
   context.fillRect( 0, 0, width, height );
   image = context.getImageData( 0, 0, canvas.width, canvas.height );
   imageData = image.data;
@@ -180,7 +214,7 @@ function render() {
 }
 
 function reset() {
-  if(Math.abs(camera.position.x-altx)>12500||Math.abs(camera.position.z-altz)>12500){/*reset*/
+  if(Math.abs(camera.position.x-altx)>weite/4||Math.abs(camera.position.z-altz)>breite/4){/*reset*/
     scene.translateX(camera.position.x-altx);
     scene.translateZ(camera.position.z-altz);
     altx = camera.position.x;
@@ -190,7 +224,7 @@ function reset() {
 
 function absturz() {
   for ( var i = 0, l = vertices.length; i < l;  i += 3 ) {
-    if(!reload&&Math.abs(camera.position.x-altx-vertices[i])<100&&Math.abs(camera.position.z-altz-vertices[i+2])<100&&vertices[i+1]>camera.position.y){
+    if(!reload&&Math.abs(camera.position.x-altx-vertices[i])<1000&&Math.abs(camera.position.z-altz-vertices[i+2])<1000&&vertices[i+1]>camera.position.y){
       if (confirm('Game over. Restart?')) {
         location.reload();
         reload = true;

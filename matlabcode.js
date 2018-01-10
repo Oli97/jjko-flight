@@ -444,7 +444,7 @@ elemqu = function(array1)
 
 
 
-
+//läuft
 find = function(x,y) //nur fuer sortierte Vektoren
 {
  var n = x.length;
@@ -458,7 +458,7 @@ find = function(x,y) //nur fuer sortierte Vektoren
 
 
 
-
+//läuft
 sort = function(x)
 {
  var n = x.length;
@@ -492,7 +492,7 @@ sort = function(x)
 
 
 
-
+//läuft
 interp1 = function(x,y,xi) //xi muss ein Skalar sein!!
 {
  x = sort(x); // sortiere x
@@ -530,7 +530,7 @@ interp1 = function(x,y,xi) //xi muss ein Skalar sein!!
 
 
 
-
+//läuft durch aber es kommt immer der Nullvektor raus!!
 Windfield=function(height,phir,thetar,psir)
 {
  /*// FLIGHT Wind Field Interpolation for 3-D wind as a Function of Altitude
@@ -542,11 +542,14 @@ Windfield=function(height,phir,thetar,psir)
  var windx = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Northerly wind, m/s
  var windy = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Easterly wind, m/s
  var windz = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Vertical wind. m/s
- var winde = [interp1(windh,windx,height);interp1(windh,windy,height);interp1(windh,windz,height)]; // Earth-relative frame
+ var winde = [interp1(windh,windx,height),interp1(windh,windy,height),interp1(windh,windz,height)]; // Earth-relative frame
  var HEB = DCM(phir,thetar,psir);
- var windb = HEB * winde; // Body-axis frame
-
- return windb;
+ //var windb = HEB * winde; // Body-axis frame
+var windb=[];
+windb[0]=HEB[0][0]*winde[0]+HEB[0][1]*winde[1]+HEB[0][2]*winde[2];
+windb[1]=HEB[1][0]*winde[0]+HEB[1][1]*winde[1]+HEB[1][2]*winde[2];
+windb[2]=HEB[2][0]*winde[0]+HEB[2][1]*winde[1]+HEB[2][2]*winde[2];
+return windb;
 }
 
 
@@ -586,7 +589,7 @@ LinModel=function(tj,xj)
 
 
 
-
+//läuft
 Atmos = function(geomAlt)
 {
  /* 1976 U.S. Standard Atmosphere Interpolation for FLIGHT
@@ -697,7 +700,7 @@ TrimCost=function(OptParam)
 
 
 
-
+//läuft
 DCM = function(Phi,Theta,Psi)
 {
   var sinR = Math.sin(Phi);
@@ -729,7 +732,7 @@ H[2][2] = cosR * cosP;
 
 
 
-
+//läuft
 event = function(t,x)
 {
  var value = x[5];
@@ -751,6 +754,8 @@ The rotation matrices transform vectors from the earth-relative frame of
 reference to the body-axis frame.
 Quaternion: q1, x Component of quaternion q2, y Component of quaternion
 q3, z Component of quaternion q4, cos(Euler) Component of quaternion */
+
+//läuft
 RMQ = function(q1,q1,q3,q4)
 {
   var H = new Array(3);
@@ -873,9 +878,10 @@ AeroModelAlpha = function(x,u,Mach,alphar,betar,V)
 
 
 
-
+//läuft aber Werte noch überprüfen
 AeroModelMach = function(x,u,Mach,alphar,betar,V)
 {
+
  //Typical Mass and Inertial Properties
  var m = 4536; // Mass, kg
  var Ixx = 35926.5; // Roll Moment of Inertia, kg-m^2
@@ -900,15 +906,16 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  var StaticThrust = 26243.2; // Static Thrust @ Sea Level, N
 
  //Current Thrust
- var atmos = Atmos(-x[6]);
+ var atmos = [];
+ atmos=Atmos(-x[5]);
  var airDens = atmos[0];
  var airPres = atmos[1];
  var temp = atmos[2];
  var soundSpeed = atmos[3];
- var Thrust=u[4] * StaticThrust * Math.pow((airDens / 1.225),0.7)* (1 - Math.exp((-x[6] - 17000) / 2000)); // Thrust at Altitude, N
+ var Thrust=u[3] * StaticThrust * Math.pow((airDens / 1.225),0.7)* (1 - Math.exp((-x[5] - 17000) / 2000)); // Thrust at Altitude, N
 
  //Current Mach Effects, normalized to Test Condition B (Mach = 0.1734)
- var PrFac=1 / (Math.sqrt(1 - Math.pow(Mach,2) * 1.015); // Prandtl Factor
+ var PrFac=1 / (Math.sqrt(1 - Math.pow(Mach,2) * 1.015)); // Prandtl Factor
  var WingMach=1 / ((1 + Math.sqrt(1 + (Math.pow((ARw/(2 * Math.cos(sweepw))),2))* (1 - Math.pow(Mach,2) * Math.cos(sweepw)))) * 0.268249); // Modified Helmbold equation
  var HorizTailMach=1 / ((1 + Math.sqrt(1 + (Math.pow((ARh/(2 * Math.cos(sweeph))),2))* (1 - Math.pow(Mach,2) * Math.cos(sweeph)))) * 0.294539); // Modified Helmbold equation
  var VertTailMach=1 / ((1 + Math.sqrt(1 + (Math.pow((ARv/(2 * Math.cos(sweepv))),2))* (1 - Math.pow(Mach,2) * Math.cos(sweepv)))) * 0.480338); // Modified Helmbold equation
@@ -924,7 +931,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
     CLo=CLo - 0.0192; // Gear-down correction
  }
 
- if (u[6] >= 0.65)
+ if (u[5] >= 0.65)
  {
     CLo=CLo + 0.5182; // 38 deg-flap correction
  }
@@ -936,7 +943,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
 
  var CLar=5.6575; // Lift Slope (B), per rad
 
- if (u[6] >= 0.65)
+ if (u[5] >= 0.65)
  {
     CLar=CLar - 0.0947;
  }
@@ -944,14 +951,14 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  var CLqr=4.231 * cBar / (2 * V); // Pitch-Rate Effect, per rad/s
  var CLdSr=1.08; // Stabilator Effect, per rad
 
- if (u[6] >= 0.65)
+ if (u[5] >= 0.65)
  {
     CLdSr=CLdSr - 0.4802; // 38 deg-flap correction
  }
 
  var CLdEr=0.5774; // Elevator Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CLdEr=CLdEr - 0.2665; // 38 deg-flap correction
  }
@@ -966,7 +973,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
     CDo=CDo + 0.0191; // Gear-down correction
  }
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CDo=CDo + 0.0836; // 38 deg-flap correction
  }
@@ -978,7 +985,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
 
  var epsilon=0.0718; // Induced Drag Factor
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     epsilon=0.079; // 38 deg-flap correction
  }
@@ -993,7 +1000,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
     Cmo=Cmo + 0.0255; // Gear-down correction
  }
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     Cmo=Cmo - 0.058; // 38 deg-flap correction
  }
@@ -1005,7 +1012,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
 
  var Cmar=-1.231; // Static Stability (B), per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     Cmar=Cmar + 0.0138;
  }
@@ -1013,19 +1020,19 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  var Cmqr = -18.8 * cBar / (2 * V); // Pitch-Rate + Alpha-Rate Effect, per rad/s
  var CmdSr=-2.291; // Stabilator Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CmdSr=CmdSr + 0.121; // 38 deg-flap correction
  }
 
  var CmdEr=-1.398; // Elevator Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CmdEr=CmdEr + 0.149; // 38 deg-flap correction
  }
 
- var Cm=Cmo + (Cmar*alphar + Cmqr*x[8] + CmdSr*u[7] + CmdEr*u[1])* HorizTailMach; // Total Pitching Moment Coefficient, w/Mach Correction
+ var Cm=Cmo + (Cmar*alphar + Cmqr*x[7] + CmdSr*u[6] + CmdEr*u[0])* HorizTailMach; // Total Pitching Moment Coefficient, w/Mach Correction
 
  //Current Lateral-Directional Characteristics
  //===========================================
@@ -1033,7 +1040,7 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  //Side-Force Coefficient
  var CYBr=-0.7162; // Side-Force Slope (B), per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CYBr=CYBr + 0.0826;
  }
@@ -1041,24 +1048,24 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  var CYdAr=-0.00699; // Aileron Effect, per rad
  var CYdRr=0.1574; // Rudder Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CYdRr=CYdRr - 0.0093; // 38 deg-flap correction
  }
 
  var CYdASr=0.0264; // Asymmetric Spoiler Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CYdASr=CYdASr + 0.0766; // 38 deg-flap correction
  }
 
- var CY=(CYBr*betar + CYdRr*u[3]) * VertTailMach+ (CYdAr*u[2] + CYdASr*u[5]) * WingMach; // Total Side-Force Coefficient, w/Mach Correction
+ var CY=(CYBr*betar + CYdRr*u[2]) * VertTailMach+ (CYdAr*u[1] + CYdASr*u[4]) * WingMach; // Total Side-Force Coefficient, w/Mach Correction
 
  //Yawing Moment Coefficient
  var CnBr=0.1194; // Directional Stability (B), per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CnBr=CnBr - 0.0092;
  }
@@ -1067,21 +1074,21 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  var Cnrr=(-2 * (lvt / b) * CnBr * VertTailMach - 0.1 * Math.pow(CL,2))* (b / (2 * V)); // Yaw-Rate Effect, per rad/s
  var CndAr=0; // Aileron Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CndAr=CndAr + 0.0028;
  }
 
  var CndRr=-0.0713; // Rudder Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CndRr=CndRr - 0.0185; // 38 deg-flap correction
  }
 
  var CndASr=-0.0088; // Asymmetric Spoiler Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CndASr=CndASr - 0.0106; // 38 deg-flap correction
  }
@@ -1091,40 +1098,40 @@ AeroModelMach = function(x,u,Mach,alphar,betar,V)
  //Rolling Moment Coefficient
  var ClBr=-0.0918; // Dihedral Effect (B), per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     ClBr=ClBr - 0.0092;
  }
 
  var Clpr=-CLar * (1 + 3 * taperw)/(12 * (1 + taperw))* (b / (2 * V)); // Roll-Rate Effect, per rad/s
- var Clrr=(CL * (1 + 3 * taperw)/(12 * (1 + taperw))* Math.pow((Mach * Math.cos(sweepw)),2) - 2) / Math.pow((Mach * Math.cos(sweepw)),2) - 1))* (b / (2 * V)); // Yaw-Rate Effect, per rad/s
+ var Clrr=(CL * (1 + 3 * taperw)/(12 * (1 + taperw))* (Math.pow(Mach * Math.cos(sweepw),2) - 2) / (Math.pow(Mach * Math.cos(sweepw),2) - 1))* (b / (2 * V)); // Yaw-Rate Effect, per rad/s
  var CldAr=0.1537; // Aileron Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CldAr=CldAr + 0.01178;
  }
 
  var CldRr=0.01208; // Rudder Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CldRr=CldRr + 0.01115; // 38 deg-flap correction
  }
 
  var CldASr=-0.01496; // Asymmetric Spoiler Effect, per rad
 
- if ( u[6] >= 0.65)
+ if ( u[5] >= 0.65)
  {
     CldASr=CldASr - 0.02376; // 38 deg-flap correction
  }
 
- var Cl=(ClBr*betar + CldRr*u[3]) * VertTailMach+ Clrr * x[9] + Clpr * x[7]+ (CldAr*u[2] + CldASr*u[5]) * WingMach; // Total Rolling-Moment Coefficient, w/Mach Correction
- var ret = [CD,CL,CY,Cl,Cm,Cn,Thrust];
+ var Cl=(ClBr*betar + CldRr*u[2]) * VertTailMach+ Clrr * x[8] + Clpr * x[6]+ (CldAr*u[1] + CldASr*u[4]) * WingMach; // Total Rolling-Moment Coefficient, w/Mach Correction
+ var ret = [];
+ ret = [CD,CL,CY,Cl,Cm,Cn,Thrust];
 
  return ret;
 }
-
 
 
 

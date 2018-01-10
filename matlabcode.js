@@ -247,28 +247,28 @@ var CmTable = CmStatic;
 var tauDE = 0.32; // Geometric elevator chord/horizontal tail chord
 var tauCO = 0.68; // Elevator Carryover effect
 var Sigmoid = [];
-Sigmoid[0] = 0;
 
-for (var i = 1; i <= 5; i++)
+for (var i = 0; i <= 4; i++)
 {
   Sigmoid[i] = tauCO;
 }
 
-for (var i = 6; i <= 39; i++)
+for (var i = 5; i <= 38; i++)
 {
   Sigmoid[i] = tauDE + elemdiv((tauCO - tauDE), (1 + Math.exp(-15.*(AlphaRad[26] - AlphaRad[i]))));
 }
 
-var CmdETable = zeros(0,39);
+var CmdETable = zeros(0,38);
+var CLdETable = zeros(0,38);
 var CLdEo = tauCO*CLaHT; // CLdE at Alpha = 0
 var CmdEo = -tauCO*(lHT/cBar)*CLaHT; // CmdE at Alpha = 0
 
-for (var i = 1; i <= 39; i++)
+for (var i = 0; i <= 38; i++)
 {
   CmdETable[i] = elemmult((CmdEo*Sigmoid),Math.cos(AlphaRad[i])); // Elevator effect on moment, per rad
 }
 
-for (var i = 1; i <= 39; i++)
+for (var i = 0; i <= 38; i++)
 {
   CLdETable[i] = elemmult((CLdEo*Sigmoid),Math.cos(AlphaRad[i])); // Elevator effect on lift, per rad
 }
@@ -484,11 +484,7 @@ sort = function(x)
     }
  }
 
- var y = [];
- y[0] = x;
- y[1] = k;
-
- return y;
+ return x;
 
 }
 
@@ -497,34 +493,8 @@ sort = function(x)
 
 
 
-interp1 = function(x,y,xi)
+interp1 = function(x,y,xi) //xi muss ein Skalar sein!!
 {
- var siz = xi.length;
- if (xi.length~=1)
- {
-
- alert("xi ist ein Vektor statt ein Skalar bei interp1. Bitte implementieren Sie den vektoriellen Fall!");
- // var y = sort(xi);
- // var xxi = y[0];
- // var k = y[1];
- // var y1 = sort([x;xxi]);
- // var dum = y1[0];
- // var j = y[1]; // Ab hier Copy-Paste
- // r(j)=1:j.length;
- // r=r(x.length+1:end)-(1:xxi.length);
- // r(k)=r;
- // r(xi==x(end))=length(x)-1;
- // ind=find((r>0) & (r<length(x)));
- // ind = ind(:);
- // yi=repmat(NaN,length(xxi),size(y,2));
- // rind = r(ind);
- // u = (xi(ind)-x(rind))./(x(rind+1)-x(rind));
- // yi(ind,:)=y(rind,:)+(y(rind+1,:)-y(rind,:)).*u(:,ones(1,size(y,2)));
-
- }
- else
- {
- // Special scalar xi case
  x = sort(x); // sortiere x
  var r1 = find(x,xi); // Vektor der die Indizes speichert, die kleinergleich xi sind
  var n1 = r1.length; // Laenge des Indizevektors
@@ -541,15 +511,14 @@ interp1 = function(x,y,xi)
  }*/
  if ((r>0) && (r<x.length))
  {
-    var u = (xi-x[r])/(x[r+1]-x[r]);
-    yi=y[r]+(y[r+1]-y[r])*u;
+    var u = (xi-x[r-1])/(x[r]-x[r-1]);
+    yi=y[r-1]+(y[r]-y[r-1])*u;
  }
  else
  {
     yi = NaN;
  }
 
- }
  /* if ((min(size(yi))==1) & (prod(siz)>1)) // prod(siz) ist bei uns 1!! Sonst Fehler!!
  {
  yi = reshape(yi,siz);

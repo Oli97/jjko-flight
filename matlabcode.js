@@ -114,9 +114,9 @@ var ARvent = (bVent*bVent)/ Svent // Ventral fin aspect ratio
 var ARVT = (bVT*bVT) / SVT // Vertical tail aspect ratio
 
 // Moments and Product of Inertia
-var Ixx = (1/12)*((mWing+mFuel)*b*b + mHT*Math.pow(bHT,2) + mVT*Math.pow(bVT,2)) + (0.25*(mFus+mPay)*Math.pow(dFus,2) + mEng*Math.pow(yEng,2) + mVT*Math.pow(zVT,2))
-var Iyy = (1/12)*((mFus+mPay)*Math.pow(lenFus,2) + (mWing+mFuel)*Math.pow(cBar,2) + mVT*Math.pow(cHT,2)) + (mEng*Math.pow(lEng,2) + mHT*Math.pow(lHT,2) + mVT*Math.pow(lHT,2))
-var Izz = (1/12)*((mFus+mPay)*Math.pow(lenFus,2) + (mWing+mFuel)*Math.pow(b,2) + mHT*Math.pow(bHT,2)) + (mEng*Math.pow(lEng,)2 + mHT*Math.pow(lHT,2) + mVT*Math.pow(lVT,2))
+var Ixx = (1/12)*((mWing+mFuel)*b*b + mHT*Math.pow(bHT,2) + mVT*Math.pow(bVT,2)) + (0.25*(mFus+mPay)*Math.pow(dFus,2) + mEng*Math.pow(yEng,2) + mVT*Math.pow(zVT,2));
+var Iyy = (1/12)*((mFus+mPay)*Math.pow(lenFus,2) + (mWing+mFuel)*Math.pow(cBar,2) + mVT*Math.pow(cHT,2)) + (mEng*Math.pow(lEng,2) + mHT*Math.pow(lHT,2) + mVT*Math.pow(lHT,2));
+var Izz = (1/12)*((mFus+mPay)*Math.pow(lenFus,2) + (mWing+mFuel)*Math.pow(b,2) + mHT*Math.pow(bHT,2)) + (mEng*Math.pow(lEng,2) + mHT*Math.pow(lHT,2) + mVT*Math.pow(lVT,2));
 var Ixz = mHT*lHT*zHT + mVT*lVT*zVT + mEng*lEng*zEng
 var dEmax = 20 * 0.01745329 // Maximum Elevator Deflection is ±20 deg
 var dAmax = 35 * 0.01745329 // Maximum Aileron Deflection is ±35 deg
@@ -173,7 +173,7 @@ CLstatic[26] = 0.78;
 
 for (var i = 27; i <= 39; i++)
 {
-  CLstatic[i] = elemmult(CN[i],CosAlpha[i]);
+  CLstatic[i] = CN[i]*CosAlpha[i];
 }
 
 var CLTable = CLstatic;
@@ -211,7 +211,7 @@ CDstatic[26] = CDstatic[25]*1.1;
 
 for (var i = 26; i <= 39; i++)
 {
-  CDstatic[i] = 2*(Splan/S)*Math.abs(elemmult(elemmult(SinAlpha[i],SinAlpha[i]),SinAlpha[i]));
+  CDstatic[i] = 2*(Splan/S)*Math.abs(SinAlpha[i]*SinAlpha[i]*SinAlpha[i]);
 }
 
 var CDNewt = 2*(Splan/S)*Math.abs(elemmult(elemmult(SinAlpha,SinAlpha),SinAlpha));
@@ -230,9 +230,9 @@ CmStatic[22] = CmStatic[21]*0.9;
 CmStatic[23] = CmStatic[22]*0.9;
 CmStatic[24] = CmStatic[23]*0.9;
 CmStatic[25] = CmStatic[24]*0.9;
-CmStatic[26] = 0.9*CmStatic[25] - 0.1*elemmult(CN[26],Math.sign(AlphaRad[26]))*cpNewt/cBar;
-CmStatic[27] = 0.4*CmStatic[26] - 0.6*elemmult(CN[27],Math.sign(AlphaRad[27]))*cpNewt/cBar;
-CmStatic[28] = 0.1*CmStatic[27] - 0.9*elemmult(CN[28],Math.sign(AlphaRad[28]))*cpNewt/cBar;
+CmStatic[26] = 0.9*CmStatic[25] - 0.1*CN[26]*Math.sign(AlphaRad[26])*cpNewt/cBar;
+CmStatic[27] = 0.4*CmStatic[26] - 0.6*CN[27]*Math.sign(AlphaRad[27])*cpNewt/cBar;
+CmStatic[28] = 0.1*CmStatic[27] - 0.9*CN[28]*Math.sign(AlphaRad[28])*cpNewt/cBar;
 
 var CN = 2*(Splan/S)*elemmult(SinAlpha,SinAlpha);
 
@@ -335,8 +335,7 @@ var CnrHatWing = -0.103*elemmult(CLTable,CLTable) - 0.4*CDoWing; // (from Seckel
 var CnrHato = CnrHatVT + CnrHatWing;
 var CnrHatTable = elemmult(CnrHato, Math.cos(AlphaRad));
 
-
-
+//läuft
 sign = function(x)
 {
 if (x<0) { return -1}
@@ -347,7 +346,7 @@ else { return 1}
 
 
 
-
+//läuft
 min = function(a,b)
 {
   if (a<=b){
@@ -362,7 +361,7 @@ min = function(a,b)
 
 
 
-
+//läuft
 max = function(a,b)
 {
   if (a>=b){
@@ -393,12 +392,12 @@ zeros = function(i,j)
 
 
 
-
+//läuft
 elemmult = function(array1, array2)
 {
  var l = array1.length;
  var res = [];
- for(var i=1;i<=l;i++)
+ for(var i=0;i<=l-1;i++)
  {
     res[i] = array1[i]*array2[i];
  }
@@ -410,12 +409,12 @@ elemmult = function(array1, array2)
 
 
 
-
+//läuft
 elemdiv = function(array1, array2)
 {
  var l = array1.length;
  var res = [];
- for(var i=1;i<=l;i++)
+ for(var i=0;i<=l-1;i++)
  {
     res[i] = array1[i]/array2[i];
  }
@@ -427,12 +426,12 @@ elemdiv = function(array1, array2)
 
 
 
-
+//läuft
 elemqu = function(array1)
 {
  var l = array1.length;
  var res = [];
- for(var i=1;i<=l;i++)
+ for(var i=0;i<=l-1;i++)
  {
     res[i] = array1[i]*array1[i];
  }
@@ -556,7 +555,7 @@ return windb;
 
 
 
-
+//läuft
 LinModel=function(tj,xj)
 {
  /*// FLIGHT Equations of Motion for Linear Model (Jacobian) Evaluation,
@@ -646,7 +645,7 @@ Atmos = function(geomAlt)
 
 
 
-
+//läuft
 TrimCost=function(OptParam)
 {
  /* FLIGHT Cost Function for Longitudinal Trim in Steady Level Flight
@@ -688,10 +687,10 @@ TrimCost=function(OptParam)
  for (var k=0;k<OptParam.length;k++){
    ParamCost[k]=OptParam[k];
  }
- ParamCost[OptParam.length]=J;
+ ParamCost[OptParam.length-1]=J;
 
 
- TrimHist = [TrimHist ParamCost];
+ TrimHist = [TrimHist, ParamCost];
 
  return J;
 }
@@ -780,9 +779,10 @@ RMQ = function(q1,q1,q3,q4)
 
 
 
-
+//läuft durch aber bis jetzt nur mit NaN
 AeroModelAlpha = function(x,u,Mach,alphar,betar,V)
 {
+
  // FLIGHT Aerodynamic Coefficients of the Aircraft, Thrust Model,
  // and Geometric and Inertial Properties
 
@@ -808,12 +808,12 @@ AeroModelAlpha = function(x,u,Mach,alphar,betar,V)
  // Thrust Properties
  var  StaticThrust = 2*6.49*Math.pow(10,3); // Static Thrust @ Sea Level, N
  // Current Thrust
- var atmos = Atmos(-x[6]);
+ var atmos = Atmos(-x[5]);
  var airDens = atmos[0];
  var airPres = atmos[1];
  var temp = atmos[2];
  var soundSpeed = atmos[3];
- var Thrust = u[4] * StaticThrust * Math.pow((airDens / 1.225),0.7) * (1 - exp((-x[6] - 17000) / 2000)); // Thrust at Altitude, N
+ var Thrust = u[3] * StaticThrust * Math.pow((airDens / 1.225),0.7) * (1 - Math.exp((-x[5] - 17000) / 2000)); // Thrust at Altitude, N
 
  // Current Longitudinal Characteristics
  // ====================================
@@ -823,18 +823,17 @@ AeroModelAlpha = function(x,u,Mach,alphar,betar,V)
  var  CLqr = CLqHat * cBar/(2*V); // Pitch-Rate Effect, per rad/s
  var  CLdEr  = interp1(AlphaTable,CLdETable,alphadeg); // Elevator Effect, per rad
  var  CLdSr = CLdEr; // Stabilator Effect, per rad
- var  CL = CLStatic + CLqr*x[8] + CLdSr*u[7] + CLdEr*u[1]; // Total Lift Coefficient
+ var  CL = CLStatic + CLqr*x[7] + CLdSr*u[6] + CLdEr*u[0]; // Total Lift Coefficient
 
  // Drag Coefficient
  var CDStatic = interp1(AlphaTable,CDTable,alphadeg); // Static Drag Coefficient
  var CD = CDStatic; // Total Drag Coefficient
-
  // Pitching Moment Coefficient
  var  CmStatic = interp1(AlphaTable,CmTable,alphadeg); // Static Pitching Moment Coefficient
  var  CmdEr  = interp1(AlphaTable,CmdETable,alphadeg); // Elevator Effect, per rad
  var Cmqr = -CLqHat*(lHT/cBar) * cBar/(2*V); // Pitch-Rate + Alpha-Rate Effect, per rad/s
  var  CmdSr = CmdEr; // Stabilator Effect, per rad
- var  Cm = CmStatic - CL*SMI + Cmqr*x[8] + CmdSr*u[7] + CmdEr*u[1]; // Total Pitching Moment Coefficient
+ var  Cm = CmStatic - CL*SMI + Cmqr*x[7] + CmdSr*u[6] + CmdEr*u[0]; // Total Pitching Moment Coefficient
 
  // Current Lateral-Directional Characteristics
  // ===========================================
@@ -848,14 +847,14 @@ AeroModelAlpha = function(x,u,Mach,alphar,betar,V)
  var  CldAr = interp1(AlphaTable,CldATable,alphadeg); // Aileron Effect, per rad
  var  CldRr = interp1(AlphaTable,CldRTable,alphadeg); // Rudder Effect, per rad
  var  CldASr = 0; // Asymmetric Spoiler Effect, per rad
- var  Cl = (ClBr*betar + CldRr*u[3]) + Clrr * x[9] + Clpr * x[7]+ (CldAr*u[2] + CldASr*u[5]); // Total Rolling-Moment Coefficient
+ var  Cl = (ClBr*betar + CldRr*u[2]) + Clrr * x[8] + Clpr * x[6]+ (CldAr*u[1] + CldASr*u[4]); // Total Rolling-Moment Coefficient
 
  // Side-Force Coefficient
  var  CYBr = interp1(AlphaTable,CYBetaTable,alphadeg); // Side-Force Slope, per rad
  var  CYdAr = CYdAo; // Aileron Effect, per rad
  var  CYdRr = 0.1574; // Rudder Effect, per rad
  var  CYdASr = 0; // Asymmetric Spoiler Effect, per rad
- var  CY = (CYBr*betar + CYdRr*u[3]) + (CYdAr*u[2] + CYdASr*u[5]); // Total Side-Force Coefficient
+ var  CY = (CYBr*betar + CYdRr*u[2]) + (CYdAr*u[1] + CYdASr*u[4]); // Total Side-Force Coefficient
 
  // Yawing Moment Coefficient
  var  CnBr = interp1(AlphaTable,CnBetaTable,alphadeg); // Directional Stability, per rad
@@ -868,7 +867,7 @@ AeroModelAlpha = function(x,u,Mach,alphar,betar,V)
  var  CndAr = interp1(AlphaTable,CndATable,alphadeg); // Aileron Effect, per rad
  var  CndRr = interp1(AlphaTable,CndRTable,alphadeg); // Rudder Effect, per rad
  var  CndASr = 0; // Asymmetric Spoiler Effect, per rad
- var  Cn = (CnBr*betar + CndRr*u[3]) + Cnrr * x[9] + Cnpr * x[7]+ (CndAr*u[2] + CndASr*u[5]); // Total Yawing-Moment Coefficient
+ var  Cn = (CnBr*betar + CndRr*u[2]) + Cnrr * x[8] + Cnpr * x[6]+ (CndAr*u[1] + CndASr*u[4]); // Total Yawing-Moment Coefficient
  var ret = [CD,CL,CY,Cl,Cm,Cn,Thrust];
 
  return ret;
@@ -1604,7 +1603,7 @@ flight = function()
  if(LINEAR >= 1)
  {
     var thresh = [.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1];
-    var xj = [x;u];
+    var xj = [x,u];
     var uTemp = u; // 'numjac' modifies 'u'; reset 'u' after the call
     var xdotj = LinModel(ti,xj);
     [dFdX,fac] = numjac('LinModel',ti,xj,xdotj,thresh,[],0);

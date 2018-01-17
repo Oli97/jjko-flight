@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <title>Canvas tutorial</title>
+    <script type="text/javascript">
+      function draw(){
+        var canvas = document.getElementById('tutorial');
+        if(canvas.getContext){
+          var ctx = canvas.getContext('2d');
+        }
+      }
+    </script>
+    <style type="text/css">
+      canvas { border: 1px solid black; }
+    </style>
+  </head>
+  <body onload="draw();">
+    <canvas id="tutorial" width="150" height="150"></canvas>
+  </body>
+  <script>
+  var canvas = document.getElementById("tutorial");
+  var ctx = canvas.getContext("2d");
+
+  ////////////////////////////////////////////////////////////////////
+  //Funktion
+/*  sort = function(x)
+  {
+   var n = x.length;
+   var k = [];
+   for (var l = 0; l < n; l++)
+   {
+      k[l]=l;
+   }
+   for (var i = n-1; i>=0; i--)
+   {
+      for(var j = 1; j<=i; j++)
+      {
+        if(x[j-1]>x[j])
+        {
+  	var temp = x[j-1];
+  	x[j-1] = x[j];
+  	x[j] = temp;
+
+  	var temp2 = j-1;
+  	k[j-1] = j;
+  	k[j] = temp2;
+        }
+      }
+   }
+
+   return x;
+
+  }
+*/
+f = function(x){
+  return Math.pow(x,2);
+}
+var xi = [1,2,3];
+//var fi = [];
+//var xa;
+var x_tilde = xi;
+xi=[];
+for(var i=0;i<xi.length;i++)
+{
+  if(i=0){xi[0]=x_tilde[0];}
+  else{
+  for(var k=0;k<=xi.length;k++){
+    if(k<xi.length){
+      if(f(x_tilde[i])>f(xi[k])){
+
+      }
+      else {
+        xi[k]=x_tilde[i];
+        for(h=k+1;h<=xi.length;h++){
+          xi[h]=xi[h-1];
+        }
+
+      }
+  }
+  else if(k==xi.length){
+    xi[k]=x_tilde[i];
+  }
+}
+}
+}
+  ////////////////////////////////////////////////////////////////////
+  ctx.fillStyle="black";
+  ctx.font="12px Futura";
+  ctx.fillText(xi,20,50);
+
+  </script>
+</html>

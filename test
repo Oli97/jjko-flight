@@ -1,0 +1,1013 @@
+
+
+<html>
+
+<head>
+<title>Fuel &mdash; Studienprojekt</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<meta name="viewport" content="width=200" />
+<meta name="viewport" content="initial-scale=2" />
+    <script type="text/javascript">
+       
+    </script>
+</head>
+
+
+<body>
+
+  <div class="container">
+
+    
+    <canvas id="fest" width="300" height="150" ></canvas>
+    
+    </canvas>
+
+
+</div>
+
+
+
+
+
+
+</body>
+<script>
+
+var canvas = document.getElementById("fest");
+var ctx=canvas.getContext("2d");
+
+//////
+
+
+
+
+
+
+
+event = function(t,x)
+{
+ var value = x[5];
+ var isterminal = 1;
+ var direction = 1;
+
+ var eventausgabe = [value, isterminal, direction];
+
+ return eventausgabe;
+}
+
+
+
+
+DCM = function(Phi,Theta,Psi)
+{
+  var sinR = Math.sin(Phi);
+var cosR = Math.cos(Phi);
+var sinP = Math.sin(Theta);
+var cosP = Math.cos(Theta);
+var sinY = Math.sin(Psi);
+var cosY = Math.cos(Psi);
+var H = new Array(3);
+
+for (var i=0;i<H.length;i++){
+  H[i] = new Array (3);
+}
+
+H[0][0] = cosP * cosY;
+H[0][1] = cosP * sinY;
+H[0][2] = -sinP;
+H[1][0] = sinR * sinP * cosY - cosR * sinY;
+H[1][1] = sinR * sinP * sinY + cosR * cosY;
+H[1][2] = sinR * cosP;
+H[2][0] = cosR * sinP * cosY + sinR * sinY;
+H[2][1] = cosR * sinP * sinY - sinR * cosY;
+H[2][2] = cosR * cosP;
+
+ return H;
+}
+
+
+
+
+
+min = function(a,b)
+{
+  if (a<=b){
+    return a;
+  }
+  else {
+    return b;
+  }
+}
+
+
+
+
+
+
+
+Atmos = function(geomAlt)
+{
+ /* 1976 U.S. Standard Atmosphere Interpolation for FLIGHT
+
+ // June 12, 2015
+ // ===============================================================
+ // Copyright 2006-15 by ROBERT F. STENGEL. All rights reserved.
+
+ // Note: Function does not extrapolate outside altitude range
+ // Input: Geometric Altitude, m (positive up)
+ // Output: Air Density, kg/m^3
+ //         Air Pressure, N/m^2
+ //         Air Temperature, K
+ //         Speed of Sound, m/s
+
+ //Values Tabulated by Geometric Altitude*/
+ var Z = [-1000,0,2500,5000,10000,11100,15000,20000,47400,51000];
+ var H = [-1000,0,2499,4996,9984,11081,14965,19937,47049,50594];
+ var ppo = [1,1,0.737,0.533,0.262,0.221,0.12,0.055,0.0011,0.0007];
+ var rro = [1,1,0.781,0.601,0.338,0.293,0.159,0.073,0.0011,0.0007];
+ var T = [288.15,288.15,271.906,255.676,223.252,216.65,216.65,216.65,270.65,270.65];
+ var a = [340.294,340.294,330.563,320.545,299.532,295.069,295.069,295.069,329.799,329.799];
+ var R = 6367435; // Mean radius of the earth, m
+ var Dens = 1.225; // Air density at sea level, Kg/m^3
+ var Pres = 101300; // Air pressure at sea level, N/m^2
+
+ // Geopotential Altitude, m
+ var geopAlt = R * geomAlt / (R + geomAlt);
+
+ // Linear Interpolation in Geopotential Altitude for Temperature and Speed of Sound
+ var temp  = interp1(Z,T,geopAlt);
+ var soundSpeed = interp1(Z,a,geopAlt);
+
+ // Exponential Interpolation in Geometric Altitude for Air Density and Pressure
+ var betap, betar, airDens, airPres;
+ for(k=1;k<=9;k++)
+ {
+    if (geomAlt <= Z[k])
+    {
+      betap = Math.log(ppo[k] / ppo[k-1]) / (Z[k] - Z[k-1]);
+      betar = Math.log(rro[k] / rro[k-1]) / (Z[k] - Z[k-1]);
+      airPres = Pres * ppo[k-1] * Math.exp(betap * (geomAlt - Z[k-1]));
+      airDens = Dens * rro[k-1] * Math.exp(betar * (geomAlt - Z[k-1]));
+      break;
+    }
+ }
+
+ var atmos = [airDens,airPres,temp,soundSpeed];
+
+ return atmos;
+}
+
+
+
+
+interp1 = function(x,y,xi) //xi muss ein Skalar sein!!
+{
+ x = sort(x); // sortiere x
+ var r1 = find(x,xi); // Vektor der die Indizes speichert, die kleinergleich xi sind
+ var n1 = r1.length; // Laenge des Indizevektors
+ var r = r1[n1-1]; // maximaler Eintrag des Indizevektors
+ var n = x.length; //
+ if (xi == x[n])
+ {
+    r = x.length-1;
+ }
+ /*if (isempty(r)) // Wenn r leer ist, gibt es ein Problem!
+ {
+ yi = NaN;
+ return
+ }*/
+ if ((r>0) && (r<x.length))
+ {
+    var u = (xi-x[r-1])/(x[r]-x[r-1]);
+    yi=y[r-1]+(y[r]-y[r-1])*u;
+ }
+ else
+ {
+    yi = NaN;
+ }
+
+ /* if ((min(size(yi))==1) & (prod(siz)>1)) // prod(siz) ist bei uns 1!! Sonst Fehler!!
+ {
+ yi = reshape(yi,siz);
+ }*/
+ return yi;
+}
+
+
+
+
+
+find = function(x,y) //nur fuer sortierte Vektoren
+{
+ var n = x.length;
+ var ind = [];
+ for (var i = 0; x[i] <= y; i++)
+ {
+    ind[i] = i;
+ }
+ return ind;
+}
+
+
+
+
+sort = function(x)
+{
+ var n = x.length;
+ var k = [];
+ for (var l = 0; l < n; l++)
+ {
+    k[l]=l;
+ }
+ for (var i = n-1; i>=0; i--)
+ {
+    for(var j = 1; j<=i; j++)
+    {
+      if(x[j-1]>x[j])
+      {
+	var temp = x[j-1];
+	x[j-1] = x[j];
+	x[j] = temp;
+
+	var temp2 = j-1;
+	k[j-1] = j;
+	k[j] = temp2;
+      }
+    }
+ }
+
+ return x;
+
+}
+
+
+
+
+
+
+
+WindField=function(height,phir,thetar,psir)
+{
+ /*// FLIGHT Wind Field Interpolation for 3-D wind as a Function of Altitude
+ // June 12, 2015
+ // ===============================================================
+ // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
+ */
+ var windh = [-10, 0, 100, 200, 500, 1000, 2000, 4000, 8000, 16000]; // Height, m
+ var windx = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Northerly wind, m/s
+ var windy = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Easterly wind, m/s
+ var windz = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Vertical wind. m/s
+ var winde = [interp1(windh,windx,height), interp1(windh,windy,height), interp1(windh,windz,height)]; // Earth-relative frame
+ var HEB = DCM(phir,thetar,psir);
+ var windb = HEB * winde; // Body-axis frame
+
+ return windb;
+}
+
+
+
+
+
+max = function(a,b)
+{
+  if (a>=b){
+    return a;
+  }
+  else {
+    return b;
+  }
+}
+
+
+
+
+
+AeroModelMach = function(x,u,Mach,alphar,betar,V)
+{
+ //Typical Mass and Inertial Properties
+ var m = 4536; // Mass, kg
+ var Ixx = 35926.5; // Roll Moment of Inertia, kg-m^2
+ var Iyy = 33940.7; // Pitch Moment of Inertia, kg-m^2
+ var Izz = 67085.5; // Yaw Moment of Inertia, kg-m^2
+ var Ixz = 3418.17; // Nose-high(low) Product of Inertia, kg-m^2
+
+ //Geometric Properties
+ var cBar=2.14; // Mean Aerodynamic Chord, m
+ var b=10.4; // Wing Span, m
+ var S=21.5; // Reference Area, m^2
+ var ARw=5.02; // Wing Aspect Ratio
+ var taperw=0.507; // Wing Taper Ratio
+ var sweepw=13 * .01745329; // Wing 1/4-chord sweep angle, rad
+ var ARh=4; // Horizontal Tail Aspect Ratio
+ var sweeph=25 * .01745329; // Horiz Tail 1/4-chord sweep angle, rad
+ var ARv=0.64; // Vertical Tail Aspect Ratio
+ var sweepv=40 * .01745329; // Vert Tail 1/4-chord sweep angle, rad
+ var lvt=4.72; // Vert Tail Length, m
+
+ //Thrust Properties
+ var StaticThrust = 26243.2; // Static Thrust @ Sea Level, N
+
+ //Current Thrust
+ var atmos = Atmos(-x[6]);
+ var airDens = atmos[0];
+ var airPres = atmos[1];
+ var temp = atmos[2];
+ var soundSpeed = atmos[3];
+ var Thrust=u[4] * StaticThrust * Math.pow((airDens / 1.225),0.7)* (1 - Math.exp((-x[6] - 17000) / 2000)); // Thrust at Altitude, N
+
+ //Current Mach Effects, normalized to Test Condition B (Mach = 0.1734)
+ var PrFac=1 / (Math.sqrt(1 - Math.pow(Mach,2) * 1.015)); // Prandtl Factor
+ var WingMach=1 / ((1 + Math.sqrt(1 + (Math.pow((ARw/(2 * Math.cos(sweepw))),2))* (1 - Math.pow(Mach,2) * Math.cos(sweepw)))) * 0.268249); // Modified Helmbold equation
+ var HorizTailMach=1 / ((1 + Math.sqrt(1 + (Math.pow((ARh/(2 * Math.cos(sweeph))),2))* (1 - Math.pow(Mach,2) * Math.cos(sweeph)))) * 0.294539); // Modified Helmbold equation
+ var VertTailMach=1 / ((1 + Math.sqrt(1 + (Math.pow((ARv/(2 * Math.cos(sweepv))),2))* (1 - Math.pow(Mach,2) * Math.cos(sweepv)))) * 0.480338); // Modified Helmbold equation
+
+ //Current Longitudinal Characteristics
+ //====================================
+
+ //Lift Coefficient
+ var CLo=0.1095; // Zero-AoA Lift Coefficient (B)
+
+ if (GEAR >= 1)
+ {
+    CLo=CLo - 0.0192; // Gear-down correction
+ }
+
+ if (u[6] >= 0.65)
+ {
+    CLo=CLo + 0.5182; // 38 deg-flap correction
+ }
+
+ if (SPOIL >= 1)
+ {
+    CLo=CLo - 0.1897; // 42 deg-Symmetric Spoiler correction
+ }
+
+ var CLar=5.6575; // Lift Slope (B), per rad
+
+ if (u[6] >= 0.65)
+ {
+    CLar=CLar - 0.0947;
+ }
+
+ var CLqr=4.231 * cBar / (2 * V); // Pitch-Rate Effect, per rad/s
+ var CLdSr=1.08; // Stabilator Effect, per rad
+
+ if (u[6] >= 0.65)
+ {
+    CLdSr=CLdSr - 0.4802; // 38 deg-flap correction
+ }
+
+ var CLdEr=0.5774; // Elevator Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CLdEr=CLdEr - 0.2665; // 38 deg-flap correction
+ }
+
+ var CL=CLo + (CLar*alphar + CLqr*x[8] + CLdSr*u[7] + CLdEr*u[1])* WingMach; // Total Lift Coefficient, w/Mach Correction
+
+ //Drag Coefficient
+ var CDo=0.0255; // Parasite Drag Coefficient (B)
+
+ if ( GEAR >= 1)
+ {
+    CDo=CDo + 0.0191; // Gear-down correction
+ }
+
+ if ( u[6] >= 0.65)
+ {
+    CDo=CDo + 0.0836; // 38 deg-flap correction
+ }
+
+ if ( SPOIL >= 1)
+ {
+    CDo=CDo + 0.0258; // 42 deg-Symmetric Spoiler correction
+ }
+
+ var epsilon=0.0718; // Induced Drag Factor
+
+ if ( u[6] >= 0.65)
+ {
+    epsilon=0.079; // 38 deg-flap correction
+ }
+
+ var CD=CDo * PrFac + epsilon * Math.pow(CL,2); // Total Drag Coefficient, w/Mach Correction
+
+ //Pitching Moment Coefficient
+ var Cmo=0; // Zero-AoA Moment Coefficient (B)
+
+ if ( GEAR >= 1)
+ {
+    Cmo=Cmo + 0.0255; // Gear-down correction
+ }
+
+ if ( u[6] >= 0.65)
+ {
+    Cmo=Cmo - 0.058; // 38 deg-flap correction
+ }
+
+ if ( SPOIL >= 1)
+ {
+    Cmo=Cmo - 0.0154; // 42 deg-Symmetric Spoiler correction
+ }
+
+ var Cmar=-1.231; // Static Stability (B), per rad
+
+ if ( u[6] >= 0.65)
+ {
+    Cmar=Cmar + 0.0138;
+ }
+
+ var Cmqr = -18.8 * cBar / (2 * V); // Pitch-Rate + Alpha-Rate Effect, per rad/s
+ var CmdSr=-2.291; // Stabilator Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CmdSr=CmdSr + 0.121; // 38 deg-flap correction
+ }
+
+ var CmdEr=-1.398; // Elevator Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CmdEr=CmdEr + 0.149; // 38 deg-flap correction
+ }
+
+ var Cm=Cmo + (Cmar*alphar + Cmqr*x[8] + CmdSr*u[7] + CmdEr*u[1])* HorizTailMach; // Total Pitching Moment Coefficient, w/Mach Correction
+
+ //Current Lateral-Directional Characteristics
+ //===========================================
+
+ //Side-Force Coefficient
+ var CYBr=-0.7162; // Side-Force Slope (B), per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CYBr=CYBr + 0.0826;
+ }
+
+ var CYdAr=-0.00699; // Aileron Effect, per rad
+ var CYdRr=0.1574; // Rudder Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CYdRr=CYdRr - 0.0093; // 38 deg-flap correction
+ }
+
+ var CYdASr=0.0264; // Asymmetric Spoiler Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CYdASr=CYdASr + 0.0766; // 38 deg-flap correction
+ }
+
+ var CY=(CYBr*betar + CYdRr*u[3]) * VertTailMach+ (CYdAr*u[2] + CYdASr*u[5]) * WingMach; // Total Side-Force Coefficient, w/Mach Correction
+
+ //Yawing Moment Coefficient
+ var CnBr=0.1194; // Directional Stability (B), per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CnBr=CnBr - 0.0092;
+ }
+
+ var Cnpr=CL * (1 + 3 * taperw)/(12 * (1 + taperw)) * (b / (2 * V)); // Roll-Rate Effect, per rad/s
+ var Cnrr=(-2 * (lvt / b) * CnBr * VertTailMach - 0.1 * Math.pow(CL,2))* (b / (2 * V)); // Yaw-Rate Effect, per rad/s
+ var CndAr=0; // Aileron Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CndAr=CndAr + 0.0028;
+ }
+
+ var CndRr=-0.0713; // Rudder Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CndRr=CndRr - 0.0185; // 38 deg-flap correction
+ }
+
+ var CndASr=-0.0088; // Asymmetric Spoiler Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CndASr=CndASr - 0.0106; // 38 deg-flap correction
+ }
+
+ var Cn=(CnBr*betar + CndRr*u[3]) * VertTailMach+ Cnrr * x[9] + Cnpr * x[7]+ (CndAr*u[2] + CndASr*u[5]) * WingMach; // Total Yawing-Moment Coefficient, w/Mach Correction
+
+ //Rolling Moment Coefficient
+ var ClBr=-0.0918; // Dihedral Effect (B), per rad
+
+ if ( u[6] >= 0.65)
+ {
+    ClBr=ClBr - 0.0092;
+ }
+
+ var Clpr=-CLar * (1 + 3 * taperw)/(12 * (1 + taperw))* (b / (2 * V)); // Roll-Rate Effect, per rad/s
+ var Clrr=(CL * (1 + 3 * taperw)/(12 * (1 + taperw))* (Math.pow((Mach * Math.cos(sweepw)),2) - 2) / (Math.pow((Mach * Math.cos(sweepw)),2) - 1))* (b / (2 * V)); // Yaw-Rate Effect, per rad/s
+ var CldAr=0.1537; // Aileron Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CldAr=CldAr + 0.01178;
+ }
+
+ var CldRr=0.01208; // Rudder Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CldRr=CldRr + 0.01115; // 38 deg-flap correction
+ }
+
+ var CldASr=-0.01496; // Asymmetric Spoiler Effect, per rad
+
+ if ( u[6] >= 0.65)
+ {
+    CldASr=CldASr - 0.02376; // 38 deg-flap correction
+ }
+
+ var Cl=(ClBr*betar + CldRr*u[3]) * VertTailMach+ Clrr * x[9] + Clpr * x[7]+ (CldAr*u[2] + CldASr*u[5]) * WingMach; // Total Rolling-Moment Coefficient, w/Mach Correction
+ var ret = [CD,CL,CY,Cl,Cm,Cn,Thrust];
+
+ return ret;
+}
+
+
+
+
+
+
+EoM = function(t,x)
+{
+ /*
+ // FLIGHT Equations of Motion
+
+ // June 12, 2015
+ // ===============================================================
+ // Copyright 2006-2015 by ROBERT F. STENGEL. All rights reserved.
+
+ global m Ixx Iyy Izz Ixz S b cBar CONHIS u tuHis deluHis uInc MODEL RUNNING
+
+ // Select Aerodynamic Model
+
+ if MODEL == 0
+ AeroModel = @AeroModelAlpha;
+ else
+ AeroModel = @AeroModelMach;
+ end
+ */
+ var ev = event(t,x);
+ var value = ev[0];
+ var isterminal = ev[1];
+ var direction = ev[2];
+
+ // Earth-to-Body-Axis Transformation Matrix
+ var HEB  = DCM(x[9],x[10],x[11]);
+
+ // Atmospheric State
+ x[5] = min(x[5],0); // Limit x[6] to <= 0 m
+ var atmos = Atmos(-x[5]);
+ var airDens = atmos[0];
+ var airPres = atmos[1];
+ var temp = atmos[2];
+ var soundSpeed = atmos[3];
+
+ // Body-Axis Wind Field
+ var windb = WindField(-x[5], x[9], x[10], x[11]);
+
+ // Body-Axis Gravity Components
+ var gb = [];
+
+  gb[0]=HEB[0][2]*9.80665;
+  gb[1]=HEB[1][2]*9.80665;
+  gb[2]=HEB[2][2]*9.80665;
+
+ // Air-Relative Velocity Vector
+ x[0] = max(x[0],0); // Limit axial velocity to >= 0 m/s
+ var Va  = [];
+ for (var i=0;i<3;i++){
+   Va[i]=x[i]+windb[i];
+ }
+ var V  = Math.sqrt(Va[0]*Va[0]+Va[1]*Va[1]+Va[2]*Va[2]);
+ var alphar = Math.atan(Va[2] / Math.abs(Va[0])); // alphar = min(alphar, (pi/2 - 1e-6)); // Limit angle of attack to <= 90 deg
+ var alpha  = 57.2957795 * alphar;
+ var betar =  Math.asin(Va[1] / V);
+ var beta =  57.2957795 * betar;
+ var Mach =  V / soundSpeed;
+ var qbar = 0.5 * airDens * Math.pow(V,2);
+
+ // Incremental Flight Control Effects
+ var uTotal;
+ var CONHIS = 1;
+ var RUNNING = 0;
+
+ if(CONHIS >=1 && RUNNING == 1)
+ {
+    [uInc] = interp1(tuHis,deluHis,t);
+
+
+for(var i=0;i<length.uInc;i++){
+    uTotal[i] = u[i] + uInc[i];
+}
+
+ }
+ else
+ {
+   for(var i=0;i<length.uInc;i++){
+       uTotal[i] = u[i];
+   }
+
+ }
+
+ // Force and Moment Coefficients; Thrust
+ var mod;
+ MODEL = 1;
+
+ if(MODEL==0)
+ {
+    mod = AeroModelAlpha(x,uTotal,Mach,alphar,betar,V);
+ }
+ else
+ {
+    mod = AeroModelMach(x,uTotal,Mach,alphar,betar,V);
+ }
+
+ var CD = mod[0];
+ var CL = mod[1];
+ var CY = mod[2];
+ var Cl = mod[3];
+ var Cm = mod[4];
+ var Cn = mod[5];
+ var Thrust = mod[6];
+ var qbarS = qbar * S;
+ var CX = -CD * Math.cos(alphar) + CL * Math.sin(alphar); // Body-axis X coefficient
+ var CZ = -CD * Math.sin(alphar) - CL * Math.cos(alphar); // Body-axis Z coefficient
+
+ // State Accelerations
+ var Xb = (CX * qbarS + Thrust) / m;
+ var Yb = CY * qbarS / m;
+ var Zb = CZ * qbarS / m;
+ var Lb = Cl * qbarS * b;
+ var Mb = Cm * qbarS * cBar;
+ var Nb = Cn * qbarS * b;
+ var nz = -Zb / 9.80665; // Normal load factor
+
+ // Dynamic Equations
+ var xd1 = Xb + gb[0] + x[8] * x[1] - x[7] * x[2];
+ var xd2 = Yb + gb[1] - x[8] * x[0] + x[6] * x[2];
+ var xd3 = Zb + gb[2] + x[7] * x[0] - x[6] * x[1];
+ var y = [];
+ for(var i=0;i<3;i++){
+   y[i]=HEB[i][0]*x[0]+HEB[i][1]*x[1]+HEB[i][2]*x[2];
+ }
+ var xd4 = y[0];
+ var xd5 = y[1];
+ var xd6 = y[2];
+ var xd7 = (Izz * Lb + Ixz * Nb - (Ixz * (Iyy - Ixx - Izz) * x[6] +(Math.pow(Ixz,2) + Izz * (Izz - Iyy)) * x[8]) * x[7]) / (Ixx * Izz - Math.pow(Ixz,2));
+ var xd8 = (Mb - (Ixx - Izz) * x[6] * x[8] - Ixz * (Math.pow(x[6],2) - Math.pow(x[8],2))) / Iyy;
+ var xd9 = (Ixz * Lb + Ixx * Nb + (Ixz * (Iyy - Ixx - Izz) * x[8] +(Math.pow(Ixz,2) + Ixx * (Ixx - Iyy)) * x[6]) * x[7]) / (Ixx * Izz - Math.pow(Ixz,2));
+ var cosPitch = Math.cos(x[10]);
+
+ if( Math.abs(cosPitch) <= 0.00001)
+ {
+    cosPitch = 0.00001 * sign(cosPitch); // sign muss noch geschrieben werden!!
+ }
+
+ var tanPitch = Math.sin(x[10]) / cosPitch;
+ var xd10 = x[6] + (Math.sin(x[9]) * x[7] + Math.cos(x[9]) * x[8]) * tanPitch;
+ var xd11 = Math.cos(x[9]) * x[7] - Math.sin(x[9]) * x[8];
+ var xd12 = (Math.sin(x[9]) * x[7] + Math.cos(x[9]) * x[8]) / cosPitch;
+ var xdot = [xd1,xd2,xd3,xd4,xd5,xd6,xd7,xd8,xd9,xd10,xd11,xd12];
+
+ return ev;
+}
+
+
+
+
+
+transpose = function(x)
+{
+ for (var i = 0; i < x.length; i++)
+ {
+   for (var j = 0; j < x[0].length; j++)
+   {
+      x[i][j] = x[j][i];
+   }
+ } 
+
+ return x;
+}
+
+
+
+
+
+
+ var MODEL = 1; // Aerodynamic model selection:  0: Incompressible flow, high angle of attack;  1: Compressible flow, low angle of attack
+ var QUAT = 1; // 0: Rotation Matrix (DCM) from Euler Angles;  1: Rotation Matrix (DCM) from Quaternion
+ var TRIM =  1; // Trim flag (= 1 to calculate trim @ I.C.)
+ var LINEAR =  0; // Linear model flag (= 1 to calculate and store F and G)
+ var SIMUL = 1; // Flight path flag (= 1 for nonlinear simulation)
+ var GEAR =  0; // Landing gear DOWN (= 1) or UP (= 0)
+ var SPOIL = 0; // Symmetric Spoiler DEPLOYED (= 1) or CLOSED (= 0)
+ var CONHIS = 1; // Control history ON (= 1) or OFF (= 0)
+ var dF =  0; // // Flap setting, deg
+ var RUNNING = 0; // internal flag, -
+
+ // Initial Altitude (ft), Indicated Airspeed (kt)
+ var hft = 10000; // Altitude above Sea Level, ft
+ var VKIAS = 150; // Indicated Airspeed, kt
+ var hm = hft * 0.3048; // Altitude above Sea Level, m
+ var VmsIAS = VKIAS * 0.5154;// Indicated Airspeed, m/s
+
+ // US Standard Atmosphere, 1976, Table Lookup for I.C.
+ [airDens,airPres,temp,soundSpeed] = Atmos(hm);
+
+ // Dynamic Pressure (N/m^2), and True Airspeed (m/s)
+ var qBarSL = 0.5*1.225*Math.pow(VmsIAS,2); // Dynamic Pressure at sea level, N/m^2
+ var V = Math.sqrt(2*qBarSL/airDens); // True Airspeed, TAS, m/s
+ var TASms = V;
+
+ // Alphabetical List of Initial Conditions
+ var alpha = 0; // Angle of attack, deg (relative to air mass)
+ var beta = 0; // Sideslip angle, deg (relative to air mass)
+ var dA = 0; // Aileron angle, deg
+ var dAS = 0; // Asymmetric spoiler angle, deg
+ var dE = 0; // Elevator angle, deg
+ var dR = 0; // Rudder angle, deg
+ var dS = 0; // Stabilator setting, deg
+ var dT = 0; // Throttle setting, // / 100
+ var hdot = 0; // Altitude rate, m/s
+ var p = 0; // Body-axis roll rate, deg/s
+ var phi = 0; // Body roll angle wrt earth, deg
+ var psi = 0; // Body yaw angle wrt earth, deg
+ var q = 0; // Body-axis pitch rate, deg/sec
+ var r = 0; // Body-axis yaw rate, deg/s
+ var SMI = 0; // Static margin increment due to center-of-mass variation from reference, ///100
+ var tf = 100; // Final time for simulation, sec
+ var ti = 0; // Initial time for simulation, sec
+ var theta = alpha; // Body pitch angle wrt earth, deg [theta = alpha if hdot = 0]
+ var xe = 0; // Initial longitudinal position, m
+ var ye =  0; // Initial lateral position, m
+ var ze = -hm; // Initial vertical position, m [h: + up, z: + down]
+
+ // Initial Conditions Depending on Prior Initial Conditions
+ var gamma = 57.2957795 * Math.atan(hdot / Math.sqrt(Math.pow(V,2) - Math.pow(hdot,2))); // Inertial Vertical Flight Path Angle, deg
+ var qbar = 0.5 * airDens * Math.pow(V,2); // Dynamic Pressure, N/m^2
+ var IAS = Math.sqrt(2 * qbar / 1.225); // Indicated Air Speed, m/s
+ var Mach = V / soundSpeed; // Mach Number
+ var uInc = [];
+
+ // Initial Control Perturbation (Test Inputs: rad or 100//)
+ var delu = [0, 0, 0, 0, 0, 0, 0];
+
+ // Initial State Perturbation (Test Inputs: m, m/s, rad, or rad/s)
+ var delx = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+ // Control Perturbation History (Test Inputs: rad or 100//)
+ // =======================================================
+ // Each control effector represented by a column
+ // Each row contains control increment delta-u(t) at time t:
+ var tuHis = [0, 33, 67, 100];
+ var deluHis = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+ // State Vector and Control Initialization, rad
+ var phir = phi * 0.01745329;
+ var thetar = theta * 0.01745329;
+ var psir = psi * 0.01745329;
+ var windb = WindField(-ze,phir,thetar,psir);
+ var alphar = alpha * 0.01745329;
+ var betar = beta * 0.01745329;
+ var x = [V * Math.cos(alphar) * Math.cos(betar) - windb[1],V * Math.sin(betar) - windb[2],V * Math.sin(alphar) * Math.cos(betar) - windb[3],xe,ye,ze,p * 0.01745329,q * 0.01745329,r * 0.01745329,phir,thetar,psir];
+ var u = [dE * 0.01745329,dA * 0.01745329,dR * 0.01745329,dT,dAS * 0.01745329,dF * 0.01745329,dS * 0.01745329];
+
+ // Trim Calculation (for Steady Level Flight at Initial V and h)
+ // =============================================================
+ // Always use Euler Angles for trim calculation
+ // Trim Parameter Vector (OptParam):
+ // 1 = Stabilator, rad
+ // 2 = Throttle,
+ // 3 = Pitch Angle, rad
+
+ if(TRIM >= 1)
+ {
+    var OptParam = [];
+    var TrimHist = [];
+    var InitParam = [0.0369, 0.1892, 0.0986];
+
+    //[OptParam,J,ExitFlag,Output] = fminsearch('TrimCost',InitParam);
+
+    // Optimizing Trim Error Cost with respect to dSr, dT, and Theta
+    var TrimHist;
+    var Index = [];
+
+    for (var i = 0; i <= TrimHist.length-1; i++)
+    {
+      Index[i] = i+1;
+    }
+
+    var TrimStabDeg = 57.2957795*OptParam[0];
+    var TrimThrusPer = 100*OptParam[1];
+    var TrimPitchDeg = 57.2957795*OptParam[2];
+    var TrimAlphaDeg = TrimPitchDeg - gamma;
+
+    // Insert trim values in nominal control and state vectors
+    u = [u[0],u[1],u[2],OptParam[1],u[4],u[5],OptParam[0]];
+    x = [V * Math.cos(OptParam[2]),x[1],V * Math.sin(OptParam[2]),x[3],x[4],x[5],x[6],x[7],x[8],x[9],OptParam[2],x[11]];
+ }
+
+ // Stability-and-Control Derivative Calculation
+ // ============================================
+
+ /*if(LINEAR >= 1)
+ {
+    var thresh = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1];
+    var xj = [x,u];
+    var uTemp = u; // 'numjac' modifies 'u'; reset 'u' after the call
+    var xdotj = LinModel(ti,xj);
+    [dFdX,fac] = numjac('LinModel',ti,xj,xdotj,thresh,[],0);
+    u = uTemp;
+
+    var Fmodel = dFdX(1:12,1:12);
+    var Gmodel = dFdX(1:12,13:19);
+ }*/
+
+ // Flight Path Simulation, with Quaternion Option
+ // ==============================================
+
+ if(SIMUL >= 1)
+ {
+    RUNNING = 1;
+    var tspan = [ti, tf];
+    var xo = x + delx;
+    var u = u + delu;
+    var kHis;
+
+   /* switch(QUAT)
+    {
+      case 0:
+	options = odeset('Events',@event,'RelTol',1e-7,'AbsTol',1e-7);
+	tic
+	[t,x] = ode15s(@EoM,tspan,xo,options);
+	toc
+	kHis = t.length;
+	break;
+
+      case 1:
+	var Ho = DCM(xo[10], xo[11], xo[12]);
+	var q4o = 0.5*Math.sqrt(1 + Ho(1,1) + Ho(2,2) + Ho(3,3));
+	var q1o = (Ho(2,3) - Ho(3,2)) / (4*q4o);
+	var q2o = (Ho(3,1) - Ho(1,3)) / (4*q4o);
+	var q3o = (Ho(1,2) - Ho(2,1)) / (4*q4o);
+	var xoQ = [xo(1:9); q1o; q2o; q3o; q4o];
+
+	options = odeset('Events',@event,'RelTol',1e-7,'AbsTol',1e-7);
+	tic
+	[tQ,xQ] = ode15s(@EoMQver2,tspan,xoQ,options);
+	toc
+	var kHisQ = tQ.length;
+	var q1s = xQ(:,10);
+	var q2s = xQ(:,11);
+	var q3s = xQ(:,12);
+	var q4s = xQ(:,13);
+	var Phi = (Math.atan2(2*(elemmult(q1s,q4s) + elemmult(q2s,q3s)),(1 - 2*(elemqu(q1s) + elemqu(q2s)))))*180/Math.PI;
+	var PhiR = Phi*Math.PI/180;
+	var ThetaR = Theta*Math.PI/180;
+	var Theta = (Math.asin(2*(elemmult(q2s,q4s) - elemmult(q1s,q3s))))*180/Math.PI;
+	var Psi = (Math.atan2(2*(elemmult(q3s,q4s) + elemmult(q1s,q2s)),(1 - 2*(elemqu(q2s) + elemqu(q3s)))))*180/Math.PI;
+	var PsiR = Psi*Math.PI/180;
+	var qMag = Math.sqrt(elemqu(q1s) + elemqu(q2s) + elemqu(q3s) + elemqu(q4s));
+
+	t = tQ;
+	x = [];
+	x = [xQ(:,1:9),PhiR(:),ThetaR(:),PsiR(:)];
+	kHis = kHisQ;
+	break;
+    }*/
+
+    var VAirRel = [];
+    var vEarth = [];
+    var AlphaAR = [];
+    var BetaAR = [];
+    var windBody = [];
+    var airDensHis = [];
+    var soundSpeedHis = [];
+    var qbarHis = [];
+    var GammaHis = [];
+    var XiHis  = [];
+
+    for(var i=0;i <=kHis;i++)
+    {
+      var windb  = WindField(-x[i][5],x[i][9],x[i][10],x[i][11]);
+      var windBody = [windBody, windb];
+      [airDens,airPres,temp,soundSpeed] = Atmos(-x[i][7]);
+      airDensHis = [airDensHis, airDens];
+      soundSpeedHis = [soundSpeedHis, soundSpeed];
+    }
+    
+    var vBody;
+
+    for (var i = 0; i <= kHis; i++)
+    {
+      vBody  = [x[i][0], x[i][1], x[i][2]];
+    }
+    vBody  = transpose(vBody); // transpose muss noch geschrieben werden!!
+    var vBodyAir = vBody + windBody;
+
+    for(var i=0;i <=kHis;i++)
+    {
+      var vE = transpose(DCM(x[i][9],x[i][10],x[i][11])) * [vBody[0][i],vBody[1][i],vBody[2][i]]; // transpose muss noch geschrieben werden!!
+      var VER = Math.sqrt(Math.pow(vE[0],2) + Math.pow(vE[1],2) + Math.pow(vE[2],2));
+      var VAR = Math.sqrt(Math.pow(vBodyAir[0][i],2) + Math.pow(vBodyAir[1][i],2) + Math.pow(vBodyAir[2][i],2));
+      var VARB = Math.sqrt(Math.pow(vBodyAir[0][i],2) + Math.pow(vBodyAir[2][i],2));
+
+      if(vBodyAir[0][i] >= 0)
+      {
+	Alphar = Math.asin(vBodyAir[2][i] / VARB);
+      }
+      else
+      {
+	Alphar = Math.PI - Math.asin(vBodyAir[2][i] / VARB);
+      }
+
+      AlphaAR = [AlphaAR, Alphar];
+      var Betar =  Math.asin(vBodyAir[1][i] / VAR);
+      BetaAR = [BetaAR, Betar];
+      vEarth = [vEarth, vE];
+      Xir = Math.asin(vEarth[1][i] / Math.sqrt(Math.pow(vEarth[0][i],2) + Math.pow(vEarth[1][i],2)));
+
+      if(vEarth[0][i] <= 0 && vEarth[1][i] <= 0)
+      {
+	Xir = -Math.PI - Xir;
+      }
+
+      if(vEarth[0][i] <= 0 && vEarth[1][i] >= 0)
+      {
+	Xir = Math.PI - Xir;
+      }
+
+      var Gammar = Math.asin(-vEarth[2][i] / VER);
+      var GammaHis = [GammaHis, Gammar];
+      XiHis = [XiHis, Xir];
+      VAirRel = [VAirRel, VAR];
+    }
+
+    var MachHis = elemdiv(VAirRel, soundSpeedHis);
+    var AlphaDegHis  = 57.2957795 * AlphaAR;
+    var BetaDegHis = 57.2957795 * BetaAR;
+    var qbarHis = 0.5 * elemmult(elemmult(airDensHis, VAirRel),VAirRel);
+    var GammaDegHis = 57.2957795 * GammaHis;
+    var XiDegHis = 57.2957795 * XiHis;
+ }
+
+
+
+
+
+
+var windb = WindField(-ze,phir,thetar,psir); 
+this.GEAR = 0; 
+this.CONHIS = 1; 
+this.SPOIL = 0;
+this.u = [dE*0.01745329, dA*0.01745329, dR*0.01745329, dT, dAS*0.01745329, dF*0.01745329, dS*0.01745329];
+this.x = [V*Math.cos(alphar)*Math.cos(betar)-windb[1], V*Math.sin(betar)-windb[2], V*Math.sin(alphar)*Math.cos(betar)-windb[3], xe, ye, ze, p*0.01745329, q * 0.01745329, r*0.01745329, phir, thetar, psir];
+this.V = Math.sqrt(2*qBarSL/airDens);
+this.uInc = [];
+this.tuHis = [0, 33,67, 100];
+this.deluHis[0] = [0, 0, 0, 0, 0, 0, 0];
+this.deluHis[1] = [0, 0, 0, 0, 0, 0, 0];
+this.deluHis[2] = [0, 0, 0, 0, 0, 0, 0];
+this.deluHis[3] = [0, 0, 0, 0, 0, 0, 0];
+this.TrimHist = [];
+this.SMI = 0;
+this.MODEL = 1;
+this.RUNNING = 0;
+
+
+
+
+
+
+
+
+var x = [0.0894, 0.0078, 0.0109, 0, 0, -3.0480, 0, 0, 0, 0, 0.0001, 0, 0, 0, 0, 0.0002, 0, 0, -0.0001];
+var t = 0;
+
+
+//////
+var yi=EoM(t,x);
+
+ctx.fillText(yi,100,50);
+
+
+
+</script>
+
+
+</html>

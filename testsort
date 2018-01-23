@@ -48,6 +48,83 @@ f = function(x)
 
 
 
+
+fminsearch = function(x)
+{
+  x = sort(x); // Schritt 1
+  var n = x.length;
+  var m = 0; // Schritt 3
+  
+  for (var i = 0; i <= n-2; i++)
+  {
+    m = x[i]/(n-2);
+  }
+  
+  var r = 2*m - x[n-1];
+  
+  if (f(x[0]) <= f(x[r]) < f(x[n-2])) // Schritt 4
+  {
+    
+  }
+  else if (f(r) < f(x[0])) // Schritt 5
+  {
+    var s = m + 2*(m-x[n-1]);
+  
+    if (f(s) < f(r)) // Schritt 5a
+    {
+      r = s;
+    }
+    else // Schritt 5b
+    {
+      
+    }
+  }
+  else // Schritt 6
+  {
+    if (f(r)< f(x[n-1])) // Schritt 6a
+    {
+      var c = m + (r-m)/2;
+      
+      if (f(c) < f(r))
+      {
+	r = c;
+      }
+    }
+    else // Schritt 6b
+    {
+      var cc = m + (x[n-1]-m)/2;
+      
+      if (f(cc) < f(x[n-1]))
+      {
+	r = cc;
+      }
+    }
+  }
+
+  var v = []; // Schritt 7
+  v[0] = x[0];
+
+  for(var i = 1; i <= n-1; i++)
+  {
+    v[i] = x[0] + (x[i]-x[0])/2;
+  }
+
+  var f = [];
+  
+  for (var i = 0; i <= n-1; i++)
+  {
+    f[i] = f(v[i]);
+  }
+
+  return f; // keine Ahnung, ob das stimmt.
+
+}
+
+
+
+
+
+
 sort = function(x)
 {
  var n = x.length;

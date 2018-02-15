@@ -619,7 +619,6 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.fillRect(-0.13*w,-0.2*h,0.04*w,0.8*h);
               ctx.fillRect(0.09*w,-0.2*h,0.04*w,0.8*h);
               var Geschwindigkeit = controls.movementSpeed;
-
               ctx.translate(0,-490+2*(Math.round(Geschwindigkeit)));
               ctx.translate(21,0);
               ctx.font="12px Arial white";
@@ -757,6 +756,9 @@ ctx.translate(31,0);
               ctx.stroke();
               ctx.translate(-0.31*w,-0.83*h);
 
+
+ctx.scale(w/1200,h/800);
+ctx.translate(0*w,0.09*h);
 //navigation
 ctx.fillStyle="black";
 ctx.fillRect(693,507,230,230);
@@ -876,7 +878,7 @@ ctx.translate(-660,-470);
 //Tankanzeige
 //ta für linken Tank
 //tb für rechten Tank
-var ta=25;
+var ta=35;
 var tb=15;
 
 ctx.translate(950,500);
@@ -1004,5 +1006,5 @@ ctx.arc(1095,654,15,0,Math.PI * 2, true);
 ctx.closePath();
 ctx.fill();
 
-
+ctx.setTransform(1, 0, 0, 1, 0, 0);
               }

@@ -96,13 +96,17 @@ this.object = object;
 	};
 
 this.a=function(){
-	var a = this.theta;
-	return b;
+	var a = this.lon;
+	return a;
 }
 
 this.b=function(){
 	var b = this.lat;
 	return b;
+}
+this.c=function(){
+	var c = this.phi;
+	return c;
 }
 /*	this.onMouseDown = function ( event ) {
 
@@ -294,7 +298,7 @@ var Vn = [];
 				  break;
 
 			case 37:
-			case 65:
+			case 86:	this.lon=this.lon+1; break;
 
 
 
@@ -304,7 +308,7 @@ break;
 			case 83:  this.nx[0] += 1; break;
 
 			case 39:
-			case 68:   break;
+			case 85:   this.phi+=1; break;
 
 			case 82:   break;
 			case 70:   break;
@@ -432,7 +436,7 @@ break;
     }
 }; */
 
-	this.update = function( delta ) { // delta ist Zeitspanne zwischen letzter und jetztiger Aktualisierung?
+	this.update = function( delta ) { // delta ist Zeitspanne zwischen letzter und jetztiger Aktualisierung
 this.nx = aero(this.nx);
 this.lat= this.nx[1]*180/Math.PI;
 		if(this.movementSpeed>0 && this.movementSpeed<1000){

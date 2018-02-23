@@ -18,7 +18,8 @@ ctx.clearRect(0,0,w,h);
 //ctx.setLineDash([5, 0]);
 keys = [];
 var y1=y2=0.8*h,y3=0.957*h,y4=0.8857*h;
-var nei=controls.a(), stei=controls.b();
+var ta=-40, tb=-40;
+var nei=controls.a(), stei=controls.b(), sch=controls.c();
 var onoff1=onoff2=onoff3=onoff4=onoff5=onoff6=true;
 
 
@@ -483,13 +484,13 @@ function drawArrow(fromx, fromy, tox, toy,color){
               //Geschwindigkeit in Knoten (-> Verschiebung in y-Richtung: -250+4*v)
               var v = 180;
               //Höhe in Fuß
-              nei=controls.a(); stei=0.005*h*controls.b();
+              nei=controls.a(); sch=0; stei=0.005*h*controls.b();
               var a=h/10;
               ctx.translate(0.31*w,0.83*h);
               ctx.fillStyle = "lightblue"
               ctx.fillRect(-0.09*w,-0.15*h,0.18*w,0.3*h);
               ctx.translate(0,stei);
-              ctx.rotate(-nei*Math.PI/180);
+              ctx.rotate(-sch*Math.PI/180);
 
               ctx.fillStyle="lightgreen"
               ctx.fillRect(-0.09*w,0.0*h,0.18*w,0.3*h);
@@ -569,7 +570,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.lineTo(76,85);
               ctx.stroke();
               */
-              ctx.rotate(nei*Math.PI/180);
+              ctx.rotate(sch*Math.PI/180);
               ctx.translate(-0.31*w,-0.83*h-stei);
 // konstante Anzeigen im fla
               ctx.translate(0.31*w,0.83*h);
@@ -763,7 +764,7 @@ ctx.translate(0*w,0.05*869);
 ctx.fillStyle="black";
 ctx.fillRect(693,507,230,230);
 //Ausrichtung
-var a=0;
+var a=nei;
 //heading
 var b=90;
 ctx.lineWidth=0.1;
@@ -878,9 +879,10 @@ ctx.translate(-660,-470);
 //Tankanzeige
 //ta für linken Tank
 //tb für rechten Tank
-var ta=35;
-var tb=15;
-
+if(ta<40){
+  ta = ta + 0.1;
+  tb = tb + 0.1;
+}
 ctx.translate(950,500);
 ctx.fillStyle="black";
 ctx.fillRect(0,0,200,120)

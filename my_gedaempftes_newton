@@ -1,0 +1,19 @@
+my_gedaempftes_newton = function (f,df,x0,tol,maxiter)
+
+var lambda_min = Math.pow(10,-4);
+var x = x0;
+var k = 0;
+for (var k = 0; k < maxiter; k++) {
+EoMx = implK(x);
+dfx = 1;
+s = -dfx/EoMx;
+var lambda = 4;
+var xk = x + lambda*s;
+var C = 1-lambda/4;
+  while (lambda>lambda_min) {
+  lambda = lambda/2;
+  xk = x+lambda*s;
+  C = 1-lambda/4;
+  }
+  x = x + lambda*s;
+}

@@ -615,9 +615,12 @@ function drawArrow(fromx, fromy, tox, toy,color){
               //ctx.translate(-0.31*w,-0.83*h);
 
 //Bänder für Höhe und Geschwindigkeit
+	      
+	      ctx.scale(w/1200,h/800);
+
               ctx.fillStyle="#585858";
-              ctx.fillRect(-0.13*w,-0.2*h,0.04*w,0.8*h);
-              ctx.fillRect(0.09*w,-0.2*h,0.04*w,0.8*h);
+              ctx.fillRect(-0.086*1902,-0.2*869,0.03*1902,0.8*869);
+              ctx.fillRect(0.056*1902,-0.2*869,0.03*1902,0.8*869);
               var Geschwindigkeit = controls.movementSpeed;
               ctx.translate(0,-490+2*(Math.round(Geschwindigkeit)));
               ctx.translate(21,0);
@@ -742,23 +745,20 @@ ctx.translate(31,0);
 
               ctx.fillText(Math.round(camera.position.y),184,0.005*h);
               ctx.translate(31,0);
-                ctx.translate(-0.31*w,-0.83*h);
               /*Umrandung der Höhenanzeige*/
-              ctx.translate(0.31*w,0.83*h);
               ctx.fillStyle = "#A4A4A4"
-              ctx.fillRect(-0.2*w,0.15*h,0.5*w,0.3*h);
-              ctx.fillRect(-0.2*w,-0.25*h,0.5*w,0.1*h);
+              ctx.fillRect(-0.18*1902,0.19*869,0.5*1902,0.3*869);
+              ctx.fillRect(-0.15*1902,-0.238*869,0.5*1902,0.1*869);
               //ctx.fillRect(-0.2*w,-0.15*h,0.11*w,0.3*h);
               //ctx.fillRect(0.09*w,-0.15*h,0.11*w,0.3*h);
 
-              ctx.moveTo(-0.2*w,-0.16*h);
-              ctx.lineTo(0.3*w,-0.16*h);
+              ctx.moveTo(-0.17*1902,-0.1475*869);
+              ctx.lineTo(0.36*1902,-0.1475*869);
               ctx.stroke();
-              ctx.translate(-0.31*w,-0.83*h);
 
-
+ctx.setTransform(1,0,0,1,0,0);
 ctx.scale(w/1200,h/800);
-ctx.translate(0*w,0.09*h);
+ctx.translate(0*w,0.05*h);
 //navigation
 ctx.fillStyle="black";
 ctx.fillRect(693,507,230,230);
@@ -892,10 +892,9 @@ ctx.fillRect(105,10,85,65);
 ctx.font="14px Futura ";
 ctx.fillStyle = "white";
 ctx.textAlign = "middle";
-ctx.fillText("LEFT",40,100);
-ctx.fillText("RIGHT",135,100);
+
 ctx.font="20px Futura";
-ctx.fillText("FUEL",80,105);
+ctx.fillText("FUEL",73,105);
 ctx.fillRect(20,40,65,3);
 ctx.fillRect(115,40,65,3);
 
@@ -994,8 +993,9 @@ ctx.rotate(tb*Math.PI/180);
 ctx.translate(-148,-75);
 ctx.translate(-950,-500);
 
-ctx.fillText("max.",1057,680);
-ctx.fillText("Steigungswinkel",1057,690);
+ctx.translate(0, 0.02*h);
+
+ctx.fillText("stall angle",1070,690);
 if (stei>60||stei<-60){
   ctx.fillStyle="red";
 } else {
@@ -1005,6 +1005,6 @@ ctx.beginPath();
 ctx.arc(1095,654,15,0,Math.PI * 2, true);
 ctx.closePath();
 ctx.fill();
-
+//w=1902, h=869
 ctx.setTransform(1, 0, 0, 1, 0, 0);
               }

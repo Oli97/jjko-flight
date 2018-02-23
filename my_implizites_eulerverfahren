@@ -1,18 +1,19 @@
 my_implizites_eulerverfahren = function (f,dfdy,a,b,y0,h)
-
 var x =[];
-x(0)=0;
+x[0]=0;
 var h = (b-a)/52
 for (var i = 1; i <=52; i++) {
-x(i) = x(i-1)+h;
+x[i] = x[i-1]+h;
 }
-y(0)=y0;
+y[0]=y0;
 for (var i = 1; i<length(x); i++) {
-y(i)= 0;
+y[i]= 0;
 }
 for (var i =1; i<length(x); i++) {
-implK = K-EoM(x(i-1)+h,y(i-1)+h*K);
+implK = K-EoM(x[i-1]+h,y[i-1]+h*K);
 dimplK = 1-h;
-var K = my_gedaempftes_newton(implK,dimplK,EoM(x(i-1),y(i-1),Math.Pow(10,-4),25));
-y(i)=y(i-1)+h*K;
+var K = my_gedaempftes_newton(implK,dimplK,EoM(x[i-1],y[i-1],Math.Pow(10,-4),25));
+y[i]=y[i-1]+h*K;
 }
+
+ÜBERARBEITET

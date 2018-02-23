@@ -758,7 +758,7 @@ ctx.translate(31,0);
 
 ctx.setTransform(1,0,0,1,0,0);
 ctx.scale(w/1200,h/800);
-ctx.translate(0*w,0.05*h);
+ctx.translate(0*w,0.05*869);
 //navigation
 ctx.fillStyle="black";
 ctx.fillRect(693,507,230,230);
@@ -993,7 +993,7 @@ ctx.rotate(tb*Math.PI/180);
 ctx.translate(-148,-75);
 ctx.translate(-950,-500);
 
-ctx.translate(0, 0.02*h);
+ctx.translate(0, 0.02*869);
 
 ctx.fillText("stall angle",1070,690);
 if (stei>60||stei<-60){

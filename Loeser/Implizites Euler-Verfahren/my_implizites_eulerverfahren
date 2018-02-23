@@ -1,0 +1,17 @@
+my_implizites_eulerverfahren = function (f,dfdy,a,b,y0,h)
+
+var x =[];
+x(0)=0;
+var h = (b-a)/53
+for (var i = 1; i <=52; i++) {
+x(i) = x(i-1)+h;
+}
+y(0)=y0;
+for (var i = 1; i<length(x); i++) {
+y(i)= 0;
+}
+for (var i =v1; i<length(x); i++) {
+implK = K-EoM(x(i-1)+h,y(i-1)+h*K);
+dimplK = 1-h;
+y(i)=y(i-1)+h*K
+}

@@ -994,7 +994,7 @@
      var windb = WindField(-ze,phir,thetar,psir);
      var alphar = alpha * 0.01745329;
      var betar = beta * 0.01745329;
-     var x = [V * Math.cos(alphar) * Math.cos(betar) - windb[1],V * Math.sin(betar) - windb[2],V * Math.sin(alphar) * Math.cos(betar) - windb[3],xe,ye,ze,p * 0.01745329,q * 0.01745329,r * 0.01745329,phir,thetar,psir];
+
      var u = [dE * 0.01745329,dA * 0.01745329,dR * 0.01745329,dT,dAS * 0.01745329,dF * 0.01745329,dS * 0.01745329];
 
 
@@ -1067,14 +1067,14 @@
       [uInc] = interp1(tuHis,deluHis,t);
 
 
-  for(var i=0;i<length.uInc;i++){
+  for(var i=0;i<uInc.length;i++){
       uTotal[i] = u[i] + uInc[i];
   }
 
    }
    else
    {
-     for(var i=0;i<length.uInc;i++){
+     for(var i=0;i<u.length;i++){
          uTotal[i] = u[i];
      }
 
@@ -1148,56 +1148,68 @@
 
 
 
-  my_gedaempftes_newton = function (f,df,x0,tol,maxiter)
+
+
+  var tn = [];
+  var xn=[];
+  for(k=0;k<1/(1/20);k++){
+   xn[k] = [];
+  }
+
+  var x_eingabe = [];
+  var s0 = [];
+  var s1 = [];
+  var s2 = [];
+
+  explizit = function (a,b,y0,h)
   {
-  var lambda_min = Math.pow(10,-8);
-  var x = x0;
-  var k = 0;
-  for (var k = 0; k < maxiter; k++) {
-  EoMx = implK(x);
-  dfx = df;
-  s = -dfx/EoMx;
-  var lambda = 4;
-  var xk = x + lambda*s;
-  var C = 1-lambda/4;
-    while (lambda>lambda_min) {
-    lambda = lambda/2;
-    xk = x+lambda*s;
-    C = 1-lambda/4;
-    }
-    x = x + lambda*s;
-  }
-  return x;
+     var tf=b;
+     var to=a;
+
+     var stepsize = h;
+
+
+     tn[0] = to;
+     for (var j = 0; j < y0.length; j++)
+     {
+         xn[0][j] = y0[j];
+     }
+
+     for (var i = 1; i < 1/stepsize; i++)
+    {
+
+         tn[i] = to + i * stepsize;
+
+         for(k=0;k<y0.length;k++){
+         x_eingabe[k]=xn[i-1][k];
+       }
+
+       var x_stern1=[];
+       var x_stern2=[];
+
+         s0 = EoM(tn[i],x_eingabe);
+       for(var l=0;l<y0.length;l++){
+         x_stern1[l]=x_eingabe[l]+h/2*s0[l];
+      }
+        s1 = EoM(tn[i]+h/2,x_stern1);
+        for(var l=0;l<y0.length;l++){
+
+          x_stern2[l]=x_eingabe[l]+3/4*h*s1[l];
+        }
+        s2 = EoM(tn[i]+3/4*h,x_stern2);
+
+for(j=0;j<y0.length;j++){
+        xn[i][j] = xn[i-1][j] + (stepsize / 9) * (2 * s0[j] + 3 * s1[j] + 4 * s2[j]);
+      }
+
   }
 
-  my_implizites_eulerverfahren = function (f,dfdy,a,b,y0,h)
-  {
-  var x = [];
-  x[0] = 0;
-  for (var i = 1; i <=52; i++) {
-  x[i] = x[i-1]+h;
-  }
-  var y = [];
-  y[0]=y0;
-  for (var i = 1; i<x.length; i++) {
-  y[i]= 0;
-  }
-  for (var i =1; i<x.length; i++) {
 
-  dimplK = 1-h;
-  implK = function(K){
-    return K-EoM(x[i-1]+h,y[i-1]+h*K);
-  }
-  var K = my_gedaempftes_newton(implK,dimplK,EoM(x[i-1],y[i-1]),Math.pow(10,-8),25);
-  y[i]=y[i-1]+h*K;
-  }
-  var z = [];
-  z[0] = x;
-  z[1] = y;
-  return y;
-  }
+  return xn;
+  };
 
-  var x = my_implizites_eulerverfahren(1,1,0,1,[89.4,7.8,10.9,0,0,-3048.0,0,0,0,0,0.1,0],1/53);
+
+  var x = explizit(0,1,[89.4,7.8,10.9,0,0,-3048.0,0,0,0,0,0.1,0],1/20);
 
 
 

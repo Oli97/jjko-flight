@@ -1490,8 +1490,8 @@ flight = function()
  */
 
  var MODEL = 1; // Aerodynamic model selection:  0: Incompressible flow, high angle of attack;  1: Compressible flow, low angle of attack
- var QUAT = 1; // 0: Rotation Matrix (DCM) from Euler Angles;  1: Rotation Matrix (DCM) from Quaternion
- var TRIM =  1; // Trim flag (= 1 to calculate trim @ I.C.)
+ 
+ var TRIM =  0; // Trim flag (= 1 to calculate trim @ I.C.)
  var LINEAR =  0; // Linear model flag (= 1 to calculate and store F and G)
  var SIMUL = 1; // Flight path flag (= 1 for nonlinear simulation)
  var GEAR =  0; // Landing gear DOWN (= 1) or UP (= 0)
@@ -1507,7 +1507,11 @@ flight = function()
  var VmsIAS = VKIAS * 0.5154;// Indicated Airspeed, m/s
 
  // US Standard Atmosphere, 1976, Table Lookup for I.C.
- [airDens,airPres,temp,soundSpeed] = Atmos(hm);
+ var atmos_1 = Atmos(hm);
+ var airDens = atmos_1[0];
+ var airPres = atmos_1[1];
+ var temp = atmos_1[2];
+ var soundSpeed = atmos_1[3];
 
  // Dynamic Pressure (N/m^2), and True Airspeed (m/s)
  var qBarSL = 0.5*1.225*Math.pow(VmsIAS,2); // Dynamic Pressure at sea level, N/m^2
@@ -1530,7 +1534,7 @@ flight = function()
  var q = 0; // Body-axis pitch rate, deg/sec
  var r = 0; // Body-axis yaw rate, deg/s
  var SMI = 0; // Static margin increment due to center-of-mass variation from reference, ///100
- var tf = 100; // Final time for simulation, sec
+ var tf = 1; // Final time for simulation, sec
  var ti = 0; // Initial time for simulation, sec
  var theta = alpha; // Body pitch angle wrt earth, deg [theta = alpha if hdot = 0]
  var xe = 0; // Initial longitudinal position, m
@@ -1545,10 +1549,10 @@ flight = function()
  var uInc = [];
 
  // Initial Control Perturbation (Test Inputs: rad or 100//)
- var delu = [0;0;0;0;0;0;0];
+ var delu = [0,0,0,0,0,0,0];
 
  // Initial State Perturbation (Test Inputs: m, m/s, rad, or rad/s)
- var delx = [0;0;0;0;0;0;0;0;0;0;0;0];
+ var delx = [0,0,0,0,0,0,0,0,0,0,0,0];
 
  // Control Perturbation History (Test Inputs: rad or 100//)
  // =======================================================
@@ -1564,7 +1568,7 @@ flight = function()
  var windb = WindField(-ze,phir,thetar,psir);
  var alphar = alpha * 0.01745329;
  var betar = beta * 0.01745329;
- var x = [V * Math.cos(alphar) * Math.cos(betar) - windb[1],V * Math.sin(betar) - windb[2],V * Math.sin(alphar) * Math.cos(betar) - windb[3],xe,ye,ze,p * 0.01745329,q * 0.01745329,r * 0.01745329,phir,thetar,psir];
+ var x = [V * Math.cos(alphar) * Math.cos(betar) - windb[0],V * Math.sin(betar) - windb[1],V * Math.sin(alphar) * Math.cos(betar) - windb[2],xe,ye,ze,p * 0.01745329,q * 0.01745329,r * 0.01745329,phir,thetar,psir];
  var u = [dE * 0.01745329,dA * 0.01745329,dR * 0.01745329,dT,dAS * 0.01745329,dF * 0.01745329,dS * 0.01745329];
 
  // Trim Calculation (for Steady Level Flight at Initial V and h)
@@ -1579,38 +1583,32 @@ flight = function()
  {
     var OptParam = [];
     var TrimHist = [];
-    var InitParam = [0.0369;0.1892;0.0986];
+    var InitParam = [0.0369,0.1892,0.0986];
 
-    options = optimset('TolFun',1e-10);
-    [OptParam,J,ExitFlag,Output] = fminsearch('TrimCost',InitParam,options);
+  //  [OptParam,J,ExitFlag,Output] = fminsearch('TrimCost',InitParam); ÜBERPRÜFEN!!
 
     // Optimizing Trim Error Cost with respect to dSr, dT, and Theta
     var TrimHist;
-    var Index= [1:TrimHist.length];
-    var TrimStabDeg = 57.2957795*OptParam[1];
-    var TrimThrusPer = 100*OptParam[2];
-    var TrimPitchDeg = 57.2957795*OptParam[3];
+    var Index = [];
+    
+    for(var i = 0; i < TrimHist.length, i++)
+    {
+      Index[0] = i;
+    }
+    
+    var TrimStabDeg = 57.2957795*OptParam[0];
+    var TrimThrusPer = 100*OptParam[1];
+    var TrimPitchDeg = 57.2957795*OptParam[2];
     var TrimAlphaDeg = TrimPitchDeg - gamma;
 
     // Insert trim values in nominal control and state vectors
-    u = [u[1],u[2],u[3],OptParam[2],u[5],u[6],OptParam[1]];
-    x = [V * Math.cos(OptParam[3]),x[2],V * Math.sin(OptParam[3]),x[4],x[5],x[6],x[7],x[8],x[9],x[10],OptParam[3],x[12]];
+    var u = [u[0],u[1],u[2],OptParam[1],u[4],u[5],OptParam[0]];
+    var x = [V * Math.cos(OptParam[2]),x[1],V * Math.sin(OptParam[2]),x[3],x[4],x[5],x[6],x[7],x[8],x[9],OptParam[2],x[11]];
  }
 
  // Stability-and-Control Derivative Calculation
  // ============================================
 
- if(LINEAR >= 1)
- {
-    var thresh = [.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1;.1];
-    var xj = [x,u];
-    var uTemp = u; // 'numjac' modifies 'u'; reset 'u' after the call
-    var xdotj = LinModel(ti,xj);
-    [dFdX,fac] = numjac('LinModel',ti,xj,xdotj,thresh,[],0);
-    u = uTemp;
-    var Fmodel = dFdX(1:12,1:12);
-    var Gmodel = dFdX(1:12,13:19);
- }
 
  // Flight Path Simulation, with Quaternion Option
  // ==============================================
@@ -1618,52 +1616,20 @@ flight = function()
  if(SIMUL >= 1)
  {
     RUNNING = 1;
-    var tspan = [ti tf];
-    var xo = x + delx;
-    var u = u + delu;
+
+    var xo;
+    
+    for(var i = 0; i < x.length; i++)
+    {
+      xo[i] = x[i] + delx[i];
+      u[i] = u[i] + delu[i];
+    }
+
     var kHis;
 
-    switch(QUAT)
-    {
-      case 0:
-	options = odeset('Events',@event,'RelTol',1e-7,'AbsTol',1e-7);
-	tic
-	[t,x] = ode15s(@EoM,tspan,xo,options);
-	toc
-	kHis = t.length;
-	break;
+    x = explizit(0,1,xo,1/20);
+    
 
-      case 1:
-	var Ho = DCM(xo[10], xo[11], xo[12]);
-	var q4o = 0.5*Math.sqrt(1 + Ho(1,1) + Ho(2,2) + Ho(3,3));
-	var q1o = (Ho(2,3) - Ho(3,2)) / (4*q4o);
-	var q2o = (Ho(3,1) - Ho(1,3)) / (4*q4o);
-	var q3o = (Ho(1,2) - Ho(2,1)) / (4*q4o);
-	var xoQ = [xo(1:9); q1o; q2o; q3o; q4o];
-
-	options = odeset('Events',@event,'RelTol',1e-7,'AbsTol',1e-7);
-	tic
-	[tQ,xQ] = ode15s(@EoMQver2,tspan,xoQ,options);
-	toc
-	var kHisQ = tQ.length;
-	var q1s = xQ(:,10);
-	var q2s = xQ(:,11);
-	var q3s = xQ(:,12);
-	var q4s = xQ(:,13);
-	var Phi = (Math.atan2(2*(elemmult(q1s,q4s) + elemmult(q2s,q3s)),(1 - 2*(elemqu(q1s) + elemqu(q2s)))))*180/Math.PI;
-	var PhiR = Phi*Math.PI/180;
-	var ThetaR = Theta*Math.PI/180;
-	var Theta = (Math.asin(2*(elemmult(q2s,q4s) - elemmult(q1s,q3s))))*180/Math.PI;
-	var Psi = (Math.atan2(2*(elemmult(q3s,q4s) + elemmult(q1s,q2s)),(1 - 2*(elemqu(q2s) + elemqu(q3s)))))*180/Math.PI;
-	var PsiR = Psi*Math.PI/180;
-	var qMag = Math.sqrt(elemqu(q1s) + elemqu(q2s) + elemqu(q3s) + elemqu(q4s));
-
-	t = tQ;
-	x = [];
-	x = [xQ(:,1:9),PhiR(:),ThetaR(:),PsiR(:)];
-	kHis = kHisQ;
-	break;
-    }
 
     var VAirRel = [];
     var vEarth = [];
@@ -1675,60 +1641,69 @@ flight = function()
     var qbarHis = [];
     var GammaHis = [];
     var XiHis  = [];
+    var Alphar;
 
-    for(var i=1;i <=kHis;i++)
+    for(var i = 0; i < kHis; i++)
     {
-      var windb  = WindField(-x(i,6),x(i,10),x(i,11),x(i,12));
-      var windBody = [windBody windb];
-      [airDens,airPres,temp,soundSpeed] = Atmos(-x(i,6));
-      airDensHis = [airDensHis airDens];
-      soundSpeedHis = [soundSpeedHis soundSpeed];
+      var windb  = WindField(-x[i][5],x[i][9],x[i][10],x[i][11]);
+      var windBody = [windBody, windb];
+      [airDens,airPres,temp,soundSpeed] = Atmos(-x[i][5]);
+      airDensHis = [airDensHis, airDens];
+      soundSpeedHis = [soundSpeedHis, soundSpeed];
     }
-
-    var vBody  = [x(:,1), x(:,2), x(:,3)];
+    
+    var vbody = [];
+    
+    for(var i = 0; i < kHis; i++)
+    {
+      vBody  = [x[i][0], x[i][1], x[i][2]];
+    }
+    
     vBody  = transpose(vBody); // transpose muss noch geschrieben werden!!
     var vBodyAir = vBody + windBody;
 
-    for(var i=1;i <=kHis;i++)
+    for(var i = 0; i < kHis; i++)
     {
-      var vE = transpose(DCM(x(i,10),x(i,11),x(i,12))) * [vBody(1,i);vBody(2,i);vBody(3,i)]; // transpose muss noch geschrieben werden!!
-      var VER = Math.sqrt(Math.pow(vE[1],2) + Math.pow(vE[2],2) + Math.pow(vE[3],2));
-      var VAR = Math.sqrt(Math.pow(vBodyAir(1,i),2) + Math.pow(vBodyAir(2,i),2) + Math.pow(vBodyAir(3,i),2));
-      var VARB = Math.sqrt(Math.pow(vBodyAir(1,i),2) + Math.pow(vBodyAir(3,i),2));
+      var vE = transpose(DCM(x[i][9],x[i][10],x[i][11])) * [vBody[0][i], vBody[1][i], vBody[2][i]]; // ÜBERPRÜFEN!
+      var VER = Math.sqrt(Math.pow(vE[0],2) + Math.pow(vE[1],2) + Math.pow(vE[2],2));
+      var VAR = Math.sqrt(Math.pow(vBodyAir[0][i],2) + Math.pow(vBodyAir[1][i],2) + Math.pow(vBodyAir[2][i],2));
+      var VARB = Math.sqrt(Math.pow(vBodyAir[0][i],2) + Math.pow(vBodyAir[2][i],2));
 
-      if(vBodyAir(1,i) >= 0)
+      if(vBodyAir[0][i] >= 0)
       {
-	Alphar = Math.asin(vBodyAir(3,i) / VARB);
-	}else{
-	Alphar = Math.PI - Math.asin(vBodyAir(3,i) / VARB);
+	Alphar = Math.asin(vBodyAir[2][i] / VARB);
+      }
+      else
+      {
+	Alphar = Math.PI - Math.asin(vBodyAir[2][i] / VARB);
       }
 
-      AlphaAR = [AlphaAR Alphar];
-      var Betar =  Math.asin(vBodyAir(2,i) / VAR);
-      BetaAR = [BetaAR Betar];
-      vEarth = [vEarth vE];
-      Xir = Math.asin(vEarth(2,i) / Math.sqrt(Math.pow((vEarth(1,i)),2) + Math.pow((vEarth(2,i))2)));
+      AlphaAR = [AlphaAR, Alphar];
+      var Betar =  Math.asin(vBodyAir[1][i] / VAR);
+      BetaAR = [BetaAR, Betar];
+      vEarth = [vEarth, vE];
+      var Xir = Math.asin(vEarth[1][i] / Math.sqrt(Math.pow(vEarth[0][i],2) + Math.pow(vEarth[1][i],2)));
 
-      if(vEarth(1,i) <= 0 && vEarth(2,i) <= 0)
+      if(vEarth[0][i] <= 0 && vEarth[1][i] <= 0)
       {
 	Xir = -Math.PI - Xir;
       }
 
-      if(vEarth(1,i) <= 0 && vEarth(2,i) >= 0)
+      if(vEarth[0][i] <= 0 && vEarth[1][i] >= 0)
       {
 	Xir = Math.PI - Xir;
       }
 
-      var Gammar = Math.asin(-vEarth(3,i) / VER);
-      var GammaHis = [GammaHis Gammar];
-      XiHis = [XiHis Xir];
-      VAirRel = [VAirRel VAR];
+      var Gammar = Math.asin(-vEarth[2][i]/ VER);
+      var GammaHis = [GammaHis, Gammar];
+      XiHis = [XiHis, Xir];
+      VAirRel = [VAirRel, VAR];
     }
 
     var MachHis = elemdiv(VAirRel, soundSpeedHis);
     var AlphaDegHis  = 57.2957795 * AlphaAR;
     var BetaDegHis = 57.2957795 * BetaAR;
-    var qbarHis = 0.5 * elemmult(elemmult(airDensHis, VAirRel),VAirRel);
+    var qbarHis = 0.5 * elemmult(elemmult(airDensHis, VAirRel),VAirRel);   // ÜBERPRÜFEN!!!
     var GammaDegHis = 57.2957795 * GammaHis;
     var XiDegHis = 57.2957795 * XiHis;
  }

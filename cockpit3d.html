@@ -85,10 +85,10 @@ function init() {
   textureCube = new THREE.CubeTextureLoader().load( urls );
   scene.background = textureCube;
   controls = new THREE.FirstPersonControls( camera );/*Steuerung für die Kamera erstellen*/
-  controls.movementSpeed = 100;/*Bewegungsgeschwindigkeit der Kamera*/
+  controls.movementSpeed = 0;/*Bewegungsgeschwindigkeit der Kamera*/
   controls.lookSpeed = 0.1;/*Drehgeschwindigkeit*/
-  data = generateHeight2( worldWidth, worldDepth );/*Erstellt natürliche Höhendaten für die 3D-Welt*/
-  camera.position.y = 3000;/*Startposition der Kamera*/
+  data = generateHeight( worldWidth, worldDepth );/*Erstellt natürliche Höhendaten für die 3D-Welt*/
+  camera.position.y = 8000;/*Startposition der Kamera*/
   var geometry = new THREE.PlaneBufferGeometry( weite, breite, worldWidth - 1, worldDepth - 1 );  /*Erste zwei Variablen bestimmen größe der 3D-Welt und die anderen Zwei bestimmen größe der einzelnen Segmente*/
   geometry.rotateX( - Math.PI / 2 );/*Rotation um die x-Achse*/
   vertices = geometry.attributes.position.array;/*Positionskoordinaten werden erstellt*/

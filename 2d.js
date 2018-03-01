@@ -997,7 +997,8 @@ ctx.translate(-950,-500);
 
 ctx.translate(0, 0.02*869);
 
-ctx.fillText("stall angle",1070,690);
+ctx.fillText(camera.position.x,1070,690);
+ctx.fillText(camera.position.z,1070,710);
 if (stei>60||stei<-60){
   ctx.fillStyle="red";
 } else {

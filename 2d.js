@@ -3,7 +3,7 @@
     window.requestAnimationFrame = requestAnimationFrame;
 })();
 //<canvas id="glcanvas" width="10" height="10" style="border:10px solid #000000;"></canvas>
-var n = 0, a = 0, b=0, c=0, d=0, e=0, f=0, g=0, i=0;
+var n = 0, a = 45, b=0, c=0, d=0, e=0, f=0, g=0, i=0;
 
 hun = document.getElementById("hundred");
 var canvas = document.getElementById("text");
@@ -149,15 +149,22 @@ function update(){
       showN15();
 
 
-            if (keys[39]) {
+   if (keys[77]) {
+       // m
+    c2="red";
+   }
+   if (keys[66]) {
+        // b
+    c1="red";
+   }
+   if (keys[39]) {
        // right arrow
-       c2="red";
        xs=0.11*w;
    }
+
    if (keys[37]) {
         // left arrow
-  c1="red";
-  xs=0.09*w;
+    xs=0.09*w;
    }
    if (keys[40]) {
 // up arrow
@@ -484,13 +491,13 @@ function drawArrow(fromx, fromy, tox, toy,color){
               //Geschwindigkeit in Knoten (-> Verschiebung in y-Richtung: -250+4*v)
               var v = 180;
               //Höhe in Fuß
-              nei=controls.a(); sch=0; stei=0.005*h*controls.b();
+              nei=controls.a(); sch=controls.c(); stei=0.005*h*controls.b();
               var a=h/10;
               ctx.translate(0.31*w,0.83*h);
               ctx.fillStyle = "lightblue"
               ctx.fillRect(-0.09*w,-0.15*h,0.18*w,0.3*h);
               ctx.translate(0,stei);
-              ctx.rotate(-sch*Math.PI/180);
+              ctx.rotate(sch*Math.PI/180);
 
               ctx.fillStyle="lightgreen"
               ctx.fillRect(-0.09*w,0.0*h,0.18*w,0.3*h);
@@ -570,7 +577,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.lineTo(76,85);
               ctx.stroke();
               */
-              ctx.rotate(sch*Math.PI/180);
+              ctx.rotate(-sch*Math.PI/180);
               ctx.translate(-0.31*w,-0.83*h-stei);
 // konstante Anzeigen im fla
               ctx.translate(0.31*w,0.83*h);
@@ -880,8 +887,8 @@ ctx.translate(-660,-470);
 //ta für linken Tank
 //tb für rechten Tank
 if(ta<40){
-  ta = ta + 0.1;
-  tb = tb + 0.1;
+  ta = ta + 0.01;
+  tb = tb + 0.01;
 }
 ctx.translate(950,500);
 ctx.fillStyle="black";
@@ -978,7 +985,13 @@ ctx.lineTo(0,0);
 ctx.fill();
 ctx.stroke();
 ctx.rotate(ta*Math.PI/180);
+if(ta>30){
+  ctx.fillStyle="red";
+  ctx.fillRect(-20,10,20,20);
+  ctx.fillText("Tank fast leer!",-45,40);
+}
 ctx.translate(-53,-75);
+ctx.fillStyle="black";
 
 ctx.translate(148,75);
 ctx.rotate(-tb*Math.PI/180);
@@ -992,11 +1005,19 @@ ctx.lineTo(0,0);
 ctx.fill();
 ctx.stroke();
 ctx.rotate(tb*Math.PI/180);
+if(tb>30){
+  ctx.fillStyle="red";
+  ctx.fillRect(5,10,20,20);
+  ctx.fillText("Tank fast leer!",-20,40);
+}
 ctx.translate(-148,-75);
 ctx.translate(-950,-500);
 
 ctx.translate(0, 0.02*869);
 
+
+
+ctx.fillStyle="black";
 ctx.fillText(camera.position.x,1070,690);
 ctx.fillText(camera.position.z,1070,710);
 if (stei>60||stei<-60){

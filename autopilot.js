@@ -5,6 +5,8 @@
  */
 
 THREE.FirstPersonControls = function ( object, domElement ) {
+
+  
     var stepsize = 1 / 3600;
     var to = 0;
     var tf = 1;
@@ -60,8 +62,10 @@ this.object = object;
 
 	this.lat = 0;
 	this.lon = 0;
+	this.seite = 0;
 	this.phi = 0;
 	this.theta = 0;
+	this.PSI = 0;
 
 	this.moveForward = true;
 	this.moveBackward = false;
@@ -107,7 +111,7 @@ this.b=function(){
 	return b;
 }
 this.c=function(){
-	var c = this.lon;
+	var c = this.seite;
 	return c;
 }
 /*	this.onMouseDown = function ( event ) {
@@ -687,6 +691,7 @@ transpose = function(x){
   }
 
   // Longitudinal Rotary & Unsteady Derivatives
+  
   var CLqHat = 2*CLaHT*lHT/cBar;
   var CmqHat = -CLqHat*lHT/cBar;
 
@@ -1134,29 +1139,31 @@ transpose = function(x){
      var qBarSL = 0.5*1.225*Math.pow(VmsIAS,2); // Dynamic Pressure at sea level, N/m^2
      var V = Math.sqrt(2*qBarSL/airDens); // True Airspeed, TAS, m/s
      var TASms = V;
+     
+       
+    // Alphabetical List of Initial Conditions
+  var alpha = 0; // Angle of attack, deg (relative to air mass)
+  var beta = 0; // Sideslip angle, deg (relative to air mass)
+  var dA = 0; // Aileron angle, deg
+  var dAS = 0; // Asymmetric spoiler angle, deg
+  var dE = 0; // Elevator angle, deg
+  var dR = 0; // Rudder angle, deg
+  var dS = 0; // Stabilator setting, deg
+  var dT = 0; // Throttle setting, // / 100
+  var hdot = 0; // Altitude rate, m/s
+  var p = 0; // Body-axis roll rate, deg/s
+  var phi = 0; // Body roll angle wrt earth, deg
+  var psi = 0; // Body yaw angle wrt earth, deg
+  var q = 0; // Body-axis pitch rate, deg/sec
+  var r = 0; // Body-axis yaw rate, deg/s
+  var SMI = 0; // Static margin increment due to center-of-mass variation from reference, ///100
+  var tf = 1; // Final time for simulation, sec
+  var ti = 0; // Initial time for simulation, sec
+  var theta = alpha; // Body pitch angle wrt earth, deg [theta = alpha if hdot = 0]
+  var xe = 0; // Initial longitudinal position, m
+  var ye =  0; // Initial lateral position, m
+  var ze = -hm; // Initial vertical position, m [h: + up, z: + down]
 
-     // Alphabetical List of Initial Conditions
-     var alpha = 0; // Angle of attack, deg (relative to air mass)
-     var beta = 0; // Sideslip angle, deg (relative to air mass)
-     var dA = 0; // Aileron angle, deg
-     var dAS = 0; // Asymmetric spoiler angle, deg
-     var dE = 0; // Elevator angle, deg
-     var dR = 0; // Rudder angle, deg
-     var dS = 0; // Stabilator setting, deg
-     var dT = 0; // Throttle setting, // / 100
-     var hdot = 0; // Altitude rate, m/s
-     var p = 0; // Body-axis roll rate, deg/s
-     var phi = 0; // Body roll angle wrt earth, deg
-     var psi = 0; // Body yaw angle wrt earth, deg
-     var q = 0; // Body-axis pitch rate, deg/sec
-     var r = 0; // Body-axis yaw rate, deg/s
-     var SMI = 0; // Static margin increment due to center-of-mass variation from reference, ///100
-     var tf = 100; // Final time for simulation, sec
-     var ti = 0; // Initial time for simulation, sec
-     var theta = alpha; // Body pitch angle wrt earth, deg [theta = alpha if hdot = 0]
-     var xe = 0; // Initial longitudinal position, m
-     var ye =  0; // Initial lateral position, m
-     var ze = -hm; // Initial vertical position, m [h: + up, z: + down]
 
      // Initial Conditions Depending on Prior Initial Conditions
      var gamma = 57.2957795 * Math.atan(hdot / Math.sqrt(Math.pow(V,2) - Math.pow(hdot,2))); // Inertial Vertical Flight Path Angle, deg
@@ -1427,9 +1434,9 @@ for(j=0;j<y0.length;j++){
   var qBarSL = 0.5*1.225*Math.pow(VmsIAS,2); // Dynamic Pressure at sea level, N/m^2
   var V = Math.sqrt(2*qBarSL/airDens); // True Airspeed, TAS, m/s
   var TASms = V;
-
-  // Alphabetical List of Initial Conditions
-  var alpha = 0; // Angle of attack, deg (relative to air mass)
+  
+    // Alphabetical List of Initial Conditions
+  var alpha = 10; // Angle of attack, deg (relative to air mass)
   var beta = 0; // Sideslip angle, deg (relative to air mass)
   var dA = 0; // Aileron angle, deg
   var dAS = 0; // Asymmetric spoiler angle, deg
@@ -1438,10 +1445,10 @@ for(j=0;j<y0.length;j++){
   var dS = 0; // Stabilator setting, deg
   var dT = 0; // Throttle setting, // / 100
   var hdot = 0; // Altitude rate, m/s
-  var p = 0; // Body-axis roll rate, deg/s
-  var phi = 0; // Body roll angle wrt earth, deg
+  var p = 1000; // Body-axis roll rate, deg/s
+  var phi = 45; // Body roll angle wrt earth, deg
   var psi = 0; // Body yaw angle wrt earth, deg
-  var q = 0; // Body-axis pitch rate, deg/sec
+  var q = 30; // Body-axis pitch rate, deg/sec
   var r = 0; // Body-axis yaw rate, deg/s
   var SMI = 0; // Static margin increment due to center-of-mass variation from reference, ///100
   var tf = 1; // Final time for simulation, sec
@@ -1450,6 +1457,7 @@ for(j=0;j<y0.length;j++){
   var xe = 0; // Initial longitudinal position, m
   var ye =  0; // Initial lateral position, m
   var ze = -hm; // Initial vertical position, m [h: + up, z: + down]
+
 
   // Initial Conditions Depending on Prior Initial Conditions
   var gamma = 57.2957795 * Math.atan(hdot / Math.sqrt(Math.pow(V,2) - Math.pow(hdot,2))); // Inertial Vertical Flight Path Angle, deg
@@ -1605,7 +1613,7 @@ for(j=0;j<y0.length;j++){
 
       var kHis;
 
-      x = explizit(0,1,xo,1/100);
+      x = explizit(0,tf,xo,1/100);
       /*
       kHis=21;
 
@@ -1729,6 +1737,9 @@ for(j=0;j<y0.length;j++){
 
 			case 82:   break;
 			case 70:   break;
+			
+			case 66: this.x[9]-=1; break;			  
+			case 77: this.x[9]+=1; break;
 
 		}
 
@@ -1752,7 +1763,7 @@ for(j=0;j<y0.length;j++){
 
 			case 82:  this.moveUp = false; break;
 			case 70:  this.moveDown = false; break;
-
+			
 		}
 
 	};
@@ -1765,7 +1776,15 @@ this.x = flight(this.x);
 
 this.lat=this.x[10];
 this.lon=this.x[11];
-this.movementSpeed+=100*this.schub;
+this.seite=this.x[9];
+this.movementSpeed=this.x[0]+100*this.schub;
+
+		if(this.movementSpeed<=0){
+			this.movementSpeed = 0.000000000001;
+		}
+		if(this.movementSpeed>=1000){
+			this.movementSpeed = 999.999999999;
+		}
 
 		if ( this.enabled === false ) return;
 
@@ -1803,6 +1822,8 @@ this.movementSpeed+=100*this.schub;
 
 this.phi = THREE.Math.degToRad(90-this.lat );
 this.theta = THREE.Math.degToRad( this.lon );
+this.PSI = THREE.Math.degToRad(this.seite);
+
 var targetPosition = this.target,
 			position = this.object.position;
 

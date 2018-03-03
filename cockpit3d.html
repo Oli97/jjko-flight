@@ -210,6 +210,9 @@ function animate() {
 
 function render() {
   controls.update( clock.getDelta() );
+  camera.rotation.x=controls.b()* Math.PI / 180;
+  camera.rotation.y=-controls.a()* Math.PI / 180;
+  camera.rotation.z=-controls.c()* Math.PI / 180;
   renderer.render( scene, camera );
 }
 

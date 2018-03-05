@@ -1216,7 +1216,7 @@ transpose = function(x){
    AeroModel = @AeroModelMach;
    end
    */
-   var ev = event(t,x);
+   var ev = eventt(t,x);
    var value = ev[0];
    var isterminal = ev[1];
    var direction = ev[2];
@@ -1333,7 +1333,7 @@ transpose = function(x){
    return xdot;
   }
 
-  event = function(t,x)
+  eventt = function(t,x)
   {
    var value = x[5];
    var isterminal = 1;

@@ -5,9 +5,7 @@
  */
 
 THREE.FirstPersonControls = function ( object, domElement ) {
-var hoehenruder=0;
-var seitenruder=0;
-var querruder=0;
+
 
     var stepsize = 1 / 3600;
     var to = 0;
@@ -1146,10 +1144,10 @@ transpose = function(x){
     // Alphabetical List of Initial Conditions
   var alpha = 0; // Angle of attack, deg (relative to air mass)
   var beta = 0; // Sideslip angle, deg (relative to air mass)
-  var dA = querruder; // Aileron angle, deg
+  var dA = 0; // Aileron angle, deg
   var dAS = 0; // Asymmetric spoiler angle, deg
   var dE = 0; // Elevator angle, deg
-  var dR = seitenruder; // Rudder angle, deg
+  var dR = 10; // Rudder angle, deg
   var dS = 0; // Stabilator setting, deg
   var dT = 0; // Throttle setting, // / 100
   var hdot = 0; // Altitude rate, m/s
@@ -1440,10 +1438,10 @@ for(j=0;j<y0.length;j++){
     // Alphabetical List of Initial Conditions
   var alpha = 0; // Angle of attack, deg (relative to air mass)
   var beta = 0; // Sideslip angle, deg (relative to air mass)
-  var dA = querruder; // Aileron angle, deg
+  var dA = 0; // Aileron angle, deg
   var dAS = 0; // Asymmetric spoiler angle, deg
   var dE = 0; // Elevator angle, deg
-  var dR = seitenruder; // Rudder angle, deg
+  var dR = 10; // Rudder angle, deg
   var dS = 0; // Stabilator setting, deg
   var dT = 0; // Throttle setting, // / 100
   var hdot = 0; // Altitude rate, m/s
@@ -1728,21 +1726,24 @@ for(j=0;j<y0.length;j++){
 
 
 			case 37:
-			case 65: this.x[11]+=1;break;
+			case 65: this.x[11]-=1;break;
 
 
 			case 40:
 			case 83:  this.x[10]+=1;break;
 
 			case 39:
-			case 68:   this.x[11]-=1;break;
+			case 68:   this.x[11]+=1;break;
 
 			case 82:   break;
 			case 70:   break;
 
-			case 66: this.x[9]+=1; break;
-			case 77: this.x[9]-=1; break;
+			case 66: this.x[9]-=1; break;
+			case 77: this.x[9]+=1; break;
 
+      case 49: fall=1;break;
+      case 50: fall=2;break;
+      case 51: fall=3;break;
 
 		}
 
@@ -1753,23 +1754,19 @@ for(j=0;j<y0.length;j++){
 		switch ( event.keyCode ) {
 
 			case 38:
-			case 87:  hoehenruder=0; break;
+			case 87:  this.moveForward = true; break;
 
 			case 37:
-			case 65:  seitenruder=0; break;
+			case 65:  this.moveLeft = false; break;
 
 			case 40:
-			case 83:  hoehenruder=0; break;
+			case 83:  this.moveBackward = false; break;
 
 			case 39:
-			case 68:  seitenruder=0; break;
+			case 68:  this.moveRight = false; break;
 
 			case 82:  this.moveUp = false; break;
 			case 70:  this.moveDown = false; break;
-
-      case 66: querruder=0; break;
-			case 77: querruder=0; break;
-
 
 		}
 
@@ -1808,7 +1805,7 @@ this.movementSpeed=this.x[0]+1000*this.schub;
 
 		}
 
-		var actualMoveSpeed = delta * 10*this.movementSpeed;
+		var actualMoveSpeed = delta * 3*this.movementSpeed;
 
 		if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
 		if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );

@@ -286,9 +286,9 @@ var Vn = [];
 			case 87://Pfeiltaste
 
 
-					this.nx=aero(this.nx);
-				  	camera.position.x = 1000*this.nx[3];
-					camera.position.y = 1000*this.nx[2];
+					//this.nx=aero(this.nx);
+				  	//camera.position.x = 1000*this.nx[3];
+					//camera.position.y = 1000*this.nx[2];
 
 
 				  break;

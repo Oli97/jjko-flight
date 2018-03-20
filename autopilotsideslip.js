@@ -1722,28 +1722,28 @@ for(j=0;j<y0.length;j++){
 
 			case 38:
 			//case 87:  this.moveForward = true; break;
-			case 87:this.x[10]-=1;break;
+			case 87:break;
 
 
 			case 37:
-			case 65: this.x[11]-=1;break;
+			case 65: break;
 
 
 			case 40:
-			case 83:  this.x[10]+=1;break;
+			case 83: break;
 
 			case 39:
-			case 68:   this.x[11]+=1;break;
+			case 68: break;
 
 			case 82:   break;
 			case 70:   break;
 
-			case 66: this.x[9]-=1; break;
-			case 77: this.x[9]+=1; break;
+			case 66: break;
+			case 77: break;
 
-      case 49: fall=1;break;
-      case 50: fall=2;break;
-      case 51: fall=3;break;
+      case 49: break;
+      case 50: break;
+      case 51: break;
 
 		}
 

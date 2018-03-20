@@ -1148,7 +1148,7 @@ transpose = function(x){
   var beta = 0; // Sideslip angle, deg (relative to air mass)
   var dA = querruder; // Aileron angle, deg
   var dAS = 0; // Asymmetric spoiler angle, deg
-  var dE = 0; // Elevator angle, deg
+  var dE = hoehenruder; // Elevator angle, deg
   var dR = seitenruder; // Rudder angle, deg
   var dS = 0; // Stabilator setting, deg
   var dT = 0; // Throttle setting, // / 100
@@ -1442,7 +1442,7 @@ for(j=0;j<y0.length;j++){
   var beta = 0; // Sideslip angle, deg (relative to air mass)
   var dA = querruder; // Aileron angle, deg
   var dAS = 0; // Asymmetric spoiler angle, deg
-  var dE = 0; // Elevator angle, deg
+  var dE = hoehenruder; // Elevator angle, deg
   var dR = seitenruder; // Rudder angle, deg
   var dS = 0; // Stabilator setting, deg
   var dT = 0; // Throttle setting, // / 100
@@ -1724,24 +1724,24 @@ for(j=0;j<y0.length;j++){
 
 			case 38:
 			//case 87:  this.moveForward = true; break;
-			case 87:this.x[10]-=1;break;
+			case 87:hoehenruder=15;break;
 
 
 			case 37:
-			case 65: this.x[11]+=1;break;
+			case 65: seitenruder=15;break;
 
 
 			case 40:
-			case 83:  this.x[10]+=1;break;
+			case 83:  hoehenruder=-15;break;
 
 			case 39:
-			case 68:   this.x[11]-=1;break;
+			case 68:   seitenruder=-15;break;
 
 			case 82:   break;
 			case 70:   break;
 
-			case 66: this.x[9]+=1; break;
-			case 77: this.x[9]-=1; break;
+			case 66: querruder=-5; break;
+			case 77: querruder=5; break;
 
 
 		}
@@ -1830,7 +1830,7 @@ this.movementSpeed=this.x[0]+1000*this.schub;
 this.phi = THREE.Math.degToRad(90-this.lat );
 this.theta = THREE.Math.degToRad( this.lon );
 this.PSI = THREE.Math.degToRad(this.seite);
-
+/*
 var targetPosition = this.target,
 			position = this.object.position;
 
@@ -1839,7 +1839,7 @@ var targetPosition = this.target,
 		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
 
 		this.object.lookAt( targetPosition );
-
+*/
 
 	};
 

@@ -493,6 +493,12 @@ function drawArrow(fromx, fromy, tox, toy,color){
               //Höhe in Fuß
               nei=controls.a(); sch=controls.c(); stei=0.005*h*controls.b();
               var a=h/10;
+              if(sch>45){
+                sch=45;
+              }
+              if(sch<-45){
+                sch=-45;
+              }
               ctx.translate(0.31*w,0.83*h);
               ctx.fillStyle = "lightblue"
               ctx.fillRect(-0.09*w,-0.15*h,0.18*w,0.3*h);
@@ -500,7 +506,8 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.rotate(sch*Math.PI/180);
 
               ctx.fillStyle="lightgreen"
-              ctx.fillRect(-0.09*w,0.0*h,0.18*w,0.3*h);
+              ctx.fillRect(-0.14*w,0.0*h,0.28*w,0.3*h);
+
 // Beschriftung der Skala vom fla
 
               ctx.font="9px Arial";
@@ -534,8 +541,8 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.lineTo(0.01*w,-0.0875*h);
               ctx.moveTo(-0.03*w,-0.1*h);
               ctx.lineTo(0.03*w,-0.1*h);
-              ctx.moveTo(-0.09*w,0);
-              ctx.lineTo(0.09*w,0);
+              ctx.moveTo(-0.14*w,0);
+              ctx.lineTo(0.14*w,0);
 
               ctx.moveTo(-0.01*w,0.0125*h);
               ctx.lineTo(0.01*w,0.0125*h);
@@ -578,6 +585,9 @@ function drawArrow(fromx, fromy, tox, toy,color){
               ctx.stroke();
               */
               ctx.rotate(-sch*Math.PI/180);
+              ctx.fillStyle="#A4A4A4"
+              ctx.fillRect(-0.24*w,-0.2*h,0.13*w,0.5*h);
+              ctx.fillRect(0.1*w,-0.2*h,0.13*w,0.5*h);
               ctx.translate(-0.31*w,-0.83*h-stei);
 // konstante Anzeigen im fla
               ctx.translate(0.31*w,0.83*h);
@@ -623,7 +633,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
               //ctx.translate(-0.31*w,-0.83*h);
 
 //Bänder für Höhe und Geschwindigkeit
-	      
+
 	      ctx.scale(w/1200,h/800);
 
               ctx.fillStyle="#585858";
@@ -1018,8 +1028,8 @@ ctx.translate(0, 0.02*869);
 
 
 ctx.fillStyle="black";
-ctx.fillText(camera.position.x,1070,690);
-ctx.fillText(camera.position.z,1070,710);
+ctx.fillText("stall angle",1070,690);
+
 if (stei>60||stei<-60){
   ctx.fillStyle="red";
 } else {

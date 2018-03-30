@@ -501,7 +501,7 @@ function drawArrow(fromx, fromy, tox, toy,color){
               }
               ctx.translate(0.31*w,0.83*h);
               ctx.fillStyle = "lightblue"
-              ctx.fillRect(-0.09*w,-0.15*h,0.18*w,0.3*h);
+              ctx.fillRect(-0.09*w,-0.15*h,0.18*w,0.4*h);
               ctx.translate(0,stei);
               ctx.rotate(sch*Math.PI/180);
 

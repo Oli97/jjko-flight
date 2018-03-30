@@ -67,6 +67,7 @@ var worldWidth = 256, worldDepth = 256,
 worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2;
 var clock = new THREE.Clock();
 var reload = false;
+var start = true;
 var weite = 125000, breite = 125000;
 init();
 animate();
@@ -206,6 +207,7 @@ function animate() {
   stats.update();
   reset();
   absturz();
+  start = false;
 }
 
 function render() {
@@ -228,9 +230,15 @@ function reset() {
 function absturz() {
   for ( var i = 0, l = vertices.length; i < l;  i += 3 ) {
     if(!reload&&Math.abs(camera.position.x-altx-vertices[i])<1000&&Math.abs(camera.position.z-altz-vertices[i+2])<1000&&vertices[i+1]>camera.position.y){
-      if (confirm('Sie sind abgestuerzt!')) {
+      if(start){
         location.reload();
         reload = true;
+      }
+      else{
+        if (confirm('Sie sind abgestuerzt!')) {
+          location.reload();
+          reload = true;
+        }
       }
     }
   }

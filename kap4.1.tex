@@ -61,17 +61,17 @@ Beim Papierflieger wird eine vorgefertigte Flugbahn durchflogen. Die vier versch
 Flugbahnen sind in den unteren Abbildungen dargestellt. Hierbei wurde die Höhe (y-Koordinate) gegen
 die Weite (x-Koordinate) angetragen, wodurch man die Seitenansicht der Flugbahn
 sieht. Die verschiedenen Flugbahnen entstehen wie in Abschnitt 2.1 beschrieben durch
-die unterschiedlichen Startwerte und ein Durchlauf entspricht dabei den Werten nach einem Zeitschritt (hier t=0.005).  Die Flugbahnen mit Ausnahme von dem letzten Graphen sind glatte Funktionen, die stetig differenzierbar
+die unterschiedlichen Startwerte und ein Durchlauf entspricht dabei den Werten nach einem Zeitschritt (hier t=0.005s).  Die Flugbahnen mit Ausnahme von dem letzten Graphen sind glatte Funktionen, die stetig differenzierbar
 sind und daher als sinnvolle Lösungen angesehen werden können.
 Da der hier verwendete Löser dem Löser des Matlab-Originalcodes (ode23.m) entspricht
 und nur minimale Rundungsfehler auftreten, stimmen die Ergebnisse des Matlab-Codes
 (s.Tab. Originalcode) und unseres Codes (s.Tab. Eigencode) sehr gut überein. Dadurch gibt es auch im
 Simulator keine größeren Fehler und der Flug sieht flüssig aus. \\
-Im Fall des Gleitflugs erkennt man, dass die prozentuale Abweichung in der Geschwindigkeit und im Steigungswinkel null beträgt. Dies kommt dadurch zu Stande, dass in diesem Fall der Winkel gesetzt wird und konstant bleibt, wodurch bei der Berechnung der Geschwindigkeit auch keine Abweichungen auftauchen. Allerdings ergeben sich Rundungsfehler bei der Höhe und der Weite, wobei der Fehler bei der Höhe mit jedem Durchlauf zunimmt, aber trotzdem nur bei 0.076\% nach 9 Durchläufen liegt. Die Abweichung bei der Weite ist aufgrund der niedrigen Werte höher, aber sie ist im Vergleich zur Höhe einigermaßen konstant und befindet sich im Bereich 5.2 - 5.7\%.\\
-Wenn man sich nun den Sinusflug betrachtet, erkennt man, dass die Abweichung bei der Weite wie beim Gleitflug verhält. Die Höhe hingegen ist bis auf zwei Werte absolut exakt, was mit dem niedrigen Steigungswinkel zusammenhängt. Dieser wiederum weist aufgrund der niedrigen Werte sehr starke Abweichungen auf, die sich dann in einem Bereich von 7 - 9\% einpendeln. Dadurch erhöht sich die Abweichung bei der Geschwindigkeit in jedem Zeitschritt, aber befindet sich noch deutlich unter 1\%. Wenn man nun beim Sinusflug die Geschwindigkeit weiter erhöhen würde wie in den nächsten beiden Fällen, würde man erkennen, dass sich die Geschwindigkeit und die Höhe wie zuvor mit wiederholter Durchführung zunehmend abweichen, aber immer noch eindeutig unter 1\% liegen. Die Abweichung in der Weite liegen auch wieder knapp über 5\% und der Steigungswinkel nähert sich auch der 5\%-Grenze an.
+Im Fall des Gleitflugs (s.Abb.\ref{fig:gleit}) erkennt man, dass die prozentuale Abweichung in der Geschwindigkeit und im Steigungswinkel null beträgt. Dies kommt dadurch zu Stande, dass in diesem Fall der Winkel gesetzt wird und konstant bleibt, wodurch bei der Berechnung der Geschwindigkeit auch keine Abweichungen auftauchen. Allerdings ergeben sich Rundungsfehler bei der Höhe und der Weite, wobei der Fehler bei der Höhe mit jedem Durchlauf zunimmt, aber trotzdem nur bei 0.076\% nach 9 Durchläufen liegt. Die Abweichung bei der Weite ist aufgrund der niedrigen Werte höher, aber sie ist im Vergleich zur Höhe einigermaßen konstant und befindet sich im Bereich 5.2 - 5.7\%.\\
+Wenn man sich nun den Sinusflug betrachtet (s.Abb.\ref{fig:sin}), erkennt man, dass die Abweichung bei der Weite wie beim Gleitflug verhält. Die Höhe hingegen ist bis auf zwei Werte absolut exakt, was mit dem niedrigen Steigungswinkel zusammenhängt. Dieser wiederum weist aufgrund der niedrigen Werte sehr starke Abweichungen auf, die sich dann in einem Bereich von 7 - 9\% einpendeln. Dadurch erhöht sich die Abweichung bei der Geschwindigkeit in jedem Zeitschritt, aber befindet sich noch deutlich unter 1\%. Wenn man nun beim Sinusflug die Geschwindigkeit weiter erhöhen würde wie in den nächsten beiden Fällen(s.Abb.\ref{fig:sin2} und \ref{fig:sin3}), würde man erkennen, dass sich die Geschwindigkeit und die Höhe wie zuvor mit wiederholter Durchführung zunehmend abweichen, aber immer noch eindeutig unter 1\% liegen. Die Abweichung in der Weite liegen auch wieder knapp über 5\% und der Steigungswinkel nähert sich auch der 5\%-Grenze an.\\
 \begin{figure}[htp]
 	\centering
-	\includegraphics{flightpath1.png}
+	\includegraphics[width=300pt]{flightpath1.png}
 	\captionof{figure}{Gleitflug}
 	\label{fig:gleit}
 \end{figure}
@@ -125,7 +125,7 @@ Durchläufe & Geschw. & Steigungsw. & Höhe   & Weite   \\
 \end{table}
 \begin{figure}[htp]
 	\centering
-	\includegraphics{flightpath2.png}
+	\includegraphics[width=300pt]{flightpath2.png}
 	\captionof{figure}{Sinusflug}
 	\label{fig:sin}
 \end{figure}
@@ -179,7 +179,7 @@ Durchläufe & Geschw. & Steigungsw. & Höhe   & Weite   \\
 \end{table}
 \begin{figure}[htp]
 	\centering
-	\includegraphics{flightpath3.png}
+	\includegraphics[width=300pt]{flightpath3.png}
 	\captionof{figure}{Sinusflug mit erhöhter Geschwindigkeit}
 	\label{fig:sin2}
 \end{figure}
@@ -201,7 +201,7 @@ Durchläufe & Geschw. & Steigungsw. & Höhe   & Weite    \\
 \end{table}
 \begin{figure}[htp]
 	\centering
-	\includegraphics{flightpath4.png}
+	\includegraphics[width=300pt]{flightpath4.png}
 	\captionof{figure}{Sinusflug mit weiter erhöhter Geschwindigkeit}
 	\label{fig:sin3}
 \end{figure}
@@ -253,6 +253,45 @@ Durchläufe & Geschw.  & Steigungsw. & Höhe   & Weite      \\
 9          & 9.9175 & 0.3121     & 2.0718 &  0.4553 
 \end{tabular}
 \end{table}
+\newpage
+Beim echten Flugzeug wurde, wie in Abschnitt 2.2 beschrieben, ein expliziter Löser verwendet,
+wobei im Matlab-Originalcode ein impliziter Löser (ode15s.m) verwendet wurde.
+Unser Löser bietet eine gute Näherung, entspricht den Daten aus dem Original-Code aber
+nicht immer exakt. Daher kann unser Löser die Bewegungsgleichungen zu bestimmten
+Eingabedaten nicht mehr lösen, da die Daten im Löser zu extrem großen Werten führen.
+Der Löser funktioniert zu realistischen Eingabedaten aber sehr gut und ist außerdem
+sehr effizient, was bei der Echtzeitlösung eine sehr große Rolle spielt. Deshalb ist auch
+hier der Flug überwiegend flüssig, bis auf ein paar wenige Momente, wo selbst der explizite
+Löser zu kleineren Fehlern führen kann.\\
+Beim echten Flugzeug wurden zwei Fälle besonders analysiert, ein Kurvenflug und ein Sinusflug.
+Hierbei entspricht ein Durchlauf bzw. Zeitschritt 1s. 
+Beim Kurvenflug wurde anfangs das Querruder auf \(10^\circ\) eingestellt. Dadurch durch fliegt
+das Flugzeug solange eine Linkskurve, bis der Benutzer per Steuerung das Querruder
+wieder verstellt. Beim Betrachten der Flugbahn(s.Abb. \ref{fig:k1},\ref{fig:k2},\ref{fig:k3},\ref{fig:k4}) erkennt man, dass die Funktionen wie zuvor auch beim Papierflieger glatt sind, aber hier ist zu beachten, dass die Kurven nicht den originalen Kurven entsprechen, was durch den unterschiedlichen Löser zu Stande kommt. Trotzdem sind die Flugbahnen aufgrund der Glattheit und stetigen Differenzierbarkeit sinnvolle Lösungen.
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=300pt]{kurve1.jpg}
+	\captionof{figure}{Flugbahn im dreidimensionalen Koordinatensystem}
+	\label{fig:k1}
+\end{figure}
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=300pt]{Kurve2.jpg}
+	\captionof{figure}{Flugbahn in xz-Richtung}
+	\label{fig:k2}
+\end{figure}
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=300pt]{Kurve3.jpg}
+	\captionof{figure}{Flugbahn in yz-Richtung}
+	\label{fig:k3}
+\end{figure}
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=300pt]{Kurve4.jpg}
+	\captionof{figure}{Flugbahn in xy-Richtung}
+	\label{fig:k4}
+\end{figure}
 \begin{table}
 \centering
 \caption{Kurvenflug}
@@ -269,4 +308,9 @@ Durchläufe & x-Geschw. & z-Geschw. & y-Geschw. & Rollwinkel & Steigungsw. & Gie
 9          & 95.7539   & 32.8952   & 2.1490    & -4.4660    & -0.5373     & 0.0956     
 \end{tabular}
 \end{table}
+\newpage
+Beim Sinusflug wird der Schräglaufwinkel (sideslip angle) \(\beta\) beispielsweise auf \(80^\circ\) eingestellt, wodurch es
+zur Side Force kommt. Man kann gut beobachten, wie das Flugzeug anfangs durch diese
+seitliche Kraft kurz ins Schwanken gerät und dann wieder in den Geradeausflug zurück
+kehrt. Dieser Effekt resultiert daraus, dass das Flugzeug aerodynamisch stabil gebaut ist.
  \end{document}.

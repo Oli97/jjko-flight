@@ -1740,8 +1740,8 @@ for(j=0;j<y0.length;j++){
 			case 82:   break;
 			case 70:   break;
 
-			case 66: querruder=-5; break;
-			case 77: querruder=5; break;
+			case 66: querruder=-15; break;
+			case 77: querruder=15; break;
 
 
 		}
